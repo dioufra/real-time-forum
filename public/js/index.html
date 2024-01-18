@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Real-time-forum</title>
+</head>
+<body>
+    <c-header>  </c-header>
+    <c-main></c-main>
+    <script rel="preload" type="module" >
+        
+        import("../js/components/layout/header.js").then(module => {
+            if (!customElements.get('c-header')) customElements.define('c-header', module.default)
+        })
+        import("../js/components/layout/main.js").then(module => {
+            if (!customElements.get('c-main')) customElements.define('c-main', module.default)
+        })
+        import("../js/components/login.js").then(module => {
+            if (!customElements.get('c-login')) customElements.define('c-login', module.default)
+        })
+    </script>
+</body>
+</html>
