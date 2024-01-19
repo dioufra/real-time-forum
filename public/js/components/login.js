@@ -5,7 +5,7 @@ export default class Login extends HTMLElement {
     }
 
     connectedCallback() {
-        console.log(this)
+        // console.log(this)
         this.render()
         // this._style()
     }
@@ -24,17 +24,17 @@ export default class Login extends HTMLElement {
                 <div class="title-form">
                     <p class="title-form">Connexion</p>
                 </div>
-                <p class="error-message"> {{ .ErrorLog }}</p>
+                <p class="error-message"></p>
                 <form class="connection-form" action="/login" method="post">
                 <div class="input-form">
-                    <input type="text" name="email" placeholder=" email" id="">
+                    <input type="text" name="email" placeholder=" email" >
                 </div>
                 <div class="input-form">                    
-                    <input type="password" name="password" placeholder="password" id="">
+                    <input type="password" name="password" placeholder="password">
                 </div>                        
                     <button class="submit-btn" type="submit">envoyer</button>
                 </form>
-        </div>
+            </div>
         `
     }
 

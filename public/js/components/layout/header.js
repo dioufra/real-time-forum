@@ -5,7 +5,7 @@ export default class Header extends HTMLElement {
     }
 
     connectedCallback() {
-        console.log(this)
+        // console.log(this)
         this.render()
         // this._style()
     }
