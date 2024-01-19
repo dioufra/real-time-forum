@@ -12,9 +12,9 @@ components.forEach(component => {
 })
 export const updateComponents = ()=> {
     components.forEach(component => {
-        let myElement = document.querySelector(component.tagName);
-        if (myElement?.render) {
-            myElement.render()
-        }
+        let elements = document.querySelectorAll(component.tagName);
+        elements.forEach(element => {
+            if (element?.render) element.render()
+        })
     })
 }
