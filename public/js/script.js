@@ -4,12 +4,12 @@ let components = [
     {tagName:'c-login',src:"../js/components/login.js"},
     {tagName:'c-register',src:"../js/components/register.js"},
 ]
+// Define the custom web component
 components.forEach(component => {
     import(component.src).then(module => {
         if (!customElements.get(component.tagName)) customElements.define(component.tagName, module.default)
     })
 })
-
 export const updateComponents = ()=> {
     components.forEach(component => {
         let myElement = document.querySelector(component.tagName);
