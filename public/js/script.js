@@ -3,6 +3,7 @@ let components = [
     {tagName:'c-main',src:"../js/components/layout/main.js"},
     {tagName:'c-login',src:"../js/components/login.js"},
     {tagName:'c-register',src:"../js/components/register.js"},
+    {tagName:'c-form',src:"../js/components/form.js"},
 ]
 // Define the custom web component
 components.forEach(component => {
