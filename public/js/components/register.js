@@ -2,16 +2,15 @@ export default class Register extends HTMLElement {
     constructor() {
         super()
         // this.isAuth = false
+       
     }
 
     connectedCallback() {
-        // console.log(this)
-        this.render()
-        // this._style()
+        if (this.shouldComponentRender) this.render()
     }
 
     disconnectedCallback() {
-        console.log('disconnected')
+        console.log('disconnected register')
     }
 
     shouldComponentRender() {
@@ -25,29 +24,29 @@ export default class Register extends HTMLElement {
                 <p class="title-form">Register</p>
             </div>
             <p class="error-message"></p>
-            <form class="connection-form" action="/register" method="post">
+            <form id="register-form" action="/" method="get">
                 <div class="input-form">
-                    <input type="text" name="firthname" placeholder="firthname" required value="" id="">
+                    <input type="text" name="firthname" placeholder="firthname">
                 </div>
 
                 <div class="input-form">
-                    <input type="text" name="lastname" placeholder="lastname" required value="" id="">
+                    <input type="text" name="lastname" placeholder="lastname">
                 </div>
 
                 <div class="input-form">
-                    <input type="text" name="username" placeholder="username" required value="" id="">
+                    <input type="text" name="username" placeholder="username">
                 </div>
 
                 <div class="input-form">
-                    <input type="email" name="email" placeholder="email"required  value="" id="">
+                    <input type="email" name="email" placeholder="email">
                 </div>
 
                 <div class="input-form">
-                    <input type="password" name="password"required placeholder="password"  id="">
+                    <input type="password" name="password" placeholder="password">
                 </div>
 
                 <div class="input-form">
-                    <input type="password" name="repeatpassword" required placeholder="repeat password">
+                    <input type="password" name="repeatpassword" placeholder="repeat password">
                 </div>
 
                 <button class="submit-btn" type="submit">envoyer</button>
@@ -82,13 +81,11 @@ export default class Register extends HTMLElement {
         }
 
         `
-        console.log(this.header)
         this.appendChild(style)
 
     }
 
     get header() {
-        console.log(this.querySelector('.main-header'))
-        this.querySelector('.main-header')
+        return this.querySelector('.main-header')
     }
 }

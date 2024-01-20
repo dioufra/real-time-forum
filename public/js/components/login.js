@@ -11,7 +11,7 @@ export default class Login extends HTMLElement {
     }
 
     disconnectedCallback() {
-        console.log('disconnected')
+        console.log('disconnected login')
     }
 
     shouldComponentRender() {

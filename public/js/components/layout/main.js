@@ -4,14 +4,21 @@ export default class Header extends HTMLElement {
     constructor() {
         super()
         this.isAuth = false
+        this.submitFormListerner = (e) => {
+            console.log('submitted');
+            console.log(e)
+            e.preventDefault();
+        }
     }
-
+    
     connectedCallback() {
+        console.log('called')
         this.render()
+        this.form?.addEventListener('submit', this.submitFormListerner)
     }
 
     disconnectedCallback() {
-        console.log('disconnected')
+        console.log('disconnected main')
     }
 
     shouldComponentRender() {
@@ -51,7 +58,10 @@ export default class Header extends HTMLElement {
     }
 
     get header() {
-        console.log(this.querySelector('.main-header'))
         this.querySelector('.main-header')
+    }
+
+    get form() {
+        return this.querySelector('form')
     }
 }
