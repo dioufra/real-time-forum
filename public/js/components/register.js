@@ -1,4 +1,4 @@
-import { CURRENT_USER } from "../user/user.js"
+import { CURRENT_USER } from "../controllers/user.js"
 
 export default class Register extends HTMLElement {
     constructor() {

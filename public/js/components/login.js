@@ -1,4 +1,4 @@
-import { CURRENT_USER } from "../user/user.js"
+import { FORM_CONTROLLER } from "../controllers/form.js"
 
 export default class Login extends HTMLElement {
     constructor() {
@@ -21,13 +21,13 @@ export default class Login extends HTMLElement {
 
     render() {
         let formAction = 'login'
-        CURRENT_USER.forms[formAction] = CURRENT_USER.forms[formAction] || {}
+        FORM_CONTROLLER.forms[formAction] = FORM_CONTROLLER.forms[formAction] || {}
         this.innerHTML = /* HTML */ `
             <div class="form-ff">
                 <div class="title-form">
                     <p class="title-form">Connexion</p>
                 </div>
-                <p class="error-message">${CURRENT_USER.forms[formAction].error || 'f'}</p>
+                <p class="error-message">${FORM_CONTROLLER.forms[formAction].error || 'f'}</p>
                 <c-form class="connection-form" action="${formAction}" method="post">
                     <div class="input-form">
                         <input type="email" name="email" placeholder=" email" >

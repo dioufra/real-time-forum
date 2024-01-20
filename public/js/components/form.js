@@ -1,5 +1,4 @@
-import { CURRENT_USER } from "../user/user.js"
-
+import { FORM_CONTROLLER } from "../controllers/form.js"
 export default class Form extends HTMLElement {
     constructor() {
         super()
@@ -16,45 +15,24 @@ export default class Form extends HTMLElement {
     }
     checkInputsListener(){
         this.querySelectorAll('input').forEach(elem => {
-            elem.value = CURRENT_USER.forms[this.action][elem.name]||''
+            elem.value = FORM_CONTROLLER.forms[this.action][elem.name]||''
             elem.addEventListener('input',(e)=>{
                 this.form[e.target.name] = e.target.value
-                CURRENT_USER.updateForm(this.action,e.target.name,e.target.value)
+                FORM_CONTROLLER.updateForm(this.action,e.target.name,e.target.value)
             })
         })
     }
     checkSubmitListener(){
         this.querySelectorAll('button.submit-btn').forEach(elem => {
             elem.addEventListener('click',(e)=>{
-                let err = this.isFormSubmittable()
+                let err = FORM_CONTROLLER.isFormSubmittable(this)
                 if (err) {
-                    CURRENT_USER.setError(this.action,err)
+                    FORM_CONTROLLER.setError(this.action,err)
                 }else {
                     alert('submit')
                 }
             })
         })
-    }
-    isFormSubmittable(){
-        let error = null;
-        [...this.querySelectorAll('input')].reverse().forEach(elem => {
-            switch (elem.type) {
-                case 'email':
-                    let emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
-                    if (!emailRegex.test(elem.value)) {
-                        error = 'Email non valid'
-                    }
-                    break;
-                case 'password':
-                    if (elem.value.length < 4) {
-                        error = 'The password must be at least 4 characters'
-                    }
-                    break;
-                default:
-                    break;
-            }
-        })
-        return error
     }
 
     disconnectedCallback() {

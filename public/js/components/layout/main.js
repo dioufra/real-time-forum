@@ -42,9 +42,7 @@ export default class Header extends HTMLElement {
                     </div>
                 </div>          
             </main> `
-        : `
-
-            `
+        : ``
         }
         
         `
