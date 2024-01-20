@@ -20,9 +20,39 @@ export default class Register extends HTMLElement {
 
     render() {
         this.innerHTML = /* HTML */ `
-            <div class="form-ff">
-            Register Form 
+        <div class="form-ff">
+            <div class="title-form">
+                <p class="title-form">Register</p>
             </div>
+            <p class="error-message"></p>
+            <form class="connection-form" action="/register" method="post">
+                <div class="input-form">
+                    <input type="text" name="firthname" placeholder="firthname" required value="" id="">
+                </div>
+
+                <div class="input-form">
+                    <input type="text" name="lastname" placeholder="lastname" required value="" id="">
+                </div>
+
+                <div class="input-form">
+                    <input type="text" name="username" placeholder="username" required value="" id="">
+                </div>
+
+                <div class="input-form">
+                    <input type="email" name="email" placeholder="email"required  value="" id="">
+                </div>
+
+                <div class="input-form">
+                    <input type="password" name="password"required placeholder="password"  id="">
+                </div>
+
+                <div class="input-form">
+                    <input type="password" name="repeatpassword" required placeholder="repeat password">
+                </div>
+
+                <button class="submit-btn" type="submit">envoyer</button>
+            </form>
+        </div>
         `
     }
 
