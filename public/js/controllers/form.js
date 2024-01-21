@@ -28,6 +28,13 @@ class FormsController {
         let error = {property:null,message:null};
         [...form.querySelectorAll('input')].reverse().forEach(elem => {
             switch (elem.type) {
+                case 'number':
+                    let numberRegex = /^[0-9]{1,2}$/g
+                    if (!numberRegex.test(elem.value)) {
+                        error.property = elem.name
+                        error.message = `${elem.name} non valid`
+                    }
+                    break;
                 case 'email':
                     let emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
                     if (!emailRegex.test(elem.value)) {
@@ -49,7 +56,7 @@ class FormsController {
                 default:
                     if (elem.value.length < 1) {
                         error.property = elem.name
-                        error.message = `The ${elem.name} box is required`
+                        error.message = `The ${elem.name} is required`
                     }
                     break;
             }

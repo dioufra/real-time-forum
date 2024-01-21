@@ -1,4 +1,4 @@
-import { ROUTER } from "../../routes/routes.js"
+import { ROUTES_CONTROLLER } from "../../routes/routes.js"
 
 export default class Header extends HTMLElement {
     constructor() {
@@ -30,7 +30,7 @@ export default class Header extends HTMLElement {
                     <a class="subscribe" class="subscribe" href="/register">Subscribe</a>
                 </div>
                 <div class="contents">
-                    ${ROUTER.currentRoute === '/register' ? 
+                    ${ROUTES_CONTROLLER.currentRoute === '/register' ? 
                         `<c-register class="form-f"></c-register>`
                         :
                         `<c-login class="form-f"></c-login>`

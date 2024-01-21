@@ -1,27 +1,18 @@
-import { updateComponents } from "../script.js";
-import { ROUTER } from "./routes.js";
+import { ROUTES_CONTROLLER } from "./routes.js";
 
 // Route change listener
 document.addEventListener('DOMContentLoaded', function () {
     // Initial setup
-    navigateTo(ROUTER.currentRoute)
+    ROUTES_CONTROLLER.navigateTo(ROUTES_CONTROLLER.currentRoute)
     // Handle navigation when a link is clicked
     document.body.addEventListener('click', function (event) {
         if (event.target.tagName === 'A' ) {
             event.preventDefault();
-            navigateTo(event.target.href);
+            ROUTES_CONTROLLER.navigateTo(event.target.href);
         }
     });
     // Handle navigation on back/forward button click
     window.addEventListener('popstate', function () {
-        navigateTo(window.location.pathname)
+        ROUTES_CONTROLLER.navigateTo(window.location.pathname)
     });
 });
-
-function navigateTo(url) {
-    // Update the URL and push a state to the browser's history
-    history.pushState(null, null, url);
-    ROUTER.currentRoute = window.location.pathname
-    updateComponents()
-}
-

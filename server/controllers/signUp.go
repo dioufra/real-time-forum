@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"real-time-forum/server/models"
@@ -10,12 +11,22 @@ import (
 
 func SignUp(res http.ResponseWriter, req *http.Request) {
 	userData := models.UserData{}
-	fmt.Println(userData)
+	if req.Method == http.MethodPost {
+		var newUser models.User
+		decoder := json.NewDecoder(req.Body)
+		if err := decoder.Decode(&newUser); err != nil {
+			fmt.Println(err)
+			http.Error(res, "Invalid request payload", http.StatusBadRequest)
+			return
+		}
+		defer req.Body.Close()
+		userData.User = newUser
+		fmt.Println(newUser)
 
-	if req.Method == "POST" {
-		fmt.Println("detected")
-		// res.Write([]byte("hello la mifa"))
-		res.Write([]byte("hello la mifa"))
+		res.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(res).Encode(userData)
+	} else {
+		http.Error(res, "Method not allowed", http.StatusMethodNotAllowed)
+		return
 	}
-	// Retrieve user data using decode or unmarshall
 }

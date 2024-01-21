@@ -31,10 +31,20 @@ export default class Register extends HTMLElement {
                 <p class="error-message">${FORM_CONTROLLER.forms[formAction].error?.message || ''}</p>
                 <c-form class="connection-form" action="${formAction}" method="post">
                     <div class="input-form">
-                        <input type="text" name="firthname" placeholder="firstname" required />
+                        <input type="text" name="firstname" placeholder="firstname" required />
                     </div>
                     <div class="input-form">
                         <input type="text" name="lastname" placeholder="lastname" required />
+                    </div>
+                    <div class="input-form">
+                        <input type="number" name="age" placeholder="age" required />
+                    </div>
+                    <div class="input-form">
+                        <span>Gender:</span>
+                        <input type="radio" name="gender" value="Male">
+                        Male
+                        <input type="radio" name="gender" value="Female">
+                        Female
                     </div>
                     <div class="input-form">
                         <input type="text" name="username" placeholder="username" required />
