@@ -1,4 +1,4 @@
-import { ROUTES_CONTROLLER } from "../../routes/routes.js"
+import { ROUTES_CONTROLLER } from "../../controllers/routes.js"
 
 export default class Header extends HTMLElement {
     constructor() {

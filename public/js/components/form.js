@@ -44,11 +44,12 @@ export default class Form extends HTMLElement {
     checkSubmitListener(){
         this.querySelectorAll('button.submit-btn').forEach(elem => {
             elem.addEventListener('click',(e)=>{
-                let err = FORM_CONTROLLER.isFormSubmittable(this)
+                e.preventDefault();
+                // let err = FORM_CONTROLLER.isFormSubmittable(this)
+                let err = {}
                 if (err.message) {
                     FORM_CONTROLLER.setError(this.action,err)
                 }else {
-                    // console.log(FORM_CONTROLLER.forms[this.action])
                     fetch('http://127.0.0.1:8080/register',{
                         method:'POST',
                         headers: {
@@ -56,16 +57,27 @@ export default class Form extends HTMLElement {
                         },
                         body: JSON.stringify(FORM_CONTROLLER.forms[this.action]),
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data)
-                    })
-                    .catch(error => {
-                        if (error.message === 'Failed to fetch') {
-                            FORM_CONTROLLER.setError(this.action,{message:'Unable to connect to API!<br>try again please'})
+                    .then(response => {
+                        if (!response.ok) {
+                            if (response.status === 400) {
+                                response.json() // Parse the JSON in the response
+                                .then(error => {
+                                    FORM_CONTROLLER.setError(this.action,error)
+                                })
+                            }else{
+                                throw new Error('Erreur de réseau');
+                            }
+                            return
                         }
-                        console.error('Error Submitting Form:', error)
-                    });
+                        return response.json()
+                    })
+                    .then(data => {
+                        if (data) {
+                            console.log(data)
+                            alert('register success')
+                        }
+                    })
+                    .catch(console.log);
                 }
             })
         })
