@@ -1,17 +1,23 @@
 export default class Login extends HTMLElement {
     constructor() {
         super()
-        // this.isAuth = false
+        this.formSubmission = (event) => {
+            console.log('submitted', event)
+            event.preventDefault()
+        }
     }
 
     connectedCallback() {
         // console.log(this)
         this.render()
         // this._style()
+        if (this.loginForm) console.log(this.loginForm)
+        this.addEventListener('submit', this.formSubmission)
     }
 
     disconnectedCallback() {
         console.log('disconnected login')
+        this.removeEventListener('submit', this.formSubmission)
     }
 
     shouldComponentRender() {
@@ -72,5 +78,9 @@ export default class Login extends HTMLElement {
     get header() {
         console.log(this.querySelector('.main-header'))
         this.querySelector('.main-header')
+    }
+
+    get loginForm() {
+        return this.querySelector('form')
     }
 }

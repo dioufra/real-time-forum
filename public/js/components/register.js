@@ -1,16 +1,27 @@
 export default class Register extends HTMLElement {
     constructor() {
         super()
-        // this.isAuth = false
-       
+        this.formSubmission = (event) => {
+            console.log('submitted', this.registerForm.checkValidity())
+            event.preventDefault()
+            const data = new FormData(this.registerForm)
+            const userData = {}
+            data.forEach((value, key) => {
+                userData[key] = value
+            })
+            
+        }
     }
-
+    
     connectedCallback() {
         if (this.shouldComponentRender) this.render()
+        if (this.registerForm) console.log(this.registerForm)
+        this.addEventListener('submit', this.formSubmission)
     }
 
     disconnectedCallback() {
         console.log('disconnected register')
+        this.removeEventListener('submit', this.formSubmission)
     }
 
     shouldComponentRender() {
@@ -87,5 +98,9 @@ export default class Register extends HTMLElement {
 
     get header() {
         return this.querySelector('.main-header')
+    }
+
+    get registerForm() {
+        return this.querySelector('form')
     }
 }

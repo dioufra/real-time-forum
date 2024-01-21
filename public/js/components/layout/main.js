@@ -4,11 +4,9 @@ export default class Header extends HTMLElement {
     constructor() {
         super()
         this.isAuth = false
-        this.submitFormListerner = (e) => {
-            console.log('submitted');
-            console.log(e)
-            e.preventDefault();
-        }
+        // this.submitFormListerner = (e) => {
+        //     e.preventDefault();
+        // }
     }
     
     connectedCallback() {

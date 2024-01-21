@@ -21,7 +21,7 @@ func Home(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 	}
-	files := []string{"public/js/index.html"}
+	files := []string{"./index.html"}
 	tpl, err := template.ParseFiles(files...)
 	if err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
