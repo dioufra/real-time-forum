@@ -2,8 +2,18 @@ export default class Login extends HTMLElement {
     constructor() {
         super()
         this.formSubmission = (event) => {
-            console.log('submitted', event)
             event.preventDefault()
+            const data = new FormData(this.registerForm)
+            const userData = {}
+            data.forEach((value, key) => {
+                userData[key] = value
+            })
+            const e = new CustomEvent('rt-login', {
+                detail: userData,
+                bubbles: true,
+                cancalable: true,
+            })
+            this.dispatchEvent(e)
         }
     }
 

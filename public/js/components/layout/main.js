@@ -1,18 +1,26 @@
 import { ROUTER } from "../../routes/routes.js"
 
-export default class Header extends HTMLElement {
+export default class Main extends HTMLElement {
     constructor() {
         super()
         this.isAuth = false
         // this.submitFormListerner = (e) => {
         //     e.preventDefault();
         // }
+        this.registerUser = (event) => {
+            if (!event.detail.user) return
+            console.log(event.detail.user)
+        }
+        this.loginUser = (event) => {
+            console.log('logging from main', event)
+        }
     }
     
     connectedCallback() {
         console.log('called')
         this.render()
-        this.form?.addEventListener('submit', this.submitFormListerner)
+        this.addEventListener('rt-register', this.registerUser)
+        this.addEventListener('rt-login', this.loginUser)
     }
 
     disconnectedCallback() {
@@ -30,9 +38,6 @@ export default class Header extends HTMLElement {
                 <div class="main-content">
                     Communnicate <br>
                     share and enjoy <br>
-                </div>
-                <div class="main-content-subscribe">
-                    <a class="subscribe" class="subscribe" href="/register">Subscribe</a>
                 </div>
                 <div class="contents">
                     ${ROUTER.currentRoute === '/register' ? 

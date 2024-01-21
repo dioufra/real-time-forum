@@ -7,6 +7,7 @@ class RoutesController {
         this.routesList = []
     }
     registerRoute(route, callBack){
+        console.log('registering a route', route)
         return callBack()
     }
 }

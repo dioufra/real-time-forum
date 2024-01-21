@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     // Handle navigation on back/forward button click
     window.addEventListener('popstate', function () {
+        console.log('clicked')
         navigateTo(window.location.pathname)
     });
 });

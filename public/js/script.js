@@ -1,4 +1,3 @@
-console.log('script.js')
 let components = [
     {tagName:'c-header',src:"../js/components/layout/header.js"},
     {tagName:'c-main',src:"../js/components/layout/main.js"},
@@ -12,6 +11,7 @@ components.forEach(component => {
     })
 })
 export const updateComponents = ()=> {
+    console.log('updating')
     components.forEach(component => {
         let elements = document.querySelectorAll(component.tagName);
         elements.forEach(element => {

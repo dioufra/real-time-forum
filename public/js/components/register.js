@@ -2,14 +2,19 @@ export default class Register extends HTMLElement {
     constructor() {
         super()
         this.formSubmission = (event) => {
-            console.log('submitted', this.registerForm.checkValidity())
+            // this.registerForm.checkValidity()
             event.preventDefault()
             const data = new FormData(this.registerForm)
             const userData = {}
             data.forEach((value, key) => {
                 userData[key] = value
             })
-            
+            const e = new CustomEvent('rt-register', {
+                detail: {user: userData},
+                bubbles: true,
+                cancalable: true,
+            })
+            this.dispatchEvent(e)
         }
     }
     
