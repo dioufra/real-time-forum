@@ -8,6 +8,7 @@ import (
 
 func Route() {
 	// http.HandleFunc("/sign_in", controllers.SignIn)
+	http.HandleFunc("/sign_up", middlewares.Ispath(middlewares.IsAuth(controllers.SignUp), "/sign_up"))
 
 	http.HandleFunc("/sign_in", middlewares.Ispath(middlewares.IsAuth(controllers.SignIn), "/sign_in"))
 	// http.HandleFunc("/sign_up", middlewares.Ispath(middlewares.IsAuth(controllers.SignUp), "/sign_up"))

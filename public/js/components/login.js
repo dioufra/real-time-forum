@@ -21,33 +21,24 @@ export default class Login extends HTMLElement {
 
     render() {
         let formAction = 'login'
-        FORM_CONTROLLER.forms[formAction] = FORM_CONTROLLER.forms[formAction] || {}
+        FORM_CONTROLLER.registerForm(formAction)
         this.innerHTML = /* HTML */ `
             <div class="form-ff">
                 <div class="title-form">
                     <p class="title-form">Connexion</p>
                 </div>
-                <p class="error-message">${FORM_CONTROLLER.forms[formAction].error || 'f'}</p>
+                <p class="error-message">${FORM_CONTROLLER.forms[formAction].error?.message || ''}</p>
                 <c-form class="connection-form" action="${formAction}" method="post">
                     <div class="input-form">
-                        <input type="email" name="email" placeholder=" email" >
+                        <input type="email" name="email" placeholder="email" >
                     </div>
                     <div class="input-form">                    
                         <input type="password" name="password" placeholder="password">
-                    </div>                        
+                    </div>
                     <button class="submit-btn" type="button">envoyer</button>
                 </c-form>
             </div>
         `
-        // <form class="connection-form" action="/login" method="post">
-        //     <div class="input-form">
-        //         <input type="text" name="email" placeholder=" email" >
-        //     </div>
-        //     <div class="input-form">                    
-        //         <input type="password" name="password" placeholder="password">
-        //     </div>                        
-        //     <button class="submit-btn" type="submit">envoyer</button>
-        // </form>
     }
     get header() {
         console.log(this.querySelector('.main-header'))

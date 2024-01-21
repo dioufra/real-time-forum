@@ -19,6 +19,12 @@ export default class Form extends HTMLElement {
             elem.addEventListener('input',(e)=>{
                 this.form[e.target.name] = e.target.value
                 FORM_CONTROLLER.updateForm(this.action,e.target.name,e.target.value)
+                if (FORM_CONTROLLER.hasError(this.action,elem.name)) {
+                    // Disconnect an reconnect component to romeve Error msg
+                    FORM_CONTROLLER.removeError(this.action)
+                    // Focus to the current input
+                    document.querySelector(`input[name=${elem.name}]`).focus()
+                }
             })
         })
     }
@@ -26,10 +32,13 @@ export default class Form extends HTMLElement {
         this.querySelectorAll('button.submit-btn').forEach(elem => {
             elem.addEventListener('click',(e)=>{
                 let err = FORM_CONTROLLER.isFormSubmittable(this)
-                if (err) {
+                if (err.message) {
                     FORM_CONTROLLER.setError(this.action,err)
                 }else {
-                    alert('submit')
+                    console.log(FORM_CONTROLLER.forms[this.action])
+                    fetch('http://127.0.0.1:8080/sign_up',{method:'POST'})
+                    .then(res => console.log(res.body))
+                    .catch(console.log)
                 }
             })
         })

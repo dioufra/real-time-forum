@@ -1,4 +1,4 @@
-import { CURRENT_USER } from "../controllers/user.js"
+import { FORM_CONTROLLER } from "../controllers/form.js"
 
 export default class Register extends HTMLElement {
     constructor() {
@@ -20,39 +20,36 @@ export default class Register extends HTMLElement {
     }
 
     render() {
+        let formAction = 'register'
+        FORM_CONTROLLER.registerForm(formAction)
+
         this.innerHTML = /* HTML */ `
             <div class="form-ff">
                 <div class="title-form">
                     <p class="title-form">Register</p>
                 </div>
-                <p class="error-message">${''}</p>
-                <form class="connection-form" action="/register" method="post">
+                <p class="error-message">${FORM_CONTROLLER.forms[formAction].error?.message || ''}</p>
+                <c-form class="connection-form" action="${formAction}" method="post">
                     <div class="input-form">
-                        <input type="text" name="firthname" placeholder="firthname" required value="${CURRENT_USER.FirstName}" />
+                        <input type="text" name="firthname" placeholder="firstname" required />
                     </div>
-
                     <div class="input-form">
-                        <input type="text" name="lastname" placeholder="lastname" required value="${CURRENT_USER.LastName}" />
+                        <input type="text" name="lastname" placeholder="lastname" required />
                     </div>
-
                     <div class="input-form">
-                        <input type="text" name="username" placeholder="username" required value="${CURRENT_USER.UserName}" />
+                        <input type="text" name="username" placeholder="username" required />
                     </div>
-
                     <div class="input-form">
-                        <input type="email" name="email" placeholder="email"required  value="${CURRENT_USER.Email}" />
+                        <input type="email" name="email" placeholder="email"required />
                     </div>
-
                     <div class="input-form">
                         <input type="password" name="password"required placeholder="password"  />
                     </div>
-
                     <div class="input-form">
                         <input type="password" name="repeatpassword" required placeholder="repeat password">
                     </div>
-
-                    <button class="submit-btn" type="submit">envoyer</button>
-                </form>
+                    <button class="submit-btn" type="button">envoyer</button>
+                </c-form>
             </div>
         `
     }
