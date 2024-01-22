@@ -10,7 +10,7 @@ export default class Main extends HTMLElement {
         // }
         this.registerUser = (event) => {
             if (!event.detail.user) return
-            fetch('http://127.0.0.1:8080/register', {
+            fetch('http://127.0.0.1:8080/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ export default class Main extends HTMLElement {
         }
         this.loginUser = (event) => {
             if (!event.detail.user) return
-            fetch('http://127.0.0.1:8080/login', {
+            fetch('http://127.0.0.1:8080/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -59,8 +59,8 @@ export default class Main extends HTMLElement {
             }).then(data => {
                 if (data) {
                     console.log(data)
-                    
-                    navigateTo('')
+
+                    // navigateTo('')
                 }
             }).catch(console.log);
         }

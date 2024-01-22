@@ -12,6 +12,16 @@ type Post struct {
 	Date       time.Time
 }
 
+type PostData struct {
+	Post     Post
+	User     User
+	Likes    int
+	Dislikes int
+	Comments int
+}
+
+type AllPosts []Post
+
 func (post *Post) GetAllPost() {}
 
 func (post *Post) GetUserPosts() {}
