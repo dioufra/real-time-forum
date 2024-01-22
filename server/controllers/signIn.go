@@ -26,12 +26,12 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 		fmt.Println("Error: ", err)
 	}
 
-	if !helper.IsPasswordsMatch(user.Password, userLogin.Password){
+	if !helper.IsPasswordsMatch(user.Password, userLogin.Password) {
 		fmt.Println("Wrong credentials")
 		return
 	}
 	fmt.Println("Login successfull")
 
-	// return data 
+	// return data
 	defer req.Body.Close()
 }
