@@ -124,6 +124,10 @@ font-weight: 500;
     margin-bottom: 10px;
     text-align: center;
 }
+.input-form>input[type=radio]{
+    width: auto;
+    height: auto;
+}
 .error-message{
     color: red;
     margin: 10px 0;

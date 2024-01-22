@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-function navigateTo(url) {
+export function navigateTo(url) {
     // Update the URL and push a state to the browser's history
     history.pushState(null, null, url);
     ROUTER.currentRoute = window.location.pathname

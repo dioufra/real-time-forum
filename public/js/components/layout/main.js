@@ -1,3 +1,4 @@
+import { navigateTo } from "../../routes/routechecker.js"
 import { ROUTER } from "../../routes/routes.js"
 
 export default class Main extends HTMLElement {
@@ -9,13 +10,62 @@ export default class Main extends HTMLElement {
         // }
         this.registerUser = (event) => {
             if (!event.detail.user) return
-            console.log(event.detail.user)
+            fetch('http://127.0.0.1:8080/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(event.detail.user),
+            }).then(response => {
+                if (!response.ok) {
+                    if (response.status === 400) {
+                       response.json() // Parse the JSON in the response
+                            .then(error => {
+                                console.log(error)
+                            })
+                    } else {
+                        throw new Error('Erreur de réseau');
+                    }
+                }
+                return response
+            }).then(data => {
+                if (data) {
+                    console.log(data)
+                    // Redirect to login page
+                    navigateTo('login')
+                }
+            }).catch(console.log);
         }
         this.loginUser = (event) => {
-            console.log('logging from main', event)
+            if (!event.detail.user) return
+            fetch('http://127.0.0.1:8080/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(event.detail.user),
+            }).then(response => {
+                if (!response.ok) {
+                    if (response.status === 400) {
+                       response.json() // Parse the JSON in the response
+                            .then(error => {
+                                console.log(error)
+                            })
+                    } else {
+                        throw new Error('Erreur de réseau');
+                    }
+                }
+                return response
+            }).then(data => {
+                if (data) {
+                    console.log(data)
+                    
+                    navigateTo('')
+                }
+            }).catch(console.log);
         }
     }
-    
+
     connectedCallback() {
         console.log('called')
         this.render()
@@ -40,11 +90,11 @@ export default class Main extends HTMLElement {
                     share and enjoy <br>
                 </div>
                 <div class="contents">
-                    ${ROUTER.currentRoute === '/register' ? 
-                        `<c-register class="form-f"></c-register>`
-                        :
-                        `<c-login class="form-f"></c-login>`
-                    }
+                    ${ROUTER.currentRoute === '/register' ?
+                    `<c-register class="form-f"></c-register>`
+                    :
+                    `<c-login class="form-f"></c-login>`
+                }
                     <div class="rigth-des">
                         <div class="rigth-content">
                             Join us <br> share <br>enjoy
@@ -52,10 +102,10 @@ export default class Main extends HTMLElement {
                     </div>
                 </div>          
             </main> `
-        : `
+                : `
 
             `
-        }
+            }
         
         `
     }

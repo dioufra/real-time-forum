@@ -4,9 +4,14 @@ import (
 	"database/sql"
 )
 
+type UserLogin struct {
+	Login    string `json:"login"`
+	Password string `json:"password"`
+}
+
 type User struct {
 	Id        int    `json:"id"`
-	Firthname string `json:"firthname"`
+	Firstname string `json:"firstname"`
 	Lastname  string `json:"lastname"`
 	Username  string `json:"username"`
 	Gender    string `json:"gender"`
@@ -21,11 +26,34 @@ type UserData struct {
 	IsAuth bool   `json:"isAuth"`
 }
 
-func (user *User) Create(DB *sql.DB, email string) error {
-	return nil
+type UserRepository struct {
+	db *sql.DB
 }
 
-func (user *User) Get(DB *sql.DB, email string) error {
+func NewUserRepository(db *sql.DB) *UserRepository {
+	return &UserRepository{
+		db: db,
+	}
+}
+
+func (r *UserRepository) Create(user User) (sql.Result, error) {
+	insertQuery := "INSERT INTO users (firstname,lastname, gender, age, username,email, password) VALUES (?, ?, ?, ?, ?, ?, ?)"
+	result, err := r.db.Exec(insertQuery, user.Firstname, user.Lastname, user.Gender, user.Age, user.Username, user.Email, user.Password)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (r *UserRepository) GetUser(user *User, login string) error {
+	req := `SELECT id,email,lastName,firstName, password,username from Users Where email=? OR username=?`
+	row, err := r.db.Query(req, login, login)
+	if err != nil {
+		return err
+	}
+	for row.Next() {
+		row.Scan(&user.Id, &user.Email, &user.Lastname, &user.Firstname, &user.Password, &user.Username)
+	}
 	return nil
 }
 

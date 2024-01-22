@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Data struct {
@@ -124,6 +126,17 @@ func ParseCatId(cat []string) ([]int, error) {
 		catid = append(catid, a)
 	}
 	return catid, nil
+}
+
+func HashPassword(pwd string) (string, error) {
+	var pwdBytes = []byte(pwd)
+	hashedPwd, err := bcrypt.GenerateFromPassword(pwdBytes, bcrypt.MinCost)
+	return string(hashedPwd), err
+}
+
+func IsPasswordsMatch(hashedPwd, currentPwd string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPwd), []byte(currentPwd))
+	return err == nil
 }
 
 // func GetData(r *http.Request, db *sql.DB, f func(*sql.DB, models.Pagination, string) ([]models.AllPost, error), pagination models.Pagination, w http.ResponseWriter, isAuth bool, metadata models.Metadata, user models.User) (Data, error) {

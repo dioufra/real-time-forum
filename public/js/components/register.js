@@ -40,9 +40,9 @@ export default class Register extends HTMLElement {
                 <p class="title-form">Register</p>
             </div>
             <p class="error-message"></p>
-            <form id="register-form" action="/" method="get">
+            <form id="register-form" action="/api/register" method="post">
                 <div class="input-form">
-                    <input type="text" name="firthname" placeholder="firthname">
+                    <input type="text" name="firstname" placeholder="firstname">
                 </div>
 
                 <div class="input-form">
@@ -58,6 +58,17 @@ export default class Register extends HTMLElement {
                 </div>
 
                 <div class="input-form">
+                <input type="number" name="age" placeholder="age" required />
+                </div>
+                <div class="input-form">
+                    <span>Gender:</span>
+                    <input type="radio" name="gender" value="Male" checked>
+                    Male
+                    <input type="radio" name="gender" value="Female">
+                    Female
+                </div>
+
+                <div class="input-form">
                     <input type="password" name="password" placeholder="password">
                 </div>
 
@@ -65,7 +76,7 @@ export default class Register extends HTMLElement {
                     <input type="password" name="repeatpassword" placeholder="repeat password">
                 </div>
 
-                <button class="submit-btn" type="submit">envoyer</button>
+                <button class="submit-btn" type="submit">register</button>
             </form>
         </div>
         `

@@ -5,27 +5,26 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"real-time-forum/server/helper"
-	"real-time-forum/server/models"
 )
 
 var DB *sql.DB
 
 func Home(res http.ResponseWriter, req *http.Request) {
-	isAuth, email := helper.Auth(DB, req)
-	var user models.User
+	// isAuth, email := helper.Auth(DB, req)
+	// var user models.User
 	// var err error
-	if isAuth {
-		if err := user.Get(DB, email); err != nil {
-			log.Println("🚨 Error: ", err)
-			return
-		}
-	}
-	files := []string{"./index.html"}
+	// if isAuth {
+	// 	if err := user.Get(DB, email); err != nil {
+	// 		log.Println("🚨 Error: ", err)
+	// 		return
+	// 	}
+	// }
+	files := []string{"./public/index.html"}
 	tpl, err := template.ParseFiles(files...)
 	if err != nil {
-		res.WriteHeader(http.StatusInternalServerError)
 		log.Println("🚨 " + err.Error())
+		res.WriteHeader(http.StatusInternalServerError)
+		return
 	} else {
 		tpl.Execute(res, nil)
 	}

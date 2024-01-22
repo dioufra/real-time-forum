@@ -3,13 +3,14 @@ export default class Login extends HTMLElement {
         super()
         this.formSubmission = (event) => {
             event.preventDefault()
-            const data = new FormData(this.registerForm)
+            const data = new FormData(this.loginForm)
             const userData = {}
             data.forEach((value, key) => {
                 userData[key] = value
             })
+            console.log(userData)
             const e = new CustomEvent('rt-login', {
-                detail: userData,
+                detail: {user: userData},
                 bubbles: true,
                 cancalable: true,
             })
@@ -41,9 +42,9 @@ export default class Login extends HTMLElement {
                     <p class="title-form">Connexion</p>
                 </div>
                 <p class="error-message"></p>
-                <form class="connection-form" action="/login" method="post">
+                <form class="connection-form" action="/api/login" method="post">
                 <div class="input-form">
-                    <input type="text" name="email" placeholder=" email" >
+                    <input type="text" name="login" placeholder="email or username" >
                 </div>
                 <div class="input-form">                    
                     <input type="password" name="password" placeholder="password">

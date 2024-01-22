@@ -9,9 +9,9 @@ import (
 func Route() {
 	// http.HandleFunc("/sign_in", controllers.SignIn)
 
-	http.HandleFunc("/sign_in", middlewares.Ispath(middlewares.IsAuth(controllers.SignIn), "/sign_in"))
-	// http.HandleFunc("/sign_up", middlewares.Ispath(middlewares.IsAuth(controllers.SignUp), "/sign_up"))
-	http.HandleFunc("/sign_out", middlewares.Ispath(middlewares.Log(controllers.SignOut), "/sign_out"))
+	http.HandleFunc("/api/login", middlewares.Ispath(middlewares.IsAuth(controllers.SignIn), "/api/login"))
+	http.HandleFunc("/api/register", middlewares.Ispath(middlewares.IsAuth(controllers.SignUp), "/api/register"))
+	http.HandleFunc("/api/sign_out", middlewares.Ispath(middlewares.Log(controllers.SignOut), "/api/sign_out"))
 
 	// http.HandleFunc("/post", middlewares.Ispath(middlewares.Log(controllers.CreatePost), "/post"))
 	// http.HandleFunc("/post/", controllers.GetPost)
@@ -21,5 +21,5 @@ func Route() {
 	// http.HandleFunc("/liked", middlewares.Ispath(middlewares.Log(controllers.LikedPosts), "/liked"))
 	// http.HandleFunc("/created", middlewares.Ispath(middlewares.Log(controllers.CreatedPosts), "/created"))
 	// http.HandleFunc("/comment-register", middlewares.Ispath(middlewares.Log(controllers.CommentRegister), "/comment-register"))
-	http.HandleFunc("/", middlewares.Ispath(controllers.Home, "/"))
+	http.HandleFunc("/", controllers.Home)
 }
