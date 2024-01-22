@@ -9,6 +9,7 @@ import (
 )
 
 func SignIn(res http.ResponseWriter, req *http.Request) {
+	fmt.Println("Hello from sign in")
 	if req.Method != http.MethodPost {
 		http.Error(res, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -33,5 +34,14 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 	fmt.Println("Login successfull")
 
 	// return data
+
+	// var users []models.User
+
+	users, err := models.UserRepo.GetAll()
+	if err != nil {
+		fmt.Println("Error retrieving users", err)
+		return
+	}
+	fmt.Println(users)
 	defer req.Body.Close()
 }

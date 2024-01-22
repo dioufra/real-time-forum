@@ -46,7 +46,7 @@ func (r *UserRepository) Create(user User) (sql.Result, error) {
 }
 
 func (r *UserRepository) GetUser(user *User, login string) error {
-	req := `SELECT id,email,lastName,firstName, password,username from Users Where email=? OR username=?`
+	req := `SELECT id, email, lastName, firstName, password, username from Users Where email=? OR username=?`
 	row, err := r.db.Query(req, login, login)
 	if err != nil {
 		return err
@@ -57,4 +57,17 @@ func (r *UserRepository) GetUser(user *User, login string) error {
 	return nil
 }
 
-func (user *User) GetAll() {}
+func (r *UserRepository) GetAll() ([]User, error) {
+	var users []User
+	req := `SELECT id, firstname, lastname, username, gender, age, email FROM Users`
+	row, err := r.db.Query(req)
+	if err != nil {
+		return nil, err
+	}
+	for row.Next() {
+		var user User
+		row.Scan(user.Id, user.Firstname, user.Lastname, user.Gender, user.Age, user.Username, user.Email)
+		users = append(users, user)
+	}
+	return users, nil
+}
