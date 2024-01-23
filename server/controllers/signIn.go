@@ -6,12 +6,7 @@ import (
 	"net/http"
 	"real-time-forum/server/helper"
 	"real-time-forum/server/models"
-	"time"
-
-	"github.com/gofrs/uuid/v5"
 )
-
-var u1 = uuid.Must(uuid.NewV4())
 
 func SignIn(res http.ResponseWriter, req *http.Request) {
 	fmt.Println("Hello from sign in")
@@ -32,24 +27,25 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 		fmt.Println("Error: ", err)
 		return
 	}
-	fmt.Println("sign in", user, helper.IsPasswordsMatch(user.Password, userLogin.Password))
 	if !helper.IsPasswordsMatch(user.Password, userLogin.Password) {
 		fmt.Println("Wrong credentials")
 		return
 	}
 
-	sessionId := u1.String() + "-" + time.Now().GoString()
-	cookie := http.Cookie{
-		Name:     "sessionid",
-		Value:    sessionId,
-		Expires:  time.Now().Add(time.Hour * 24 * 3),
-		Path:     "/",
-		MaxAge:   3600 * 24 * 3,
-		HttpOnly: true,
-		Secure:   true,
-		SameSite: http.SameSiteLaxMode,
-	}
-	http.SetCookie(res, &cookie)
+	// sessionId := u1.String() + "-" + time.Now().GoString()
+	// cookie := http.Cookie{
+	// 	Name:     "sessionid",
+	// 	Value:    sessionId,
+	// 	Expires:  time.Now().Add(time.Hour * 24 * 3),
+	// 	Path:     "/",
+	// 	MaxAge:   3600 * 24 * 3,
+	// 	HttpOnly: true,
+	// 	Secure:   true,
+	// 	SameSite: http.SameSiteLaxMode,
+	// }
+	// http.SetCookie(res, &cookie)
+
+	sessionId := helper.SetCookie(res)
 
 	errSession := helper.SessionAddOrUpdate(DB, sessionId, user.Email)
 	if errSession != nil {

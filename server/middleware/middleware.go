@@ -11,7 +11,7 @@ func Log(next http.HandlerFunc) http.HandlerFunc {
 		if is, _ := helper.Auth(controllers.DB, r); is {
 			next.ServeHTTP(w, r)
 		} else {
-			http.Redirect(w, r, "/sign_in", 302)
+			http.Redirect(w, r, "/api/login", 302)
 		}
 	}
 	return http.HandlerFunc(fn)

@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gofrs/uuid/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -19,6 +20,8 @@ type Data struct {
 	// Pagination models.Metadata
 	User models.User
 }
+
+var u1 = uuid.Must(uuid.NewV4())
 
 func UpdateSession(db *sql.DB, sssid, useremail string) error {
 	req := `SELECT sessionId,email,datefin from Session Where email='` + useremail + `';`
@@ -128,6 +131,22 @@ func ParseCatId(cat []string) ([]int, error) {
 	return catid, nil
 }
 
+func SetCookie(res http.ResponseWriter) string {
+	sessionId := u1.String() + "-" + time.Now().GoString()
+	cookie := http.Cookie{
+		Name:     "sessionid",
+		Value:    sessionId,
+		Expires:  time.Now().Add(time.Hour * 24 * 3),
+		Path:     "/",
+		MaxAge:   3600 * 24 * 3,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+	}
+	http.SetCookie(res, &cookie)
+	return sessionId
+}
+
 func HashPassword(pwd string) (string, error) {
 	var pwdBytes = []byte(pwd)
 	hashedPwd, err := bcrypt.GenerateFromPassword(pwdBytes, bcrypt.MinCost)
@@ -141,7 +160,6 @@ func IsPasswordsMatch(hashedPwd, currentPwd string) bool {
 
 func SessionAddOrUpdate(db *sql.DB, sssid, useremail string) error {
 	req := `SELECT sessionId,email,datefin from Session Where email='` + useremail + `';`
-	// req:=fmt.Sprintf(`SELECT * from Session Where email=?;`)
 	row, err := db.Query(req)
 	var sessionid, email string
 	var datef time.Time
