@@ -31,6 +31,7 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 
 	if err := models.UserRepo.GetUser(&user, userLogin.Login); err != nil {
 		fmt.Println("Error: ", err)
+		return
 	}
 
 	if !helper.IsPasswordsMatch(user.Password, userLogin.Password) {
@@ -57,7 +58,8 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 		fmt.Println("Error getting the db")
 		return
 	}
-
+	fmt.Println(user.Email)
+	
 	errss := helper.SessionAddOrUpdate(db, sssid, user.Email)
 	if errss != nil {
 		fmt.Println(errss)

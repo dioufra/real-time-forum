@@ -18,14 +18,14 @@ import (
 // }
 
 func init() {
-	// var err error
-	db, err := config.GetDB()
+	var err error
+	controllers.DB, err = config.GetDB()
 	if err != nil {
 		fmt.Println("connection database Error", err)
 		os.Exit(0)
 	}
 
-	models.AddRepositories(db)
+	models.AddRepositories(controllers.DB)
 
 	tabRequest := []string{
 		`CREATE TABLE IF NOT EXISTS Users (
@@ -48,7 +48,7 @@ func init() {
 		);`,
 	}
 	for _, req := range tabRequest {
-		_, queryErr := db.Exec(req)
+		_, queryErr := controllers.DB.Exec(req)
 		if queryErr != nil {
 			log.Println("🚨 Error during table creation: ", queryErr)
 			os.Exit(0)

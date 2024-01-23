@@ -9,6 +9,8 @@ import (
 )
 
 func Response(res http.ResponseWriter, req *http.Request) {
+	fmt.Println("hello form response")
+
 	if req.Method != http.MethodGet {
 		fmt.Println("Bad method")
 		return
@@ -18,13 +20,18 @@ func Response(res http.ResponseWriter, req *http.Request) {
 		fmt.Println("connection database Error", err)
 		return
 	}
+
+	fmt.Println("email")
+	
 	ok, email := helper.Auth(db, req)
 	if !ok {
 		fmt.Println(email, "not connected")
 		return
 	}
 
-	user, err := models.UserRepo.GetUserByEmail(email)
+	var user models.User
+
+	err = models.UserRepo.GetUserByEmail(&user, email)
 	if err != nil {
 		fmt.Println("Error retrieving user")
 		return

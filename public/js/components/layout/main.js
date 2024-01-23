@@ -1,3 +1,4 @@
+import { USER_CONTROLLER } from "../../controllers/user.js"
 import { navigateTo } from "../../routes/routechecker.js"
 import { ROUTER } from "../../routes/routes.js"
 
@@ -53,7 +54,7 @@ export default class Main extends HTMLElement {
             }).then(data => {
                 if (data) {
                     console.log(data)
-                    
+                    USER_CONTROLLER.fetchData()
                     // navigateTo('')
                 }
             }).catch(console.log);

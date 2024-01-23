@@ -72,7 +72,14 @@ func (r *UserRepository) GetAll() ([]User, error) {
 	return users, nil
 }
 
-
-func (r *UserRepository) GetUserByEmail(email string) (User, error) {
-	return User{}, nil
+func (r *UserRepository) GetUserByEmail(user *User, email string) error {
+	req := `SELECT id, email, lastName, firstName, username from Users Where email=?`
+	row, err := r.db.Query(req, email)
+	if err != nil {
+		return err
+	}
+	for row.Next() {
+		row.Scan(&user.Id, &user.Email, &user.Lastname, &user.Firstname, &user.Username)
+	}
+	return nil
 }

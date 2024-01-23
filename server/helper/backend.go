@@ -55,7 +55,7 @@ func Auth(Db *sql.DB, r *http.Request) (bool, string) {
 	var Id int
 	var sessionId, email string
 	var datef time.Time
-	req := `SELECT *from Session Where sessionId=?;`
+	req := `SELECT * from Session Where sessionId=?;`
 	row, err := Db.Query(req, sessionpi.Value)
 
 	if err != nil {
