@@ -1,8 +1,10 @@
 let components = [
-    {tagName:'c-header',src:"../js/components/layout/header.js"},
-    {tagName:'c-main',src:"../js/components/layout/main.js"},
-    {tagName:'c-login',src:"../js/components/login.js"},
-    {tagName:'c-register',src:"../js/components/register.js"},
+    {tagName:'c-header',src:"./components/layout/header.js"},
+    {tagName:'c-main',src:"./components/layout/main.js"},
+    {tagName:'c-login',src:"./components/login.js"},
+    {tagName:'c-register',src:"./components/register.js"},
+    {tagName:'sc-user-info',src:"./components/userInfo.js"},
+    {tagName:'sc-post',src:"./components/posts.js"},
 ]
 // Define the custom web component
 components.forEach(component => {

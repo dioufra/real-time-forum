@@ -1,3 +1,5 @@
+import { CATEGORY_CONTROLLER } from "../../controllers/categorie.js"
+import { POST_CONTROLLER } from "../../controllers/post.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
 import login_data from "../../json_data/login_data.js"
 import { navigateTo } from "../../routes/routechecker.js"
@@ -58,9 +60,13 @@ export default class Main extends HTMLElement {
                 }
                 return response
             }).then(data => {
+                // login data imported fron json_data
                 if (login_data) {
                     console.log(login_data)
-                    USER_CONTROLLER.setIsAuth(login_data.UserData.IsAuth)
+                    USER_CONTROLLER.setUser(login_data.UserData)
+                    POST_CONTROLLER.setPosts(login_data.Posts)
+                    CATEGORY_CONTROLLER.setCategories(login_data.Categories)
+                    CATEGORY_CONTROLLER.setCurrentCategoryId(login_data.CurrentCategoryId)
                 }
             }).catch(console.log);
         }
@@ -103,8 +109,8 @@ export default class Main extends HTMLElement {
                 </div>          
             </main> `
                 : /* HTML if Ahthentificated */ `
-            <sc-user-info></sc-user-info>
-
+            <sc-user-info class="sc-user-info" ></sc-user-info>
+            <sc-post class="sc-post" ></sc-post>
             `
             }
         
