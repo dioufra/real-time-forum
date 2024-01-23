@@ -10,11 +10,8 @@ export default class Main extends HTMLElement {
         // }
         this.registerUser = (event) => {
             if (!event.detail.user) return
-            fetch('http://127.0.0.1:8080/api/register', {
+            fetch('/api/register', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(event.detail.user),
             }).then(response => {
                 if (!response.ok) {
@@ -38,11 +35,8 @@ export default class Main extends HTMLElement {
         }
         this.loginUser = (event) => {
             if (!event.detail.user) return
-            fetch('http://127.0.0.1:8080/api/login', {
+            fetch('/api/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(event.detail.user),
             }).then(response => {
                 if (!response.ok) {
