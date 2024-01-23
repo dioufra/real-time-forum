@@ -59,7 +59,7 @@ export default class Main extends HTMLElement {
             }).then(data => {
                 if (data) {
                     console.log(data)
-
+                    
                     // navigateTo('')
                 }
             }).catch(console.log);

@@ -13,14 +13,14 @@ type Post struct {
 }
 
 type PostData struct {
-	Post     Post
-	User     User
-	Likes    int
-	Dislikes int
-	Comments int
+	Post        Post `json:"Post"`
+	NbrLike     int  `json:"Nbrlike"`
+	NbrDislike  int  `json:"NbrDislike"`
+	NbrComments int  `json:"NbrComments"`
 }
 
-type AllPosts []Post
+
+type AllPosts []PostData
 
 func (post *Post) GetAllPost() {}
 

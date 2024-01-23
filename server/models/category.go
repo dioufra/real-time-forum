@@ -1,14 +1,15 @@
 package models
 
 type Category struct {
-	Id     int
-	Name   string
+	Id   int
+	Name string
 }
+
+type Categories []Category
 
 type PostCategory struct {
 	Category Category
-	PostId int
+	PostId   int
 }
-
 
 func GetPostCategory() {}
