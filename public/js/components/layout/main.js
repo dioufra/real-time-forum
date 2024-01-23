@@ -54,7 +54,7 @@ export default class Main extends HTMLElement {
             }).then(data => {
                 if (data) {
                     console.log(data)
-                    USER_CONTROLLER.fetchData()
+                    // USER_CONTROLLER.fetchData()
                     // navigateTo('')
                 }
             }).catch(console.log);

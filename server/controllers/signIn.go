@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"real-time-forum/server/config"
 	"real-time-forum/server/helper"
 	"real-time-forum/server/models"
 	"time"
@@ -33,17 +32,16 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 		fmt.Println("Error: ", err)
 		return
 	}
-
+	fmt.Println("sign in", user, helper.IsPasswordsMatch(user.Password, userLogin.Password))
 	if !helper.IsPasswordsMatch(user.Password, userLogin.Password) {
 		fmt.Println("Wrong credentials")
 		return
 	}
-	fmt.Println("Login successfull")
 
-	sssid := u1.String() + "-" + time.Now().GoString()
+	sessionId := u1.String() + "-" + time.Now().GoString()
 	cookie := http.Cookie{
 		Name:     "sessionid",
-		Value:    sssid,
+		Value:    sessionId,
 		Expires:  time.Now().Add(time.Hour * 24 * 3),
 		Path:     "/",
 		MaxAge:   3600 * 24 * 3,
@@ -53,17 +51,9 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 	}
 	http.SetCookie(res, &cookie)
 
-	db, err := config.GetDB()
-	if err != nil {
-		fmt.Println("Error getting the db")
-		return
-	}
-	fmt.Println(user.Email)
-	
-	errss := helper.SessionAddOrUpdate(db, sssid, user.Email)
-	if errss != nil {
-		fmt.Println(errss)
-		helper.ErrorPage(res, 500)
+	errSession := helper.SessionAddOrUpdate(DB, sessionId, user.Email)
+	if errSession != nil {
+		fmt.Println(errSession)
 		return
 	}
 

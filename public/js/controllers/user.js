@@ -38,8 +38,12 @@ class User {
         updateComponents()
     }
     fetchData(){
-        fetch('/api/getResponse')
-        .then(console.log)
+        console.log('fetching the data');
+        fetch('/api/getResponse', {
+            method: 'GET'
+        })
+        .then(response => response)
+        .then(data => console.log(data))
         .catch(console.log)
     }
 }

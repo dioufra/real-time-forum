@@ -20,12 +20,10 @@ export default class Register extends HTMLElement {
     
     connectedCallback() {
         if (this.shouldComponentRender) this.render()
-        if (this.registerForm) console.log(this.registerForm)
         this.addEventListener('submit', this.formSubmission)
     }
 
     disconnectedCallback() {
-        console.log('disconnected register')
         this.removeEventListener('submit', this.formSubmission)
     }
 

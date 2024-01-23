@@ -8,7 +8,6 @@ export default class Login extends HTMLElement {
             data.forEach((value, key) => {
                 userData[key] = value
             })
-            console.log(userData)
             const e = new CustomEvent('rt-login', {
                 detail: {user: userData},
                 bubbles: true,
@@ -22,12 +21,10 @@ export default class Login extends HTMLElement {
         // console.log(this)
         this.render()
         // this._style()
-        if (this.loginForm) console.log(this.loginForm)
         this.addEventListener('submit', this.formSubmission)
     }
 
     disconnectedCallback() {
-        console.log('disconnected login')
         this.removeEventListener('submit', this.formSubmission)
     }
 
