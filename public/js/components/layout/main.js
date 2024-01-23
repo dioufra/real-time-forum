@@ -59,9 +59,15 @@ export default class Main extends HTMLElement {
                 return response
             }).then(data => {
                 if (data) {
+<<<<<<< HEAD
                     
 
                     navigateTo('')
+=======
+                    console.log(data)
+
+                    // navigateTo('')
+>>>>>>> 8e2691331ebcb02830ef5517188dc877aa08226f
                 }
             }).catch(console.log);
         }

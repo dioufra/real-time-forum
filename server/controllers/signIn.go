@@ -42,6 +42,8 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 		fmt.Println("Error retrieving users", err)
 		return
 	}
+
 	fmt.Println(users)
+
 	defer req.Body.Close()
 }
