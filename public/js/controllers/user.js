@@ -1,3 +1,5 @@
+import { updateComponents } from "../script.js"
+
 class User {
     constructor() {
         this.IsAuth = false
@@ -6,5 +8,9 @@ class User {
         this.UserName = ''
         this.Email = ''
     }
+    setIsAuth(bool){
+        this.IsAuth = bool
+        updateComponents()
+    }
 }
-export const CURRENT_USER = new User()
+export const USER_CONTROLLER = new User()

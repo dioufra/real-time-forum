@@ -1,3 +1,4 @@
+import { USER_CONTROLLER } from "../../controllers/user.js"
 import login_data from "../../json_data/login_data.js"
 import { navigateTo } from "../../routes/routechecker.js"
 import { ROUTER } from "../../routes/routes.js"
@@ -5,7 +6,6 @@ import { ROUTER } from "../../routes/routes.js"
 export default class Main extends HTMLElement {
     constructor() {
         super()
-        this.isAuth = false
         // this.submitFormListerner = (e) => {
         //     e.preventDefault();
         // }
@@ -58,16 +58,9 @@ export default class Main extends HTMLElement {
                 }
                 return response
             }).then(data => {
-                if (data) {
-<<<<<<< HEAD
-                    
-
-                    navigateTo('')
-=======
-                    console.log(data)
-
-                    // navigateTo('')
->>>>>>> 8e2691331ebcb02830ef5517188dc877aa08226f
+                if (login_data) {
+                    console.log(login_data)
+                    USER_CONTROLLER.setIsAuth(login_data.UserData.IsAuth)
                 }
             }).catch(console.log);
         }
@@ -90,7 +83,7 @@ export default class Main extends HTMLElement {
 
     render() {
         this.innerHTML = /* HTML */ `
-        ${!this.isAuth ? /* HTML */ ` 
+        ${!USER_CONTROLLER.IsAuth ? /* HTML */ ` 
             <main>
                 <div class="main-content">
                     Communnicate <br>
@@ -109,7 +102,8 @@ export default class Main extends HTMLElement {
                     </div>
                 </div>          
             </main> `
-                : `
+                : /* HTML if Ahthentificated */ `
+            <sc-user-info></sc-user-info>
 
             `
             }

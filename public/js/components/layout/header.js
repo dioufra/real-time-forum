@@ -1,7 +1,8 @@
+import { USER_CONTROLLER } from "../../controllers/user.js"
+
 export default class Header extends HTMLElement {
     constructor() {
         super()
-        this.isAuth = false
     }
 
     connectedCallback() {
@@ -11,7 +12,7 @@ export default class Header extends HTMLElement {
     }
 
     disconnectedCallback() {
-        console.log('disconnected')
+        console.log('disconnected header')
     }
 
     shouldComponentRender() {
@@ -29,7 +30,7 @@ export default class Header extends HTMLElement {
                     </div>
                 
                     <div class="links">
-                        ${this.isAuth ? /*HTML */ `
+                        ${USER_CONTROLLER.IsAuth ? /*HTML */ `
                             <a href="/logout" class="logout">Logout</a>
                         `
                         :  /* HTML */`
