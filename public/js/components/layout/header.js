@@ -1,4 +1,5 @@
 import { USER_CONTROLLER } from "../../controllers/user.js"
+import { updateComponents } from "../../script.js"
 
 export default class Header extends HTMLElement {
     constructor() {
@@ -18,7 +19,11 @@ export default class Header extends HTMLElement {
     shouldComponentRender() {
         return !this.innerHTML
     }
-
+    checkLogoutClickListener(){
+        this.logoutButton?.addEventListener('click', ()=>{
+            USER_CONTROLLER.disconnect()
+        });
+    }
     render() {
         this.innerHTML = /* HTML */ `
             <header>
@@ -31,7 +36,7 @@ export default class Header extends HTMLElement {
                 
                     <div class="links">
                         ${USER_CONTROLLER.IsAuth ? /*HTML */ `
-                            <a href="/logout" class="logout">Logout</a>
+                            <button class="logout">Logout</button>
                         `
                         :  /* HTML */`
                             <a href="/register" class="sbcr">Register</a>
@@ -42,41 +47,13 @@ export default class Header extends HTMLElement {
                 </div>
             </header>
         `
+        this.checkLogoutClickListener()
     }
-
-    
-    _style() {
-        const style = document.createElement('style')
-        style.textContent = `
-        ${this.tagName} .main-header{
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-        }
-        ${this.tagName} .main-header>.menu-a{
-            padding: 0;
-            background-color: #002ea3;
-            width: 150px;
-            height: 37px;
-            border-radius: 23px;
-            justify-content: center;
-            align-items: center;
-            font-weight: 600;
-        }
-        ${this.tagName} .main-header .join {
-
-        }
-
-        `
-        console.log(this.header)
-        this.appendChild(style)
-            
-        }
-
-        get header() {
-            console.log(this.querySelector('.main-header'))
-            this.querySelector('.main-header')
-        }
+    get logoutButton(){
+        return this.querySelector('button')
     }
+    get header() {
+        console.log(this.querySelector('.main-header'))
+        this.querySelector('.main-header')
+    }
+}

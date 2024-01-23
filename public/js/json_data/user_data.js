@@ -10,7 +10,8 @@ export default {
     },
     Users:{
         ConnectedUsers:[],
-        
+        OnlineUsers:[],
+        OfflineUsers:[]
     },
     CurrentCategoryId:2,
     Categories:[
@@ -23,6 +24,11 @@ export default {
             Name:"Tech",
         },
     ],
+    PaginationData:{
+        Iterate:1,
+        LastPage:4,
+        CurrentPage:5
+    },
     Posts:[
         {
             Id:1,
@@ -33,7 +39,10 @@ export default {
             Content:`Lynlee Hope, la petite fille de Lewisville au Texas (États-Unis), est née deux fois. Alors que sa mère était enceinte de 16 semaines, une échographie a révélé que le bébé souffrait d’un type de tumeur infantile au niveau du coccyx, connue sous le nom de tératome sacro-coccygien. ...`,
             Image:'https://picsum.photos/200',
             Categories: ["Culture","Tech"],
-            Date: new Date()
+            Date: new Date(),
+            Nbrlike:3,
+            NbrDislike:4,
+            NbrComments:1,
         },
         {
             Id:2,
@@ -44,7 +53,10 @@ export default {
             Content:`Les humains sont en retard sur la réalité, et c'est pire que vous ne le pensez ; non seulement il faut plusieurs millisecondes à des dizaines de millisecondes pour que les signaux de notre appareil sensoriel atteignent le cerveau (d'ailleurs les signaux de douleur arrivent encore plus lentemen...`,
             Image:'https://picsum.photos/200',
             Categories: ["Culture","Tech"],
-            Date: new Date()
+            Date: new Date(),
+            Nbrlike:2,
+            NbrDislike:3,
+            NbrComments:1,
         }
     ]
 }

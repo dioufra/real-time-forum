@@ -12,7 +12,10 @@ class PostController {
                 Content:``,
                 Image:'https://picsum.photos/200',
                 Categories: [""],
-                Date: new Date()
+                Date: new Date(),
+                Nbrlike:1,
+                NbrDislike:1,
+                NbrComments:1,
             },
         ]
     }

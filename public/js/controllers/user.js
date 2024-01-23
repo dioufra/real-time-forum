@@ -1,3 +1,5 @@
+import { navigateTo } from "../routes/routechecker.js"
+import { ROUTES_CONTROLLER } from "../routes/routes.js"
 import { updateComponents } from "../script.js"
 
 class User {
@@ -22,6 +24,18 @@ class User {
         this.Email = Email || this.Email
         this.Age = Age || this.Age
         this.Gender = Gender || this.Gender
+        updateComponents()
+    }
+    disconnect(){
+        this.IsAuth = false
+        this.FirstName = ''
+        this.LastName = ''
+        this.UserName = ''
+        this.Email = ''
+        this.Age = ''
+        this.Gender = ''
+
+        navigateTo('login')
         updateComponents()
     }
 }

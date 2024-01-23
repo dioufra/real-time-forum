@@ -4,7 +4,9 @@ let components = [
     {tagName:'c-login',src:"./components/login.js"},
     {tagName:'c-register',src:"./components/register.js"},
     {tagName:'sc-user-info',src:"./components/userInfo.js"},
-    {tagName:'sc-post',src:"./components/posts.js"},
+    {tagName:'c-posts-container',src:"./components/postsContainer.js"},
+    {tagName:'c-post',src:"./components/post.js"},
+    {tagName:'c-pagination',src:"./components/pagination.js"},
 ]
 // Define the custom web component
 components.forEach(component => {
