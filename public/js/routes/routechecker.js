@@ -4,6 +4,7 @@ import { ROUTER } from "./routes.js";
 // Route change listener
 document.addEventListener('DOMContentLoaded', function () {
     // Initial setup
+    console.log('Navigating to route', ROUTER.currentRoute)
     navigateTo(ROUTER.currentRoute)
     // Handle navigation when a link is clicked
     document.body.addEventListener('click', function (event) {

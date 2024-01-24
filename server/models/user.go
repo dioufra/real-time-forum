@@ -37,7 +37,7 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 }
 
 func (r *UserRepository) Create(user User) (sql.Result, error) {
-	insertQuery := "INSERT INTO users (firstname,lastname, gender, age, username,email, password) VALUES (?, ?, ?, ?, ?, ?, ?)"
+	insertQuery := "INSERT INTO Users (firstname,lastname, gender, age, username,email, password) VALUES (?, ?, ?, ?, ?, ?, ?)"
 	result, err := r.db.Exec(insertQuery, user.Firstname, user.Lastname, user.Gender, user.Age, user.Username, user.Email, user.Password)
 	if err != nil {
 		return nil, err

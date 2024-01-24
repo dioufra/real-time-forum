@@ -6,7 +6,7 @@ export default class Header extends HTMLElement {
 
     connectedCallback() {
         // console.log(this)
-        this.render()
+        if (this.shouldComponentRender()) this.render()
         // this._style()
     }
 
@@ -15,6 +15,7 @@ export default class Header extends HTMLElement {
     }
 
     shouldComponentRender() {
+        console.log(this.innerHTML)
         return !this.innerHTML
     }
 

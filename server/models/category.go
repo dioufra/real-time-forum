@@ -12,4 +12,8 @@ type PostCategory struct {
 	PostId   int
 }
 
+// func (r *CatRepository) GetCategory() {
+
+// }
+
 func GetPostCategory() {}
