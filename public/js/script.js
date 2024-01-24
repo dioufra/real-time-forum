@@ -11,7 +11,6 @@ components.forEach(component => {
     })
 })
 export const updateComponents = ()=> {
-    console.log('updating')
     components.forEach(component => {
         let elements = document.querySelectorAll(component.tagName);
         elements.forEach(element => {
