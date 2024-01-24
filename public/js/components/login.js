@@ -12,6 +12,7 @@ export default class Login extends HTMLElement {
                 detail: {user: userData},
                 bubbles: true,
                 cancalable: true,
+                composed: true
             })
             this.dispatchEvent(e)
         }

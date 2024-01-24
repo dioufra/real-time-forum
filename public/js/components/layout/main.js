@@ -1,6 +1,7 @@
 import { USER_CONTROLLER } from "../../controllers/user.js"
 import { navigateTo } from "../../routes/routechecker.js"
 import { ROUTER } from "../../routes/routes.js"
+import { updateComponents } from "../../script.js"
 
 export default class Main extends HTMLElement {
     constructor() {
@@ -17,7 +18,7 @@ export default class Main extends HTMLElement {
             }).then(response => {
                 if (!response.ok) {
                     if (response.status === 400) {
-                       response.json() // Parse the JSON in the response
+                        response.json() // Parse the JSON in the response
                             .then(error => {
                                 console.log(error)
                             })
@@ -28,7 +29,7 @@ export default class Main extends HTMLElement {
                 return response
             }).then(data => {
                 if (data) {
-                    console.log(data)
+                    console.log("userrrrr", data)
                     // Redirect to login page
                     navigateTo('login')
                 }
@@ -42,7 +43,7 @@ export default class Main extends HTMLElement {
             }).then(response => {
                 if (!response.ok) {
                     if (response.status === 400) {
-                       response.json() // Parse the JSON in the response
+                        response.json() // Parse the JSON in the response
                             .then(error => {
                                 console.log(error)
                             })
@@ -50,11 +51,16 @@ export default class Main extends HTMLElement {
                         throw new Error('Erreur de réseau');
                     }
                 }
-                return response
+                return response.json()
             }).then(data => {
                 if (data) {
-                    console.log(data)
+                    console.log(data.user)  // from there we know wheither or not a user is authenticated
                     // USER_CONTROLLER.fetchData()
+                    if (data.user.IsAuth) {
+                        this.isAuth = true
+                        this.innerHTML = ''
+                        this.render()
+                    }
                     // navigateTo('')
                 }
             }).catch(console.log);
@@ -77,6 +83,7 @@ export default class Main extends HTMLElement {
     }
 
     render() {
+        console.log('rendering');
         this.innerHTML = /* HTML */ `
         ${!this.isAuth ? /* HTML */ ` 
             <main>
@@ -96,11 +103,13 @@ export default class Main extends HTMLElement {
                         </div>
                     </div>
                 </div>          
-            </main> `
-                : `
-
-            `
-            }
+            </main> 
+        `
+        : 
+        /* HTML */ `
+            <p> Hello from connected user </p>
+        `
+        }
         
         `
     }

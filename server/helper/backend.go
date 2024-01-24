@@ -49,8 +49,15 @@ func UpdateSession(db *sql.DB, sssid, useremail string) error {
 
 }
 
-func Auth(Db *sql.DB, r *http.Request) (bool, string) {
+func ValidateCredential(userLogin models.UserLogin) (bool, models.User, error) {
+	var user models.User
+	if err := models.UserRepo.GetUser(&user, userLogin.Login); err != nil {
+		return false, user, err
+	}
+	return IsPasswordsMatch(user.Password, userLogin.Password), user, nil
+}
 
+func Auth(Db *sql.DB, r *http.Request) (bool, string) {
 	sessionpi, err := r.Cookie("sessionid")
 	if err != nil || sessionpi.String() == "" {
 		return false, ""

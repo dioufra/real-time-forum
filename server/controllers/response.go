@@ -32,6 +32,7 @@ func Response(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	res.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(res).Encode(map[string]any{"user": user}); err != nil {
 		// If encoding fails, log the error (you might want to handle this differently)
 		log.Println("Error encoding JSON response:", err)

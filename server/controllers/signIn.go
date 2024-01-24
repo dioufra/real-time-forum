@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"real-time-forum/server/helper"
 	"real-time-forum/server/models"
@@ -12,10 +13,10 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 	fmt.Println("Hello from sign in")
 	if req.Method != http.MethodPost {
 		http.Error(res, "Method not allowed", http.StatusMethodNotAllowed)
+		fmt.Println("NNNNNNNNNNNNNNNNNNNNNNNNNNN")
 		return
 	}
 	var userLogin models.UserLogin
-	var user models.User
 	decoder := json.NewDecoder(req.Body)
 	if err := decoder.Decode(&userLogin); err != nil {
 		fmt.Println(err)
@@ -23,28 +24,23 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := models.UserRepo.GetUser(&user, userLogin.Login); err != nil {
-		fmt.Println("Error: ", err)
-		return
-	}
-	if !helper.IsPasswordsMatch(user.Password, userLogin.Password) {
-		fmt.Println("Wrong credentials")
+	ok, user, err := helper.ValidateCredential(userLogin)
+	if err != nil {
+		fmt.Println("Error retrieving the user")
 		return
 	}
 
-	// sessionId := u1.String() + "-" + time.Now().GoString()
-	// cookie := http.Cookie{
-	// 	Name:     "sessionid",
-	// 	Value:    sessionId,
-	// 	Expires:  time.Now().Add(time.Hour * 24 * 3),
-	// 	Path:     "/",
-	// 	MaxAge:   3600 * 24 * 3,
-	// 	HttpOnly: true,
-	// 	Secure:   true,
-	// 	SameSite: http.SameSiteLaxMode,
-	// }
-	// http.SetCookie(res, &cookie)
 
+	// might consider creating a response function
+	if !ok {
+		fmt.Println("Wrong credential")
+		if err := json.NewEncoder(res).Encode(map[string]any{"message": "wrong credential", "user": models.UserResponseData{}}); err != nil {
+			log.Println("Error encoding JSON response:", err)
+		}
+		return
+	}
+
+	fmt.Println("login successfull")
 	sessionId := helper.SetCookie(res)
 
 	errSession := helper.SessionAddOrUpdate(DB, sessionId, user.Email)
@@ -53,13 +49,18 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	users, err := models.UserRepo.GetAll()
-	if err != nil {
-		fmt.Println("Error retrieving users", err)
-		return
+	authUser := models.UserResponseData{
+		Id: user.Id,
+		IsAuth: true,
+		Firstname: user.Firstname,
+		Lastname: user.Lastname,
 	}
+	
+	res.Header().Set("Content-Type", "application/json")
 
-	fmt.Println(users)
+	if err := json.NewEncoder(res).Encode(map[string]any{"message": "Login successful", "user": authUser}); err != nil {
+		log.Println("Error encoding JSON response:", err)
+	}
 
 	defer req.Body.Close()
 }

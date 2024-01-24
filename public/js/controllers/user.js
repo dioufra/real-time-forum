@@ -37,11 +37,9 @@ class User {
         navigateTo('login')
         updateComponents()
     }
+    
     fetchData(){
-        console.log('fetching the data');
-        fetch('/api/getResponse', {
-            method: 'GET'
-        })
+        fetch('/api/getResponse')
         .then(response => response)
         .then(data => console.log(data))
         .catch(console.log)
