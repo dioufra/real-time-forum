@@ -1,3 +1,4 @@
+import { POST_CONTROLLER } from "../../controllers/post.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
 import { navigateTo } from "../../routes/routechecker.js"
 import { ROUTER } from "../../routes/routes.js"
@@ -52,7 +53,7 @@ export default class Main extends HTMLElement {
                 return response.json()
             }).then(data => {
                 if (data) {
-                    console.log(data.user)  // from there we know wheither or not a user is authenticated
+                    // from there we know wheither or not a user is authenticated
                     // USER_CONTROLLER.fetchData()
                     // if (data.user.IsAuth) {
                     //     this.isAuth = true
@@ -60,10 +61,10 @@ export default class Main extends HTMLElement {
                     //     this.render()
                     // }
                     // navigateTo('')
-                    this.isAuth = data.user.isAuth
-                    USER_CONTROLLER.setIsAuth(data.user.isAuth)
-                    USER_CONTROLLER.setUser(data.user)
-                    // POST_CONTROLLER.setPosts(login_data.Posts)
+                    this.isAuth = data.user.IsAuth
+                    USER_CONTROLLER.setIsAuth(data.user.IsAuth)
+                    USER_CONTROLLER.setUser(data)
+                    POST_CONTROLLER.setPosts(data.posts)
                     // CATEGORY_CONTROLLER.setCategories(login_data.Categories)
                     // CATEGORY_CONTROLLER.setCurrentCategoryId(login_data.CurrentCategoryId)
                 }
@@ -111,8 +112,10 @@ export default class Main extends HTMLElement {
         `
         : 
         /* HTML */ `
-            <sc-user-info class="sc-user-info" ></sc-user-info>
-            <c-posts-container class="sc-post" ></c-posts-container>
+            <main class="main-home">
+                <sc-user-info class="sc-user-info" ></sc-user-info>
+                <c-posts-container class="sc-post" ></c-posts-container>
+            </main>
         `
         }
         

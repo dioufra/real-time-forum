@@ -4,7 +4,7 @@ import "database/sql"
 
 var (
 	UserRepo *UserRepository
-	// PostRepo         *PostRepository
+	PostRepo *PostRepository
 	// CommentRepo      *CommentRepository
 	// CategoryRepo     *CategoryRepository
 	// PostCategoryRepo *PostCategoryRepository
@@ -13,4 +13,5 @@ var (
 
 func AddRepositories(db *sql.DB) {
 	UserRepo = NewUserRepository(db)
+	PostRepo = NewPostRepository(db)
 }

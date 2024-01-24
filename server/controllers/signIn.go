@@ -10,10 +10,8 @@ import (
 )
 
 func SignIn(res http.ResponseWriter, req *http.Request) {
-	fmt.Println("Hello from sign in")
 	if req.Method != http.MethodPost {
 		http.Error(res, "Method not allowed", http.StatusMethodNotAllowed)
-		fmt.Println("NNNNNNNNNNNNNNNNNNNNNNNNNNN")
 		return
 	}
 	var userLogin models.UserLogin
@@ -29,7 +27,6 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 		fmt.Println("Error retrieving the user")
 		return
 	}
-
 
 	// might consider creating a response function
 	if !ok {
@@ -50,15 +47,21 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 	}
 
 	authUser := models.UserResponseData{
-		Id: user.Id,
-		IsAuth: true,
+		Id:        user.Id,
+		IsAuth:    true,
 		Firstname: user.Firstname,
-		Lastname: user.Lastname,
+		Lastname:  user.Lastname,
 	}
-	
+
+	posts, err := models.PostRepo.GetAllPost()
+	if err != nil {
+		fmt.Println("Error getting posts", err)
+		return
+	}
+
 	res.Header().Set("Content-Type", "application/json")
 
-	if err := json.NewEncoder(res).Encode(map[string]any{"message": "Login successful", "user": authUser}); err != nil {
+	if err := json.NewEncoder(res).Encode(map[string]any{"message": "Login successful", "user": authUser, "posts": posts}); err != nil {
 		log.Println("Error encoding JSON response:", err)
 	}
 

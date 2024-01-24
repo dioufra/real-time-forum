@@ -30,11 +30,6 @@ type UserRepository struct {
 	db *sql.DB
 }
 
-func NewUserRepository(db *sql.DB) *UserRepository {
-	return &UserRepository{
-		db: db,
-	}
-}
 
 func (r *UserRepository) Create(user User) (sql.Result, error) {
 	insertQuery := "INSERT INTO Users (firstname,lastname, gender, age, username,email, password) VALUES (?, ?, ?, ?, ?, ?, ?)"
@@ -55,6 +50,11 @@ func (r *UserRepository) GetUser(user *User, login string) error {
 		row.Scan(&user.Id, &user.Email, &user.Lastname, &user.Firstname, &user.Password, &user.Username)
 	}
 	return nil
+}
+func NewUserRepository(db *sql.DB) *UserRepository {
+	return &UserRepository{
+		db: db,
+	}
 }
 
 func (r *UserRepository) GetAll() ([]User, error) {

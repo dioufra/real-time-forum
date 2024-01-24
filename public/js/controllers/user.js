@@ -15,14 +15,15 @@ class User {
         this.IsAuth = bool
         updateComponents()
     }
-    setUser({IsAuth,FirstName,LastName,UserName,Email,Age,Gender}){
-        this.IsAuth = IsAuth || this.IsAuth
-        this.FirstName = FirstName || this.FirstName
-        this.LastName = LastName || this.LastName
-        this.UserName = UserName || this.UserName
-        this.Email = Email || this.Email
-        this.Age = Age || this.Age
-        this.Gender = Gender || this.Gender
+    setUser(data){
+        console.log(data)
+        this.IsAuth = data.user.IsAuth || this.IsAuth
+        this.FirstName = data.user.Firstname || this.FirstName
+        this.LastName = data.user.Lastname || this.LastName
+        this.UserName = data.user.Username || this.UserName
+        this.Email = data.user.Email || this.Email
+        this.Age = data.user.Age || this.Age
+        this.Gender = data.user.Gender || this.Gender
         updateComponents()
     }
     disconnect(){

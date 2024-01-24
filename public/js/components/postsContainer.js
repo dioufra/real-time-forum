@@ -47,17 +47,15 @@ export default class PostsContainer extends HTMLElement {
                     <div class="head">
                         <div class="ctn">
                             <div class="img">
-                                <img src="//ui-avatars.com/api/?name=${post.User.UserName}&size=90&rounded=true&color=fff&background=random"
+                                <img src="//ui-avatars.com/api/?name=${post.Username}&size=90&rounded=true&color=fff&background=random"
                                     alt="">
                             </div>
                             <div class="nm-tm">
-                                <p>${post.User.UserName}</p>
+                                <p>${post.Username}</p>
                             </div>
                         </div>
                         <div class="feather">
-                            ${post.Categories.map(catName => `
-                                <span class="cm-time">  ${catName} </span>
-                            `).join('')}
+                            <span class="cm-time">  ${post.categories} </span>
                         </div>
                     </div>
                     <div class="text-area">
@@ -71,17 +69,17 @@ export default class PostsContainer extends HTMLElement {
                     <div class="submenu">
                         <div class="sb-tags">
                         <div class="sb-tags-l like" onclick="Appreciation(${post.Id},1,0) ">
-                            <div><img src="/static/img/icones/Heart.svg" alt=""></div>
-                            <div id="like${post.Id}">${post.Nbrlike}</div>
+                            <div><img src="/public/img/icones/Heart.svg" alt="img"></div>
+                            <div id="like${post.Id}">${post.NbrLike}</div>
                         </div>
-                        <div class="sb-tags-l" onclick="Appreciation({{.OnePost.ID}},0,1) ">
+                        <div class="sb-tags-l" onclick="Appreciation(${post.ID},0,1) ">
                             <div id="dislike${post.Id}">${post.NbrDislike}</div>
                             <div>💔</div>
                         </div>
                         </div>
                         <div class="activity">
                         <a href="/post/${post.Id}" class="cmt-title">
-                            <div><img src="/static/img/icones/message-square.svg" alt=""></div>
+                            <div><img src="/public/img/icones/message-square.svg" alt=""></div>
                             <div>${post.NbrComments}</div>
                         </a>
                         </div>
