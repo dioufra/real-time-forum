@@ -1,7 +1,6 @@
 import { USER_CONTROLLER } from "../../controllers/user.js"
 import { navigateTo } from "../../routes/routechecker.js"
 import { ROUTER } from "../../routes/routes.js"
-import { updateComponents } from "../../script.js"
 
 export default class Main extends HTMLElement {
     constructor() {
@@ -29,7 +28,6 @@ export default class Main extends HTMLElement {
                 return response
             }).then(data => {
                 if (data) {
-                    console.log("userrrrr", data)
                     // Redirect to login page
                     navigateTo('login')
                 }
@@ -48,7 +46,7 @@ export default class Main extends HTMLElement {
                                 console.log(error)
                             })
                     } else {
-                        throw new Error('Erreur de réseau');
+                        throw new Error('Network error');
                     }
                 }
                 return response.json()
