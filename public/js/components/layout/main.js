@@ -1,3 +1,4 @@
+import { CATEGORY_CONTROLLER } from "../../controllers/categorie.js"
 import { POST_CONTROLLER } from "../../controllers/post.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
 import { navigateTo } from "../../routes/routechecker.js"
@@ -65,7 +66,7 @@ export default class Main extends HTMLElement {
                     USER_CONTROLLER.setIsAuth(data.user.IsAuth)
                     USER_CONTROLLER.setUser(data)
                     POST_CONTROLLER.setPosts(data.posts)
-                    // CATEGORY_CONTROLLER.setCategories(login_data.Categories)
+                    CATEGORY_CONTROLLER.setCategories(data.categories)
                     // CATEGORY_CONTROLLER.setCurrentCategoryId(login_data.CurrentCategoryId)
                 }
             }).catch(console.log);

@@ -6,7 +6,7 @@ var (
 	UserRepo *UserRepository
 	PostRepo *PostRepository
 	// CommentRepo      *CommentRepository
-	// CategoryRepo     *CategoryRepository
+	CategoryRepo *CategoryRepository
 	// PostCategoryRepo *PostCategoryRepository
 	// MessageRepo      *MessageRepository
 )
@@ -14,4 +14,5 @@ var (
 func AddRepositories(db *sql.DB) {
 	UserRepo = NewUserRepository(db)
 	PostRepo = NewPostRepository(db)
+	CategoryRepo = NewCategoryRepository(db)
 }

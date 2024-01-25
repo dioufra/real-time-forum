@@ -1,19 +1,89 @@
 package models
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 type Appreciation struct {
 	Id        int
+	Like      int
+	Dislike   int
 	UserId    int
 	PostId    int
 	CommentId int
 	Date      time.Time
 }
 
+type AppreciationRepository struct {
+	db *sql.DB
+}
 
+func (r *AppreciationRepository) Create(user_id, post_id, like, dislike int) error {
+	req := `SELECT id, Use_id, like, dislike FROM Appreciation WHERE Pos_id=? AND Use_id=?;`
 
-func (appreciation *Appreciation) Create() {} // or add
+	row, err := r.db.Query(req, post_id, user_id)
+	if err != nil {
+		return err
+	}
+	appr := Appreciation{}
+	for row.Next() {
+		row.Scan(&appr.Id, &appr.UserId, &appr.Like, &appr.Dislike)
+	}
 
-func (appreciation *Appreciation) Get() {}
+	if appr.UserId == user_id {
+		if like > 0 {
+			if like+appr.Like > 1 {
+				return Update(r.db, user_id, post_id, 0, "like")
+			} else {
+				Update(r.db, user_id, post_id, 1, "like")
+				return Update(r.db, user_id, post_id, 0, "dislike")
+			}
+		} else if dislike > 0 {
+			if dislike+appr.Dislike > 1 {
+				return Update(r.db, user_id, post_id, 0, "dislike")
+			} else {
+				Update(r.db, user_id, post_id, 0, "like")
+				return Update(r.db, user_id, post_id, 1, "dislike")
+			}
+		}
+	} else {
+		req := `INSERT INTO Appreciation (Use_id,Pos_id,like, dislike) VALUES(?,?,?,?);`
+		_, erreq := r.db.Exec(req, user_id, post_id, like, dislike)
+		return erreq
+	}
 
-func (appreciation *Appreciation) Update() {}
+	return row.Err()
+}
+
+func (r *AppreciationRepository) Get(post_id int) (Appreciation, error) {
+	var apprec Appreciation
+	req := `SELECT count(*) as like  , (SELECT count(*) FROM Appreciation WHERE pos_id=? AND dislike=1) as dislike FROM Appreciation WHERE pos_id=? AND like=1;`
+	row, err := r.db.Query(req, post_id, post_id)
+	if err != nil {
+		return apprec, err
+	}
+	for row.Next() {
+		row.Scan(&apprec.Like, &apprec.Dislike)
+	}
+
+	return apprec, row.Err()
+}
+
+func Update(db *sql.DB, user_id, post_id, value int, colone string) error {
+	req := `UPDATE Appreciation SET ` + colone + `=? WHERE Use_id=? AND  Pos_id=?;`
+	_, err := db.Exec(req, value, user_id, post_id)
+	return err
+}
+
+func UpdateComment(db *sql.DB, user_id, com_id, value int, colone string) error {
+	req := `UPDATE Appreciation SET ` + colone + `=? WHERE Use_id=? AND  Com_id=?;`
+	_, err := db.Exec(req, value, user_id, com_id)
+	return err
+}
+
+// func (appreciation *Appreciation) Create() {} // or add
+
+// func (appreciation *Appreciation) Get() {}
+
+// func (appreciation *Appreciation) Update() {}
