@@ -1,2 +1,3 @@
-+ addd a public folder (css, images, and javascript)
-+ add a data folder containing the models and sql related stuff
+[] Prevent the login handler from begin called a second time login using USER_CONTROLLER.fetchData()
+
+[] Prevent the home controller from being called twice on page refresh

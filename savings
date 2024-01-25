@@ -1,0 +1,77 @@
+// users, err := models.UserRepo.GetAll()
+// if err != nil {
+// 	fmt.Println("Error retrieving users", err)
+// 	return
+// }
+
+// fmt.Println(users)
+
+map[string]any{"message": "Login successful", "user": authUser}
+
+res.Header().Set("Content-Type", "application/json")
+res.WriteHeader(statusCode)
+
+if err := json.NewEncoder(res).Encode(map[string]any{"message": "Login successful", "user": authUser}); err != nil {
+	log.Println("Error encoding JSON response:", err)
+}
+
+initSQL, err := ioutil.ReadFile("./server/data/sql/insert.sql")
+if err != nil {
+	log.Fatal(err)
+}
+
+// Execute SQL statements from the init.sql file
+_, err = controllers.DB.Exec(string(initSQL))
+if err != nil {
+	log.Println("🚨 Error during table initialization: ", err)
+}
+log.Println("✅ Initialisation successful")
+
+
+func enableCORS(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
+}
+
+handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		enableCORS(&w)
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		http.DefaultServeMux.ServeHTTP(w, r)
+	})
+
+	add routes by either importing them or using them directly here
+
+	SELECT
+    p.id,
+    p.title,
+    p.content,
+    p."date",
+    u.username,
+    (
+        SELECT count(*)
+        FROM "Appreciation" "a"
+        WHERE p.id = a."Pos_id" AND "like" = 1
+    ) as "likes",
+    (
+        SELECT count(*)
+        FROM "Appreciation" "a"
+        WHERE p.id = a."Pos_id" AND "dislike" = 1
+    ) as "dislikes",
+    (
+        SELECT count(*)
+        FROM "Comment" "c"
+        WHERE p.id = c."Pos_id"
+    ) as "Comments",
+    (
+        SELECT GROUP_CONCAT("c"."name", ', ')
+        FROM "Category" "c"
+        JOIN "Post_Category" "pc" ON "c"."id" = "pc"."Cat_id"
+        WHERE "pc"."Pos_id" = p.id
+    ) as "Categories"
+FROM "Post" p
+JOIN "Users" "u" ON p.Use_id = u.id
+ORDER BY p.id DESC;

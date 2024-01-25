@@ -30,14 +30,9 @@ type UserRepository struct {
 	db *sql.DB
 }
 
-func NewUserRepository(db *sql.DB) *UserRepository {
-	return &UserRepository{
-		db: db,
-	}
-}
 
 func (r *UserRepository) Create(user User) (sql.Result, error) {
-	insertQuery := "INSERT INTO users (firstname,lastname, gender, age, username,email, password) VALUES (?, ?, ?, ?, ?, ?, ?)"
+	insertQuery := "INSERT INTO Users (firstname,lastname, gender, age, username,email, password) VALUES (?, ?, ?, ?, ?, ?, ?)"
 	result, err := r.db.Exec(insertQuery, user.Firstname, user.Lastname, user.Gender, user.Age, user.Username, user.Email, user.Password)
 	if err != nil {
 		return nil, err
@@ -46,7 +41,7 @@ func (r *UserRepository) Create(user User) (sql.Result, error) {
 }
 
 func (r *UserRepository) GetUser(user *User, login string) error {
-	req := `SELECT id,email,lastName,firstName, password,username from Users Where email=? OR username=?`
+	req := `SELECT id, email, lastName, firstName, password, username from Users Where email=? OR username=?`
 	row, err := r.db.Query(req, login, login)
 	if err != nil {
 		return err
@@ -56,5 +51,35 @@ func (r *UserRepository) GetUser(user *User, login string) error {
 	}
 	return nil
 }
+func NewUserRepository(db *sql.DB) *UserRepository {
+	return &UserRepository{
+		db: db,
+	}
+}
 
-func (user *User) GetAll() {}
+func (r *UserRepository) GetAll() ([]User, error) {
+	var users []User
+	req := `SELECT id, firstname, lastname, username, gender, age, email FROM Users`
+	row, err := r.db.Query(req)
+	if err != nil {
+		return nil, err
+	}
+	for row.Next() {
+		var user User
+		row.Scan(user.Id, user.Firstname, user.Lastname, user.Gender, user.Age, user.Username, user.Email)
+		users = append(users, user)
+	}
+	return users, nil
+}
+
+func (r *UserRepository) GetUserByEmail(user *User, email string) error {
+	req := `SELECT id, email, lastName, firstName, username from Users Where email=?`
+	row, err := r.db.Query(req, email)
+	if err != nil {
+		return err
+	}
+	for row.Next() {
+		row.Scan(&user.Id, &user.Email, &user.Lastname, &user.Firstname, &user.Username)
+	}
+	return nil
+}

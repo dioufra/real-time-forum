@@ -1,24 +1,28 @@
+import { CATEGORY_CONTROLLER } from "../../controllers/categorie.js"
 import { POST_CONTROLLER } from "../../controllers/post.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
+import login_data from "../../json_data/user_data.js"
 import { navigateTo } from "../../routes/routechecker.js"
 import { ROUTER } from "../../routes/routes.js"
 
 export default class Main extends HTMLElement {
     constructor() {
         super()
-        this.isAuth = false
         // this.submitFormListerner = (e) => {
         //     e.preventDefault();
         // }
         this.registerUser = (event) => {
             if (!event.detail.user) return
-            fetch('/api/register', {
+            fetch('http://127.0.0.1:8080/api/register', {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify(event.detail.user),
             }).then(response => {
                 if (!response.ok) {
                     if (response.status === 400) {
-                        response.json() // Parse the JSON in the response
+                       response.json() // Parse the JSON in the response
                             .then(error => {
                                 console.log(error)
                             })
@@ -29,6 +33,7 @@ export default class Main extends HTMLElement {
                 return response
             }).then(data => {
                 if (data) {
+                    console.log(data)
                     // Redirect to login page
                     navigateTo('login')
                 }
@@ -36,37 +41,31 @@ export default class Main extends HTMLElement {
         }
         this.loginUser = (event) => {
             if (!event.detail.user) return
-            fetch('/api/login', {
+            fetch('http://127.0.0.1:8080/api/login', {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify(event.detail.user),
             }).then(response => {
                 if (!response.ok) {
                     if (response.status === 400) {
-                        response.json() // Parse the JSON in the response
+                       response.json() // Parse the JSON in the response
                             .then(error => {
                                 console.log(error)
                             })
                     } else {
-                        throw new Error('Network error');
+                        throw new Error('Erreur de réseau');
                     }
                 }
-                return response.json()
+                return response
             }).then(data => {
-                if (data) {
-                    // from there we know wheither or not a user is authenticated
-                    // USER_CONTROLLER.fetchData()
-                    // if (data.user.IsAuth) {
-                    //     this.isAuth = true
-                    //     this.innerHTML = ''
-                    //     this.render()
-                    // }
-                    // navigateTo('')
-                    this.isAuth = data.user.IsAuth
-                    USER_CONTROLLER.setIsAuth(data.user.IsAuth)
-                    USER_CONTROLLER.setUser(data)
-                    POST_CONTROLLER.setPosts(data.posts)
-                    // CATEGORY_CONTROLLER.setCategories(login_data.Categories)
-                    // CATEGORY_CONTROLLER.setCurrentCategoryId(login_data.CurrentCategoryId)
+                // login data imported fron json_data
+                if (login_data) {
+                    USER_CONTROLLER.setUser(login_data.UserData)
+                    POST_CONTROLLER.setPosts(login_data.Posts)
+                    CATEGORY_CONTROLLER.setCategories(login_data.Categories)
+                    CATEGORY_CONTROLLER.setCurrentCategoryId(login_data.CurrentCategoryId)
                 }
             }).catch(console.log);
         }
@@ -88,9 +87,8 @@ export default class Main extends HTMLElement {
     }
 
     render() {
-        console.log('rendering');
         this.innerHTML = /* HTML */ `
-        ${!this.isAuth ? /* HTML */ ` 
+        ${!USER_CONTROLLER.IsAuth ? /* HTML */ ` 
             <main>
                 <div class="main-content">
                     Communnicate <br>
@@ -108,17 +106,12 @@ export default class Main extends HTMLElement {
                         </div>
                     </div>
                 </div>          
-            </main> 
-        `
-        : 
-        /* HTML */ `
-            <main class="main-home">
-                <sc-user-info class="sc-user-info" ></sc-user-info>
-                <c-posts-container class="sc-post" ></c-posts-container>
-            </main>
-        `
-        }
-        
+            </main> `
+                : /* HTML if Ahthentificated */ `
+            <sc-user-info class="sc-user-info" ></sc-user-info>
+            <c-posts-container class="sc-post" ></c-posts-container>
+            `
+            }
         `
     }
 

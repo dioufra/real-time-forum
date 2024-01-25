@@ -1,0 +1,55 @@
+// package models
+
+import (
+	"io/ioutil"
+	"log"
+	"os"
+	"real-time-forum/server/controllers"
+)
+
+func init() {
+	var err error
+
+	AddRepositories(controllers.DB)
+
+	tabRequest := []string{
+		`CREATE TABLE IF NOT EXISTS Users (
+			id          integer  not null,
+			firstname 	varchar(250) ,
+			lastname	varchar(250),
+			age			varchar(250),
+			gender		varchar(250),
+			username	varchar(250),
+			email		varchar(250),
+			password	varchar(250),
+			constraint  PK_SESS primary key (id)
+		);`,
+		`CREATE TABLE IF NOT EXISTS Session (
+			id          integer  not null,
+			sessionId 	varchar(250) ,
+			email		varchar(250),
+			datefin		TIMESTAMP,
+			constraint  PK_SESS primary key (id)
+		);`,
+	}
+	for _, req := range tabRequest {
+		_, queryErr := controllers.DB.Exec(req)
+		if queryErr != nil {
+			log.Println("🚨 Error during table creation: ", queryErr)
+			os.Exit(0)
+		}
+	}
+
+	initSQL, err := ioutil.ReadFile("./server/data/sql/insert.sql")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Execute SQL statements from the init.sql file
+	_, err = controllers.DB.Exec(string(initSQL))
+	if err != nil {
+		log.Println("🚨 Error during table initialization: ", err)
+	}
+	log.Println("✅ Initialisation successful")
+
+}

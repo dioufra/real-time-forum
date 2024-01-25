@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gofrs/uuid/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -19,6 +20,8 @@ type Data struct {
 	// Pagination models.Metadata
 	User models.User
 }
+
+var u1 = uuid.Must(uuid.NewV4())
 
 func UpdateSession(db *sql.DB, sssid, useremail string) error {
 	req := `SELECT sessionId,email,datefin from Session Where email='` + useremail + `';`
@@ -46,8 +49,15 @@ func UpdateSession(db *sql.DB, sssid, useremail string) error {
 
 }
 
-func Auth(Db *sql.DB, r *http.Request) (bool, string) {
+func ValidateCredential(userLogin models.UserLogin) (bool, models.User, error) {
+	var user models.User
+	if err := models.UserRepo.GetUser(&user, userLogin.Login); err != nil {
+		return false, user, err
+	}
+	return IsPasswordsMatch(user.Password, userLogin.Password), user, nil
+}
 
+func Auth(Db *sql.DB, r *http.Request) (bool, string) {
 	sessionpi, err := r.Cookie("sessionid")
 	if err != nil || sessionpi.String() == "" {
 		return false, ""
@@ -55,7 +65,7 @@ func Auth(Db *sql.DB, r *http.Request) (bool, string) {
 	var Id int
 	var sessionId, email string
 	var datef time.Time
-	req := `SELECT *from Session Where sessionId=?;`
+	req := `SELECT * from Session Where sessionId=?;`
 	row, err := Db.Query(req, sessionpi.Value)
 
 	if err != nil {
@@ -128,6 +138,22 @@ func ParseCatId(cat []string) ([]int, error) {
 	return catid, nil
 }
 
+func SetCookie(res http.ResponseWriter) string {
+	sessionId := u1.String() + "-" + time.Now().GoString()
+	cookie := http.Cookie{
+		Name:     "sessionid",
+		Value:    sessionId,
+		Expires:  time.Now().Add(time.Hour * 24 * 3),
+		Path:     "/",
+		MaxAge:   3600 * 24 * 3,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+	}
+	http.SetCookie(res, &cookie)
+	return sessionId
+}
+
 func HashPassword(pwd string) (string, error) {
 	var pwdBytes = []byte(pwd)
 	hashedPwd, err := bcrypt.GenerateFromPassword(pwdBytes, bcrypt.MinCost)
@@ -137,6 +163,31 @@ func HashPassword(pwd string) (string, error) {
 func IsPasswordsMatch(hashedPwd, currentPwd string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPwd), []byte(currentPwd))
 	return err == nil
+}
+
+func SessionAddOrUpdate(db *sql.DB, sssid, useremail string) error {
+	req := `SELECT sessionId,email,datefin from Session Where email='` + useremail + `';`
+	row, err := db.Query(req)
+	var sessionid, email string
+	var datef time.Time
+	var errsession error
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	for row.Next() {
+		row.Scan(&sessionid, &email, &datef)
+
+	}
+
+	if email == useremail {
+		_, errsession = db.Exec("UPDATE Session SET sessionId=?, datefin=? where sessionId=? AND email=?;", sssid, time.Now().Add(time.Hour*24*3), sssid, email)
+	} else {
+		_, errsession = db.Exec("INSERT INTO Session (sessionId,email,datefin) VALUES(?,?,?);", sssid, useremail, time.Now().Add(time.Hour*24*3))
+	}
+	return errsession
+
 }
 
 // func GetData(r *http.Request, db *sql.DB, f func(*sql.DB, models.Pagination, string) ([]models.AllPost, error), pagination models.Pagination, w http.ResponseWriter, isAuth bool, metadata models.Metadata, user models.User) (Data, error) {

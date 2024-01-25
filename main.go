@@ -11,21 +11,15 @@ import (
 	"real-time-forum/server/router"
 )
 
-func enableCORS(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	(*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
-}
-
 func init() {
-	// var err error
-	db, err := config.GetDB()
+	var err error
+	controllers.DB, err = config.GetDB()
 	if err != nil {
 		fmt.Println("connection database Error", err)
 		os.Exit(0)
 	}
 
-	models.AddRepositories(db)
+	models.AddRepositories(controllers.DB)
 
 	tabRequest := []string{
 		`CREATE TABLE IF NOT EXISTS Users (
@@ -48,13 +42,14 @@ func init() {
 		);`,
 	}
 	for _, req := range tabRequest {
-		_, queryErr := db.Exec(req)
+		_, queryErr := controllers.DB.Exec(req)
 		if queryErr != nil {
 			log.Println("🚨 Error during table creation: ", queryErr)
 			os.Exit(0)
 		}
 	}
-	log.Println("✅ Successfully created session table")
+
+	log.Println("✅ Initialisation successful")
 
 }
 
@@ -67,21 +62,11 @@ func main() {
 	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir("./public/"))))
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("./public/img/"))))
 
-	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		enableCORS(&w)
-		if r.Method == http.MethodOptions {
-			w.WriteHeader(http.StatusOK)
-			return
-		}
-		http.DefaultServeMux.ServeHTTP(w, r)
-	})
-
-	// add routes by either importing them or using them directly here
 	router.Route()
 
 	fmt.Println("Listening in http://localhost" + PORT)
 
-	http.ListenAndServe(PORT, handler)
+	http.ListenAndServe(PORT, nil)
 
 	defer controllers.DB.Close()
 
