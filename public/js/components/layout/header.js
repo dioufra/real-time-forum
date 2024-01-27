@@ -1,3 +1,5 @@
+import { USER_CONTROLLER } from "../../controllers/user.js"
+
 export default class Header extends HTMLElement {
     constructor() {
         super()
@@ -6,7 +8,7 @@ export default class Header extends HTMLElement {
 
     connectedCallback() {
         // console.log(this)
-        if (this.shouldComponentRender()) this.render()
+        this.render()
         // this._style()
     }
 
@@ -30,10 +32,11 @@ export default class Header extends HTMLElement {
                     </div>
                 
                     <div class="links">
-                        ${this.isAuth ? /*HTML */ `
-                            <a href="/logout" class="logout">Logout</a>
+                        ${USER_CONTROLLER.IsAuth 
+                        ? /*HTML */ 
+                            `<a href="/logout" class="logout">Logout</a>`
+                        : /* HTML */
                         `
-                        :  /* HTML */`
                             <a href="/register" class="sbcr">Register</a>
                             <a href="/login" class="join">Join us</a>
                         `

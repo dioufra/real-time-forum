@@ -59,7 +59,11 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	categories, err := models.CategoryRepo.GetPostCategory()
+	_, postCats := models.CategoryRepo.GetPostCategories()
+
+	fmt.Println(postCats)
+
+	categories, err := models.CategoryRepo.GetCategories()
 
 	if err != nil {
 		fmt.Println("Error retrieving categories: ", err)

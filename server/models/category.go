@@ -1,17 +1,18 @@
 package models
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 type Category struct {
 	Id   int
 	Name string
 }
 
-type Categories []Category
-
 type PostCategory struct {
-	Category Category
-	PostId   int
+	Id     int
+	CatId  int
+	PostId int
 }
 
 type CategoryRepository struct {
@@ -24,11 +25,7 @@ func NewCategoryRepository(db *sql.DB) *CategoryRepository {
 	}
 }
 
-// func (r *CatRepository) GetCategory() {
-
-// }
-
-func (r CategoryRepository) GetPostCategory() ([]Category, error) {
+func (r *CategoryRepository) GetCategories() ([]Category, error) {
 	var categories []Category
 	req := `SELECT id, name FROM Category`
 
@@ -44,4 +41,19 @@ func (r CategoryRepository) GetPostCategory() ([]Category, error) {
 		categories = append(categories, category)
 	}
 	return categories, err
+}
+
+func (r *CategoryRepository) GetPostCategories() ([]PostCategory, error) {
+	var postCategories []PostCategory
+	req := `SELECT pc.id, pc.Cat_id, pc.Pos_id FROM Post_Category pc`
+	row, err := r.db.Query(req)
+	if err != nil {
+		return postCategories, err
+	}
+	for row.Next() {
+		var postCategory PostCategory
+		row.Scan(&postCategory.Id, &postCategory.CatId, &postCategory.PostId)
+		postCategories = append(postCategories, postCategory)
+	}
+	return postCategories, row.Err()
 }

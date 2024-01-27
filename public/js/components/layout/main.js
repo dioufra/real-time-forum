@@ -3,73 +3,29 @@ import { POST_CONTROLLER } from "../../controllers/post.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
 import { navigateTo } from "../../routes/routechecker.js"
 import { ROUTER } from "../../routes/routes.js"
+import {API_SERVICE} from "../../service/api-service.js"
 
 export default class Main extends HTMLElement {
     constructor() {
         super()
         this.isAuth = false
-        // this.submitFormListerner = (e) => {
-        //     e.preventDefault();
-        // }
         this.registerUser = (event) => {
-            if (!event.detail.user) return
-            fetch('/api/register', {
-                method: 'POST',
-                body: JSON.stringify(event.detail.user),
-            }).then(response => {
-                if (!response.ok) {
-                    if (response.status === 400) {
-                        response.json() // Parse the JSON in the response
-                            .then(error => {
-                                console.log(error)
-                            })
-                    } else {
-                        throw new Error('Erreur de réseau');
-                    }
-                }
-                return response
-            }).then(data => {
-                if (data) {
-                    // Redirect to login page
-                    navigateTo('login')
-                }
-            }).catch(console.log);
+            API_SERVICE.registerUser(event.detail.user)
         }
         this.loginUser = (event) => {
-            if (!event.detail.user) return
-            fetch('/api/login', {
-                method: 'POST',
-                body: JSON.stringify(event.detail.user),
-            }).then(response => {
-                if (!response.ok) {
-                    if (response.status === 400) {
-                        response.json() // Parse the JSON in the response
-                            .then(error => {
-                                console.log(error)
-                            })
-                    } else {
-                        throw new Error('Network error');
-                    }
-                }
-                return response.json()
-            }).then(data => {
-                if (data) {
-                    // from there we know wheither or not a user is authenticated
-                    // USER_CONTROLLER.fetchData()
-                    // if (data.user.IsAuth) {
-                    //     this.isAuth = true
-                    //     this.innerHTML = ''
-                    //     this.render()
-                    // }
-                    // navigateTo('')
+            if (!event.detail.user) return;
+        
+            API_SERVICE.loginUser(event.detail.user)
+                .then(data => {
                     this.isAuth = data.user.IsAuth
                     USER_CONTROLLER.setIsAuth(data.user.IsAuth)
                     USER_CONTROLLER.setUser(data)
                     POST_CONTROLLER.setPosts(data.posts)
                     CATEGORY_CONTROLLER.setCategories(data.categories)
-                    // CATEGORY_CONTROLLER.setCurrentCategoryId(login_data.CurrentCategoryId)
-                }
-            }).catch(console.log);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
         }
     }
 
