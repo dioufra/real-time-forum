@@ -16,7 +16,6 @@ class User {
         updateComponents()
     }
     setUser(data){
-        console.log(data)
         this.IsAuth = data.user.IsAuth || this.IsAuth
         this.FirstName = data.user.Firstname || this.FirstName
         this.LastName = data.user.Lastname || this.LastName

@@ -59,9 +59,18 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	_, postCats := models.CategoryRepo.GetPostCategories()
+
+	fmt.Println(postCats)
+
+	categories, err := models.CategoryRepo.GetCategories()
+
+	if err != nil {
+		fmt.Println("Error retrieving categories: ", err)
+	}
 	res.Header().Set("Content-Type", "application/json")
 
-	if err := json.NewEncoder(res).Encode(map[string]any{"message": "Login successful", "user": authUser, "posts": posts}); err != nil {
+	if err := json.NewEncoder(res).Encode(map[string]any{"message": "Login successful", "user": authUser, "posts": posts, "categories": categories}); err != nil {
 		log.Println("Error encoding JSON response:", err)
 	}
 
