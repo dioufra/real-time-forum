@@ -4,16 +4,38 @@ import { POST_CONTROLLER } from "../controllers/post.js"
 export default class PostsContainer extends HTMLElement {
     constructor() {
         super()
+        this.seePostListener = event => {
+            fetch('/api/post/')
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 400) {
+                        response.json()
+                            .then(error => {
+                                console.log(error)
+                            })
+                    } else {
+                        throw new Error('Network error')
+                    }
+                }
+            }).then(data => {
+                console.log(data);
+            })
+        }
     }
 
     connectedCallback() {
         // console.log(this)
         this.render()
+        this.seePostBtns.forEach(btn => {
+            this.addEventListener('click', this.seePostListener)
+        })
         // this._style()
     }
 
     disconnectedCallback() {
-        console.log('disconnected header')
+        this.seePostBtns.forEach(btn => {
+            this.removeEventListener('click', this.seePostListener)
+        })
     }
 
     shouldComponentRender() {
@@ -27,15 +49,11 @@ export default class PostsContainer extends HTMLElement {
                 <input class="dropdown" type="checkbox" id="dropdown" name="dropdown"/>
                 <label class="for-dropdown" for="dropdown">Categories</label>
                 <div class="section-dropdown">
-                  <a href="/filter-categorie?categorie=default">All</a>
+                  <a href="api/filter-categorie?categorie=default">All</a>
                     ${
-                        CATEGORY_CONTROLLER.categories.map((category)=> (
-                            category.Id === CATEGORY_CONTROLLER.currentCategoryId?`
-                                <a style="background-color: #002EA3; border-radius: 2px;" href="/filter-categorie?categorie=${category.Id}">${category.Name}</a>
-                            `:`
-                                <a href="/filter-categorie?categorie=${category.Id}">${category.Name}</a>
-                            `
-                        )).join('')
+                        CATEGORY_CONTROLLER.categories.map((category) => 
+                              (`<a href="/filter-categorie?categorie=${category.Id}">${category.Name}</a>`)
+                        ).join('\n')
                     }
                 </div>
             </div>
@@ -59,7 +77,7 @@ export default class PostsContainer extends HTMLElement {
                         </div>
                     </div>
                     <div class="text-area">
-                        <a href="/post/${post.Id}" class="cmt-title">
+                        <a href="/api/post/${post.Id}" class="cmt-title">
                             ${post.Title}
                         </a>
                         <p class="cmt">
@@ -78,7 +96,7 @@ export default class PostsContainer extends HTMLElement {
                         </div>
                         </div>
                         <div class="activity">
-                        <a href="/post/${post.Id}" class="cmt-title">
+                        <a href="api/post/${post.Id}" class="cmt-title">
                             <div><img src="/public/img/icones/message-square.svg" alt=""></div>
                             <div>${post.NbrComments}</div>
                         </a>
@@ -90,6 +108,10 @@ export default class PostsContainer extends HTMLElement {
         </div>
         <c-pagination class="pagination"></c-pagination>
         `
+    }
+
+    get seePostBtns() {
+        return [...this.querySelectorAll('.cmt-title')]
     }
 
     get header() {

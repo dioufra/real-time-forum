@@ -4,16 +4,41 @@ export default class Header extends HTMLElement {
     constructor() {
         super()
         this.isAuth = false
+
+        // this.logout = event => {
+        //     console.log('loging user out');
+        //     fetch('/api/logout', {
+        //         method: 'POST',
+        //         body: JSON.stringify(data),
+        //     }).then(response => {
+        //         if (!response.ok) {
+        //             if (response.status === 400) {
+        //                 response.json()
+        //                     .then(error => {
+        //                         console.log(error)
+        //                     })
+        //             } else {
+        //                 throw new Error('Erreur de réseau');
+        //             }
+        //         }
+        //         return response
+        //     }).then(data => {
+        //         if (data) {
+        //             // Redirect to login page
+        //             navigateTo('login')
+        //         }
+        //     }).catch(console.log);
+        // }
     }
 
     connectedCallback() {
         // console.log(this)
         this.render()
         // this._style()
+        this.logoutBtn?.addEventListener('click', this.logout)
     }
 
     disconnectedCallback() {
-        console.log('disconnected')
     }
 
     shouldComponentRender() {
@@ -34,7 +59,7 @@ export default class Header extends HTMLElement {
                     <div class="links">
                         ${USER_CONTROLLER.IsAuth 
                         ? /*HTML */ 
-                            `<a href="/logout" class="logout">Logout</a>`
+                            `<a href="/logout" class="logout" id="logout">Logout</a>`
                         : /* HTML */
                         `
                             <a href="/register" class="sbcr">Register</a>
@@ -46,6 +71,10 @@ export default class Header extends HTMLElement {
             </header>
         `
     }
+
+    // get logoutBtn() {
+    //     return this.logoutBtn = this.querySelector('#logout')
+    // }
 
     
     _style() {

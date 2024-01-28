@@ -12,7 +12,6 @@ export default class UserInfo extends HTMLElement {
     }
 
     disconnectedCallback() {
-        console.log('disconnected header')
     }
 
     shouldComponentRender() {

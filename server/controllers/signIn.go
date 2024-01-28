@@ -10,6 +10,7 @@ import (
 )
 
 func SignIn(res http.ResponseWriter, req *http.Request) {
+	fmt.Println("Hello from sign in")
 	if req.Method != http.MethodPost {
 		http.Error(res, "Method not allowed", http.StatusMethodNotAllowed)
 		return

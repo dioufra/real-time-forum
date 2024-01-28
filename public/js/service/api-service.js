@@ -1,3 +1,5 @@
+import { navigateTo } from "../routes/routechecker.js";
+
 class ApiService {
     constructor() {
         this.baseURL = 'http://your-backend-api-url'; // Replace with your actual backend API URL

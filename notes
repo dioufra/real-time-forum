@@ -1,3 +1,5 @@
 [] Prevent the login handler from begin called a second time login using USER_CONTROLLER.fetchData()
 
 [] Prevent the home controller from being called twice on page refresh
+
+[] Add a class for all global data (auth, setAuth, getAuth)

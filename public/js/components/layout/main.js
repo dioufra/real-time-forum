@@ -9,6 +9,8 @@ export default class Main extends HTMLElement {
     constructor() {
         super()
         this.isAuth = false
+       
+
         this.registerUser = (event) => {
             API_SERVICE.registerUser(event.detail.user)
         }
@@ -30,10 +32,10 @@ export default class Main extends HTMLElement {
     }
 
     connectedCallback() {
-        console.log('called')
         this.render()
         this.addEventListener('rt-register', this.registerUser)
         this.addEventListener('rt-login', this.loginUser)
+        this.logoutBtn?.addEventListener('click', this.logout)
     }
 
     disconnectedCallback() {
@@ -45,7 +47,7 @@ export default class Main extends HTMLElement {
     }
 
     render() {
-        console.log('rendering');
+        console.log('rendering', ROUTER.currentRoute);
         this.innerHTML = /* HTML */ `
         ${!this.isAuth ? /* HTML */ ` 
             <main>
@@ -55,14 +57,26 @@ export default class Main extends HTMLElement {
                 </div>
                 <div class="contents">
                     ${ROUTER.currentRoute === '/register' ?
-                    `<c-register class="form-f"></c-register>`
+                        `<c-register class="form-f"></c-register>`
                     :
-                    `<c-login class="form-f"></c-login>`
-                }
+                    `
+                    ${ROUTER.currentRoute === '/login' ?
+                        `<c-login class="form-f"></c-login>`
+                    :
+                    `
+                    <div class="left-des">
+                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Autem dolorem eveniet quaerat maxime accusantium q</p>
+                    <div class="auth-btns">
+                        <a href="/register" class="sbcr">Register</a>
+                        <a href="/login" class="join">Join us</a>
+                    </div>
+                    </div>
+                    `
+                    }
+                    `
+                    }
                     <div class="rigth-des">
-                        <div class="rigth-content">
-                            Join us <br> share <br>enjoy
-                        </div>
+                        <div class="rigth-content">Join us <br> share <br>enjoy</div>
                     </div>
                 </div>          
             </main> 
@@ -74,9 +88,7 @@ export default class Main extends HTMLElement {
                 <c-posts-container class="sc-post" ></c-posts-container>
             </main>
         `
-        }
-        
-        `
+        }`
     }
 
     get header() {
