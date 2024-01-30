@@ -1,3 +1,4 @@
+import { POST_CONTROLLER } from "../../controllers/post.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
 import { updateComponents } from "../../script.js"
 
@@ -11,8 +12,9 @@ export default class Socket extends HTMLElement {
     connectedCallback() {
         // console.log(this)
         this.render()
-        this.checkOnlineUsersLitener()
-        this.checkAllUsersLitener()
+        this.checkOnlineUsersListener()
+        this.checkAllUsersListener()
+        this.checkAllPostsListener()
     }
     disconnectedCallback() {
         console.log('disconnected')
@@ -46,16 +48,22 @@ export default class Socket extends HTMLElement {
             });
         }
     }
-    checkOnlineUsersLitener(){
+    checkOnlineUsersListener(){
         this.addEventListener('broadcastOnlineUsers',e => {
             console.log("broadcastOnlineUsers",this.storedData)
             USER_CONTROLLER.setOnlineUsers(this.storedData)
         })
     }
-    checkAllUsersLitener(){
+    checkAllUsersListener(){
         this.addEventListener('broadcastAllUsers',e => {
             console.log("broadcastAllUsers",this.storedData)
             USER_CONTROLLER.setAllUsers(this.storedData)
+        })
+    }
+    checkAllPostsListener(){
+        this.addEventListener('broadcastAllPosts',e => {
+            console.log("broadcastAllPosts",this.storedData)
+            POST_CONTROLLER.setPosts(this.storedData)
         })
     }
     render(){

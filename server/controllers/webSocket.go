@@ -37,6 +37,7 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	clientsMutex.Unlock()
 	BroadcastOnlineUsers()
 	BroadcastAllUsers()
+	BroadcastAllPosts()
 
 	defer func() {
 		// Remove the client when the connection is closed
@@ -100,6 +101,24 @@ func BroadcastAllUsers() {
 			}
 		}
 		response := map[string]interface{}{"event": "broadcastAllUsers", "data": data}
+		err := client.WriteJSON(response)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+}
+func BroadcastAllPosts() {
+	// Iterate through all connected clients and send the message
+	clientsMutex.Lock()
+	defer clientsMutex.Unlock()
+
+	posts, err := models.PostRepo.GetAllPost()
+	if err != nil {
+		fmt.Println("Error getting posts", err)
+		return
+	}
+	for client, _ := range clients { //send data
+		response := map[string]interface{}{"event": "broadcastAllPosts", "data": posts}
 		err := client.WriteJSON(response)
 		if err != nil {
 			log.Println(err)
