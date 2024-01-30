@@ -99,6 +99,7 @@ func CheckRequest(r *http.Request, path, method string) (bool, int) {
 	}
 }
 func DeleteSessio(db *sql.DB, ssid string) error {
+	fmt.Println("deleting session")
 	req := `DELETE from Session Where sessionId=?;`
 	_, err := db.Exec(req, ssid)
 	return err

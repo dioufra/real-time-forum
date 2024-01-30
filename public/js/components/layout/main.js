@@ -20,10 +20,14 @@ export default class Main extends HTMLElement {
             API_SERVICE.loginUser(event.detail.user)
                 .then(data => {
                     this.isAuth = data.user.IsAuth
-                    USER_CONTROLLER.setIsAuth(data.user.IsAuth)
-                    USER_CONTROLLER.setUser(data)
-                    POST_CONTROLLER.setPosts(data.posts)
-                    CATEGORY_CONTROLLER.setCategories(data.categories)
+                    if (data.user.IsAuth) {
+                        USER_CONTROLLER.setIsAuth(data.user.IsAuth)
+                        USER_CONTROLLER.setUser(data)
+                        POST_CONTROLLER.setPosts(data.posts)
+                        CATEGORY_CONTROLLER.setCategories(data.categories)
+                        navigateTo('post')
+                    } else
+                        navigateTo('login')
                 })
                 .catch(error => {
                     console.error(error);
@@ -35,7 +39,6 @@ export default class Main extends HTMLElement {
         this.render()
         this.addEventListener('rt-register', this.registerUser)
         this.addEventListener('rt-login', this.loginUser)
-        this.logoutBtn?.addEventListener('click', this.logout)
     }
 
     disconnectedCallback() {
@@ -49,7 +52,7 @@ export default class Main extends HTMLElement {
     render() {
         console.log('rendering', ROUTER.currentRoute);
         this.innerHTML = /* HTML */ `
-        ${!this.isAuth ? /* HTML */ ` 
+        ${!USER_CONTROLLER.IsAuth ? /* HTML */ ` 
             <main>
                 <div class="main-content">
                     Communnicate <br>
@@ -97,5 +100,9 @@ export default class Main extends HTMLElement {
 
     get form() {
         return this.querySelector('form')
+    }
+
+    get logoutBtn() {
+        return this.querySelector('#logout')
     }
 }

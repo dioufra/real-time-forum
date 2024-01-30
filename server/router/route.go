@@ -11,7 +11,7 @@ func Route() {
 
 	http.HandleFunc("/api/login", middlewares.Ispath(middlewares.IsAuth(controllers.SignIn), "/api/login"))
 	http.HandleFunc("/api/register", middlewares.Ispath(middlewares.IsAuth(controllers.SignUp), "/api/register"))
-	http.HandleFunc("/api/logout", middlewares.Ispath(middlewares.Log(controllers.SignOut), "/api/logout"))
+	http.HandleFunc("/api/logout",controllers.SignOut)
 	http.HandleFunc("/api/getResponse", middlewares.Ispath(middlewares.Log(controllers.Response), "/api/getResponse"))
 
 

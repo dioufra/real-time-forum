@@ -71,6 +71,7 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 	}
 	res.Header().Set("Content-Type", "application/json")
 
+
 	if err := json.NewEncoder(res).Encode(map[string]any{"message": "Login successful", "user": authUser, "posts": posts, "categories": categories}); err != nil {
 		log.Println("Error encoding JSON response:", err)
 	}

@@ -1,44 +1,44 @@
+import { POST_CONTROLLER } from "../../controllers/post.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
+import { navigateTo } from "../../routes/routechecker.js"
 
 export default class Header extends HTMLElement {
     constructor() {
         super()
         this.isAuth = false
-
-        // this.logout = event => {
-        //     console.log('loging user out');
-        //     fetch('/api/logout', {
-        //         method: 'POST',
-        //         body: JSON.stringify(data),
-        //     }).then(response => {
-        //         if (!response.ok) {
-        //             if (response.status === 400) {
-        //                 response.json()
-        //                     .then(error => {
-        //                         console.log(error)
-        //                     })
-        //             } else {
-        //                 throw new Error('Erreur de réseau');
-        //             }
-        //         }
-        //         return response
-        //     }).then(data => {
-        //         if (data) {
-        //             // Redirect to login page
-        //             navigateTo('login')
-        //         }
-        //     }).catch(console.log);
-        // }
+            this.logout = event => {
+                USER_CONTROLLER.setIsAuth(false)
+                // Implement your logout logic here
+                // You might want to dispatch a custom event for logout or perform other actions
+                fetch('/api/logout')
+                    .then(response => {
+                        if (!response.ok) {
+                            if (response.status === 400) {
+                                const error = response.json()
+                                console.log(error)
+                            } else {
+                                throw new Error('Network error')
+                            }
+                        }
+                        return response
+                        
+                    }).catch(error => {
+                        console.error(error);
+                        throw error;
+                    })
+                    navigateTo('login')
+            }
     }
 
     connectedCallback() {
-        // console.log(this)
         this.render()
-        // this._style()
-        this.logoutBtn?.addEventListener('click', this.logout)
     }
 
     disconnectedCallback() {
+        // Remove event listener or perform cleanup if needed
+        if (this.logoutBtn) {
+            this.logoutBtn.removeEventListener('click', this.logout);
+        }
     }
 
     shouldComponentRender() {
@@ -52,63 +52,33 @@ export default class Header extends HTMLElement {
                 <div class="main-header">
                     <div class="logo" >
                         <a href="/">     
-                            <img src="../../../public/img/LOGO.png"  alt="bg-image">
+                            <img src="../../../public/img/LOGO.png" alt="bg-image">
                         </a>
                     </div>
                 
                     <div class="links">
-                        ${USER_CONTROLLER.IsAuth 
-                        ? /*HTML */ 
-                            `<a href="/logout" class="logout" id="logout">Logout</a>`
-                        : /* HTML */
-                        `
+                        ${USER_CONTROLLER.IsAuth
+                ? /* HTML */
+                `<a id="logout" class="logout">Logout</a>`
+                : /* HTML */
+                `
                             <a href="/register" class="sbcr">Register</a>
                             <a href="/login" class="join">Join us</a>
                         `
-                        }   
+            }   
                     </div>
                 </div>
             </header>
-        `
-    }
+        `;
 
-    // get logoutBtn() {
-    //     return this.logoutBtn = this.querySelector('#logout')
-    // }
-
-    
-    _style() {
-        const style = document.createElement('style')
-        style.textContent = `
-        ${this.tagName} .main-header{
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-        }
-        ${this.tagName} .main-header>.menu-a{
-            padding: 0;
-            background-color: #002ea3;
-            width: 150px;
-            height: 37px;
-            border-radius: 23px;
-            justify-content: center;
-            align-items: center;
-            font-weight: 600;
-        }
-        ${this.tagName} .main-header .join {
-
-        }
-
-        `
-        console.log(this.header)
-        this.appendChild(style)
-            
-        }
-
-        get header() {
-            console.log(this.querySelector('.main-header'))
-            this.querySelector('.main-header')
+        if (USER_CONTROLLER.IsAuth) {
+            this.logoutBtn.addEventListener('click', this.logout);
         }
     }
+
+    get logoutBtn() {
+        console.log(this.querySelector('a#logout'));
+        return this.querySelector('a#logout')
+    }
+
+}

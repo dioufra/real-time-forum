@@ -23,9 +23,9 @@ func NewSessionRepository(db *sql.DB) *SessionRepository {
 	}
 }
 
-func (r *SessionRepository) DeleteSession(sessionId string) error {
+func (r *SessionRepository) DeleteSession(value string) error {
 	req := `DELETE from Session Where sessionId=?;`
-	_, err := r.db.Exec(req, sessionId)
+	_, err := r.db.Exec(req, value)
 	return err
 }
 
@@ -49,7 +49,6 @@ func (r *SessionRepository) GetSessionFromEmail(db *sql.DB, sssid, useremail str
 	}
 	return session, err
 }
-
 
 func (r *SessionRepository) UpdateSession(sssid, useremail string) error {
 	req := `SELECT sessionId, email, datefin from Session Where email='` + useremail + `';`
