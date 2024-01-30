@@ -39,6 +39,26 @@ export default class UserInfo extends HTMLElement {
                     <div><a href="/liked">Liked posts</a></div>
                 </div>
             </div>
+            <div class="user-ac">
+                <div id="show-modal" style="cursor:pointer;">Online Users</div>
+                <div class="user-ac">
+                    ${USER_CONTROLLER.onlineUsers.map(user => `
+                        <div>
+                            ${user.firstname} ${user.lastname}
+                        </div>
+                    `).join('') || "No user online"}
+                </div>
+            </div>
+            <div class="user-ac">
+                <div id="show-modal" style="cursor:pointer;">All Users</div>
+                <div class="user-ac">
+                    ${USER_CONTROLLER.allUsers.map(user => `
+                        <div>
+                            ${user.firstname} ${user.lastname}
+                        </div>
+                    `).join('') || "No user found"}
+                </div>
+            </div>
         `
     }
 

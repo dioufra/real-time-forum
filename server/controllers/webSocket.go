@@ -63,7 +63,7 @@ func BroadcastOnlineUsers() {
 	// Iterate through all connected clients and send the message
 	clientsMutex.Lock()
 	defer clientsMutex.Unlock()
-	data := []models.User{}
+	users := []models.User{}
 
 	for _, email := range clients {
 		user, err := GetUserByEmail(DB, email)
@@ -71,9 +71,16 @@ func BroadcastOnlineUsers() {
 			fmt.Println("user not found")
 			return
 		}
-		data = append(data, user)
+		users = append(users, user)
 	}
-	for client := range clients { //send data
+	for client, email := range clients { //send data
+		data := []models.User{}
+
+		for _, user := range users {
+			if user.Email != email {
+				data = append(data, user)
+			}
+		}
 		response := map[string]interface{}{"event": "broadcastOnlineUsers", "data": data}
 		err := client.WriteJSON(response)
 		if err != nil {
