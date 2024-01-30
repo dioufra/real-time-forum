@@ -34,6 +34,7 @@ class ApiService {
                 body: JSON.stringify(data),
             });
     
+            console.log(response)
             if (!response.ok) {
                 if (response.status === 400) {
                     const error = await response.json()

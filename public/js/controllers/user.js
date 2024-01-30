@@ -10,7 +10,12 @@ class User {
         this.Email = ''
         this.Age = ''
         this.Gender = ''
+        // Data from wesocket
+        this.onlineUsers = []
+        this.allUsers = []
     }
+    setOnlineUsers(data){this.onlineUsers = data}
+    setAllUsers(data){this.allUsers = data}
     setIsAuth(bool){
         this.IsAuth = bool
         updateComponents()

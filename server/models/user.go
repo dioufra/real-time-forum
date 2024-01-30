@@ -27,13 +27,12 @@ type UserData struct {
 }
 
 type UserRepository struct {
-	db *sql.DB
+	DB *sql.DB
 }
-
 
 func (r *UserRepository) Create(user User) (sql.Result, error) {
 	insertQuery := "INSERT INTO Users (firstname,lastname, gender, age, username,email, password) VALUES (?, ?, ?, ?, ?, ?, ?)"
-	result, err := r.db.Exec(insertQuery, user.Firstname, user.Lastname, user.Gender, user.Age, user.Username, user.Email, user.Password)
+	result, err := r.DB.Exec(insertQuery, user.Firstname, user.Lastname, user.Gender, user.Age, user.Username, user.Email, user.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +41,7 @@ func (r *UserRepository) Create(user User) (sql.Result, error) {
 
 func (r *UserRepository) GetUser(user *User, login string) error {
 	req := `SELECT id, email, lastName, firstName, password, username from Users Where email=? OR username=?`
-	row, err := r.db.Query(req, login, login)
+	row, err := r.DB.Query(req, login, login)
 	if err != nil {
 		return err
 	}
@@ -53,20 +52,20 @@ func (r *UserRepository) GetUser(user *User, login string) error {
 }
 func NewUserRepository(db *sql.DB) *UserRepository {
 	return &UserRepository{
-		db: db,
+		DB: db,
 	}
 }
 
 func (r *UserRepository) GetAll() ([]User, error) {
 	var users []User
 	req := `SELECT id, firstname, lastname, username, gender, age, email FROM Users`
-	row, err := r.db.Query(req)
+	row, err := r.DB.Query(req)
 	if err != nil {
 		return nil, err
 	}
 	for row.Next() {
 		var user User
-		row.Scan(user.Id, user.Firstname, user.Lastname, user.Gender, user.Age, user.Username, user.Email)
+		row.Scan(&user.Id, &user.Firstname, &user.Lastname, &user.Gender, &user.Age, &user.Username, &user.Email)
 		users = append(users, user)
 	}
 	return users, nil
@@ -74,7 +73,7 @@ func (r *UserRepository) GetAll() ([]User, error) {
 
 func (r *UserRepository) GetUserByEmail(user *User, email string) error {
 	req := `SELECT id, email, lastName, firstName, username from Users Where email=?`
-	row, err := r.db.Query(req, email)
+	row, err := r.DB.Query(req, email)
 	if err != nil {
 		return err
 	}

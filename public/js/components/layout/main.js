@@ -8,7 +8,6 @@ import {API_SERVICE} from "../../service/api-service.js"
 export default class Main extends HTMLElement {
     constructor() {
         super()
-        this.isAuth = false
         this.registerUser = (event) => {
             API_SERVICE.registerUser(event.detail.user)
         }
@@ -17,7 +16,8 @@ export default class Main extends HTMLElement {
         
             API_SERVICE.loginUser(event.detail.user)
                 .then(data => {
-                    this.isAuth = data.user.IsAuth
+                    console.log('data',data)
+                    USER_CONTROLLER.IsAuth = data.user.IsAuth
                     USER_CONTROLLER.setIsAuth(data.user.IsAuth)
                     USER_CONTROLLER.setUser(data)
                     POST_CONTROLLER.setPosts(data.posts)
@@ -47,7 +47,7 @@ export default class Main extends HTMLElement {
     render() {
         console.log('rendering');
         this.innerHTML = /* HTML */ `
-        ${!this.isAuth ? /* HTML */ ` 
+        ${!USER_CONTROLLER.IsAuth ? /* HTML */ ` 
             <main>
                 <div class="main-content">
                     Communnicate <br>

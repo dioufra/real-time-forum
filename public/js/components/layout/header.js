@@ -3,7 +3,6 @@ import { USER_CONTROLLER } from "../../controllers/user.js"
 export default class Header extends HTMLElement {
     constructor() {
         super()
-        this.isAuth = false
     }
 
     connectedCallback() {
