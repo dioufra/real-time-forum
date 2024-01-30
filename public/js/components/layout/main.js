@@ -19,7 +19,6 @@ export default class Main extends HTMLElement {
         
             API_SERVICE.loginUser(event.detail.user)
                 .then(data => {
-                    this.isAuth = data.user.IsAuth
                     if (data.user.IsAuth) {
                         USER_CONTROLLER.setIsAuth(data.user.IsAuth)
                         USER_CONTROLLER.setUser(data)

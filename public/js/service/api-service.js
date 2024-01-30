@@ -46,7 +46,7 @@ class ApiService {
             }
             return  await response.json()
         } catch (error) {
-            console.error(error);
+            console.log(error);
             throw error;  // Re-throw the error so it can be caught in the calling code
         }
     }
