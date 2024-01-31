@@ -8,9 +8,6 @@ import {API_SERVICE} from "../../service/api-service.js"
 export default class Main extends HTMLElement {
     constructor() {
         super()
-        this.isAuth = false
-       
-
         this.registerUser = (event) => {
             API_SERVICE.registerUser(event.detail.user)
         }
@@ -22,6 +19,7 @@ export default class Main extends HTMLElement {
                     if (data.user.IsAuth) {
                         USER_CONTROLLER.setIsAuth(data.user.IsAuth)
                         USER_CONTROLLER.setUser(data)
+                        USER_CONTROLLER.auth = data.user
                         POST_CONTROLLER.setPosts(data.posts)
                         CATEGORY_CONTROLLER.setCategories(data.categories)
                         navigateTo('post')

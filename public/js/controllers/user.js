@@ -11,11 +11,11 @@ class User {
         this.Age = ''
         this.Gender = ''
     }
-    setIsAuth(bool){
+    setIsAuth(bool) {
         this.IsAuth = bool
         updateComponents()
     }
-    setUser(data){
+    setUser(data) {
         this.IsAuth = data.user.IsAuth || this.IsAuth
         this.FirstName = data.user.Firstname || this.FirstName
         this.LastName = data.user.Lastname || this.LastName
@@ -25,7 +25,7 @@ class User {
         this.Gender = data.user.Gender || this.Gender
         updateComponents()
     }
-    disconnect(){
+    disconnect() {
         this.IsAuth = false
         this.FirstName = ''
         this.LastName = ''
@@ -37,12 +37,26 @@ class User {
         navigateTo('login')
         updateComponents()
     }
-    
-    fetchData(){
+
+    fetchData() {
         fetch('/api/getResponse')
-        .then(response => response)
-        .then(data => console.log(data))
-        .catch(console.log)
+            .then(response => response)
+            .then(data => console.log(data))
+            .catch(console.log)
     }
+
+    get auth() {
+        const auth = self.localStorage.getItem('auth')
+        return auth ? JSON.parse(auth) : null
+    }
+
+    set auth(auth) {
+        if (auth) {
+            self.localStorage.setItem('auth', JSON.stringify(auth))
+        } else {
+            self.localStorage.removeItem('auth')
+        }
+    }
+
 }
 export const USER_CONTROLLER = new User()
