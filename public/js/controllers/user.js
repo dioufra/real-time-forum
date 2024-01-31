@@ -41,15 +41,7 @@ class User {
         this.Age = ''
         this.Gender = ''
 
-        navigateTo('login')
         updateComponents()
-    }
-    
-    fetchData(){
-        fetch('/api/getResponse')
-        .then(response => response)
-        .then(data => console.log(data))
-        .catch(console.log)
     }
 }
 export const USER_CONTROLLER = new User()

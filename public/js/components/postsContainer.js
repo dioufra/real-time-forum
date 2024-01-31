@@ -7,13 +7,10 @@ export default class PostsContainer extends HTMLElement {
     }
 
     connectedCallback() {
-        // console.log(this)
         this.render()
-        // this._style()
     }
 
     disconnectedCallback() {
-        console.log('disconnected header')
     }
 
     shouldComponentRender() {
@@ -96,7 +93,6 @@ export default class PostsContainer extends HTMLElement {
     }
 
     get header() {
-        console.log(this.querySelector('.main-header'))
         this.querySelector('.main-header')
     }
 }

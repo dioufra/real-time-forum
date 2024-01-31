@@ -10,17 +10,15 @@ export default class Socket extends HTMLElement {
     }
 
     connectedCallback() {
-        // console.log(this)
         this.render()
         this.checkUserInfosListener()
         this.checkOnlineUsersListener()
         this.checkAllUsersListener()
         this.checkAllPostsListener()
         this.checkAllCategoriesListener()
-        this.checkLogoutListener()
+        this.checkDisconnectListener()
     }
     disconnectedCallback() {
-        console.log('disconnected')
     }
     connectWebSocket(){
         if (!this.isSocketConnected) {
@@ -49,6 +47,17 @@ export default class Socket extends HTMLElement {
                 // console.error("WebSocket error:", event);
             });
         }
+    }
+    checkDisconnectListener(){
+        document.addEventListener('disconnectWebSocket',e => {
+                fetch('/api/sign_out',{
+                    method:'POST'
+                }).then(response => {
+                    this.socket?.close()
+                    USER_CONTROLLER.disconnect()
+                })
+                .catch(console.log)
+        })
     }
     checkUserInfosListener(){
         this.addEventListener('broadcastUserInfos',e => {
@@ -80,18 +89,6 @@ export default class Socket extends HTMLElement {
             CATEGORY_CONTROLLER.setCategories(e.detail.data)
         })
     }
-    checkLogoutListener(){
-        document.addEventListener('disconnectWebSocket',e => {
-                fetch('/api/sign_out',{
-                    method:'POST'
-                }).then(response => {
-                    this.socket?.close()
-                    USER_CONTROLLER.IsAuth = false
-                    updateComponents()
-                })
-                .catch(console.log)
-        })
-    }
     render(){
         this.connectWebSocket()
         this.innerHTML= `
@@ -100,7 +97,6 @@ export default class Socket extends HTMLElement {
         `
     }
     get header() {
-        console.log(this.querySelector('.main-header'))
         this.querySelector('.main-header')
     }
 }

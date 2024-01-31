@@ -8,14 +8,12 @@ export default class Pagination extends HTMLElement {
     }
 
     connectedCallback() {
-        // console.log(this)
         this.render()
         this.checkButtonClickListener()
         this.filterPosts(PAGINATION_CONTROLLER.CurrentPage)
     }
 
     disconnectedCallback() {
-        console.log('disconnected header')
     }
 
     shouldComponentRender() {
@@ -39,7 +37,6 @@ export default class Pagination extends HTMLElement {
         POST_CONTROLLER.filteredPosts = POST_CONTROLLER.posts.filter((post,index)=> {
             return index>(page-1)*10 && index < (page*10)
         })
-        console.log('filterdPosts',POST_CONTROLLER.filteredPosts)
     }
     render() {
         this.innerHTML = /* HTML */ `
@@ -53,7 +50,6 @@ export default class Pagination extends HTMLElement {
     }
 
     get header() {
-        console.log(this.querySelector('.main-header'))
         this.querySelector('.main-header')
     }
 }

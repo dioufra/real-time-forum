@@ -7,13 +7,11 @@ export default class UserInfo extends HTMLElement {
     }
 
     connectedCallback() {
-        // console.log(this)
         this.render()
         this.checkButtonClickListener()
     }
 
     disconnectedCallback() {
-        console.log('disconnected header')
     }
 
     shouldComponentRender() {
@@ -75,7 +73,6 @@ export default class UserInfo extends HTMLElement {
     }
 
     get header() {
-        console.log(this.querySelector('.main-header'))
         this.querySelector('.main-header')
     }
 }

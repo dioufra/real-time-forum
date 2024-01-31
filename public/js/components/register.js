@@ -1,3 +1,5 @@
+import { FORM_CONTROLLER } from "../controllers/form.js"
+
 export default class Register extends HTMLElement {
     constructor() {
         super()
@@ -21,6 +23,7 @@ export default class Register extends HTMLElement {
     connectedCallback() {
         if (this.shouldComponentRender) this.render()
         this.addEventListener('submit', this.formSubmission)
+        this.checkInputListener()
     }
 
     disconnectedCallback() {
@@ -31,32 +34,43 @@ export default class Register extends HTMLElement {
         return !this.innerHTML
     }
 
+    checkInputListener(){
+        this.addEventListener('input',e => {
+            FORM_CONTROLLER.setInput('register',e.target)
+        })
+    }
+
     render() {
         this.innerHTML = /* HTML */ `
         <div class="form-ff">
             <div class="title-form">
                 <p class="title-form">Register</p>
             </div>
-            <p class="error-message"></p>
+            <p class="error-message">${FORM_CONTROLLER.errors.register || ''}</p>
             <form id="register-form" action="/api/register" method="post">
                 <div class="input-form">
-                    <input type="text" name="firstname" placeholder="firstname">
+                    <input type="text" name="firstname" placeholder="firstname" 
+                        value="${FORM_CONTROLLER.forms?.register?.firstname ||''}" >
                 </div>
 
                 <div class="input-form">
-                    <input type="text" name="lastname" placeholder="lastname">
+                    <input type="text" name="lastname" placeholder="lastname"
+                        value="${FORM_CONTROLLER.forms?.register?.lastname ||''}" >
                 </div>
 
                 <div class="input-form">
-                    <input type="text" name="username" placeholder="username">
+                    <input type="text" name="username" placeholder="username"
+                        value="${FORM_CONTROLLER.forms?.register?.lastname ||''}" >
                 </div>
 
                 <div class="input-form">
-                    <input type="email" name="email" placeholder="email">
+                    <input type="email" name="email" placeholder="email"
+                        value="${FORM_CONTROLLER.forms?.register?.email ||''}" >
                 </div>
 
                 <div class="input-form">
-                <input type="number" name="age" placeholder="age" required />
+                <input type="number" name="age" placeholder="age" required 
+                    value="${FORM_CONTROLLER.forms?.register?.age ||''}" />
                 </div>
                 <div class="input-form">
                     <span>Gender:</span>
@@ -67,11 +81,13 @@ export default class Register extends HTMLElement {
                 </div>
 
                 <div class="input-form">
-                    <input type="password" name="password" placeholder="password">
+                    <input type="password" name="password" placeholder="password"
+                        value="${FORM_CONTROLLER.forms?.register?.password ||''}" >
                 </div>
 
                 <div class="input-form">
-                    <input type="password" name="repeatpassword" placeholder="repeat password">
+                    <input type="password" name="repeatpassword" placeholder="repeat password"
+                        value="${FORM_CONTROLLER.forms?.register?.repeatpassword ||''}" >
                 </div>
 
                 <button class="submit-btn" type="submit">register</button>

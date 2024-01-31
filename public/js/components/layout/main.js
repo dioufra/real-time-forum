@@ -15,7 +15,6 @@ export default class Main extends HTMLElement {
         
             API_SERVICE.loginUser(event.detail.user)
                 .then(data => {
-                    console.log('data',data)
                     updateComponents()
                 })
                 .catch(error => {
@@ -25,14 +24,12 @@ export default class Main extends HTMLElement {
     }
 
     connectedCallback() {
-        console.log('called')
         this.render()
         this.addEventListener('rt-register', this.registerUser)
         this.addEventListener('rt-login', this.loginUser)
     }
 
     disconnectedCallback() {
-        console.log('disconnected main')
     }
 
     shouldComponentRender() {
@@ -40,7 +37,6 @@ export default class Main extends HTMLElement {
     }
 
     render() {
-        console.log('rendering');
         this.innerHTML = /* HTML */ `
         ${!USER_CONTROLLER.IsAuth ? /* HTML */ ` 
             <main>
