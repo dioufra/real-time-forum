@@ -1,3 +1,8 @@
 [] Prevent the login handler from begin called a second time login using USER_CONTROLLER.fetchData()
 
 [] Prevent the home controller from being called twice on page refresh
+
+// Todo list
+manage logout
+pagination
+like dislike

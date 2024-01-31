@@ -40,9 +40,10 @@ export default class PostsContainer extends HTMLElement {
                 </div>
             </div>
         </div>
+        <c-pagination class="pagination"></c-pagination>
         <div class="posts">
         ${
-            POST_CONTROLLER.posts.map(post => (`
+            POST_CONTROLLER.filteredPosts.map(post => (`
                 <div class="post-teaser">
                     <div class="head">
                         <div class="ctn">
@@ -55,7 +56,9 @@ export default class PostsContainer extends HTMLElement {
                             </div>
                         </div>
                         <div class="feather">
-                            <span class="cm-time">  ${post.categories} </span>
+                            ${post.Categories.split(' ').map(cat => `
+                                <span class="cm-time">${cat}</span>
+                            `).join('')} 
                         </div>
                     </div>
                     <div class="text-area">

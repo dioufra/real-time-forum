@@ -2,9 +2,8 @@ import { updateComponents } from "../script.js";
 
 class PaginationController {
     constructor() {
-        this.Iterate = 1
-        this.LastPage = 4
-        this.CurrentPage = 2
+        this.PageSize = 10
+        this.CurrentPage = 1
     }
     setPaginationData({Iterate,LastPage,CurrentPage}){
         this.Iterate = Iterate || this.Iterate

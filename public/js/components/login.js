@@ -1,3 +1,5 @@
+import { ERROR_CONTROLLER } from "../controllers/error.js"
+
 export default class Login extends HTMLElement {
     constructor() {
         super()
@@ -23,6 +25,7 @@ export default class Login extends HTMLElement {
         this.render()
         // this._style()
         this.addEventListener('submit', this.formSubmission)
+        
     }
 
     disconnectedCallback() {
@@ -39,7 +42,7 @@ export default class Login extends HTMLElement {
                 <div class="title-form">
                     <p class="title-form">Connexion</p>
                 </div>
-                <p class="error-message"></p>
+                <p class="error-message">${ERROR_CONTROLLER.errors.login || 'no'}</p>
                 <form class="connection-form" action="/api/login" method="post">
                 <div class="input-form">
                     <input type="text" name="login" placeholder="email or username" >

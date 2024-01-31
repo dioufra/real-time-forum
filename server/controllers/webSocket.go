@@ -35,9 +35,11 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	clientsMutex.Lock()
 	clients[conn] = email
 	clientsMutex.Unlock()
+	BroadcastUserInfos(conn, email)
 	BroadcastOnlineUsers()
 	BroadcastAllUsers()
 	BroadcastAllPosts()
+	BroadcastAllCategories()
 
 	defer func() {
 		// Remove the client when the connection is closed
@@ -59,6 +61,20 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+func BroadcastUserInfos(client *websocket.Conn, email string) {
+	user, err := GetUserByEmail(DB, email)
+	if err != nil {
+		fmt.Println("user not found")
+		return
+	}
+
+	response := map[string]interface{}{"event": "broadcastUserInfos", "data": user}
+	err = client.WriteJSON(response)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
 func BroadcastOnlineUsers() {
 	// Iterate through all connected clients and send the message
 	clientsMutex.Lock()
@@ -126,6 +142,24 @@ func BroadcastAllPosts() {
 	}
 	for client, _ := range clients { //send data
 		response := map[string]interface{}{"event": "broadcastAllPosts", "data": posts}
+		err := client.WriteJSON(response)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+}
+func BroadcastAllCategories() {
+	// Iterate through all connected clients and send the message
+	clientsMutex.Lock()
+	defer clientsMutex.Unlock()
+
+	categories, err := models.CategoryRepo.GetCategories()
+	if err != nil {
+		fmt.Println("Error retrieving categories: ", err)
+		return
+	}
+	for client, _ := range clients { //send data
+		response := map[string]interface{}{"event": "broadcastAllCategories", "data": categories}
 		err := client.WriteJSON(response)
 		if err != nil {
 			log.Println(err)

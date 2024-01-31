@@ -1,3 +1,4 @@
+import { CATEGORY_CONTROLLER } from "../../controllers/categorie.js"
 import { POST_CONTROLLER } from "../../controllers/post.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
 import { updateComponents } from "../../script.js"
@@ -12,9 +13,12 @@ export default class Socket extends HTMLElement {
     connectedCallback() {
         // console.log(this)
         this.render()
+        this.checkUserInfosListener()
         this.checkOnlineUsersListener()
         this.checkAllUsersListener()
         this.checkAllPostsListener()
+        this.checkAllCategoriesListener()
+        this.checkLogoutListener()
     }
     disconnectedCallback() {
         console.log('disconnected')
@@ -22,31 +26,37 @@ export default class Socket extends HTMLElement {
     connectWebSocket(){
         if (!this.isSocketConnected) {
             // Créer une connexion WebSocket
-            const socket = new WebSocket("ws://localhost:8080/api/ws/",);
+            this.socket = new WebSocket("ws://localhost:8080/api/ws/",);
             // Gérer les événements de la connexion WebSocket
-            socket.addEventListener("open", (event) => {
+            this.socket.addEventListener("open", (event) => {
                 console.log("WebSocket connection opened:", event);
                 this.isSocketConnected = true
                 USER_CONTROLLER.IsAuth = true
                 updateComponents()
             });
-            socket.addEventListener("message", (event) => {
+            this.socket.addEventListener("message", (event) => {
                 let response = JSON.parse(event.data)
                 // Mettre à jour le storedData
                 this.storedData = response.data
                 this.dispatchEvent(new Event(response.event))
                 updateComponents()
             });
-            socket.addEventListener("close", (event) => {
+            this.socket.addEventListener("close", (event) => {
                 console.log("WebSocket connection closed:", event);
                 this.isSocketConnected = false
                 USER_CONTROLLER.IsAuth = false
             });
             // Gérer les erreurs WebSocket
-            socket.addEventListener("error", (event) => {
-                console.error("WebSocket error:", event);
+            this.socket.addEventListener("error", (event) => {
+                // console.error("WebSocket error:", event);
             });
         }
+    }
+    checkUserInfosListener(){
+        this.addEventListener('broadcastUserInfos',e => {
+            console.log("broadcastUserInfos",this.storedData)
+            USER_CONTROLLER.setUser(this.storedData)
+        })
     }
     checkOnlineUsersListener(){
         this.addEventListener('broadcastOnlineUsers',e => {
@@ -64,6 +74,24 @@ export default class Socket extends HTMLElement {
         this.addEventListener('broadcastAllPosts',e => {
             console.log("broadcastAllPosts",this.storedData)
             POST_CONTROLLER.setPosts(this.storedData)
+        })
+    }
+    checkAllCategoriesListener(){
+        this.addEventListener('broadcastAllCategories',e => {
+            console.log("broadcastAllCategories",this.storedData)
+            CATEGORY_CONTROLLER.setCategories(this.storedData)
+        })
+    }
+    checkLogoutListener(){
+        document.addEventListener('disconnectWebSocket',e => {
+                fetch('/api/sign_out',{
+                    method:'POST'
+                }).then(response => {
+                    this.socket?.close()
+                    USER_CONTROLLER.IsAuth = false
+                    updateComponents()
+                })
+                .catch(console.log)
         })
     }
     render(){

@@ -1,8 +1,7 @@
-import { CATEGORY_CONTROLLER } from "../../controllers/categorie.js"
-import { POST_CONTROLLER } from "../../controllers/post.js"
+
 import { USER_CONTROLLER } from "../../controllers/user.js"
-import { navigateTo } from "../../routes/routechecker.js"
 import { ROUTER } from "../../routes/routes.js"
+import { updateComponents } from "../../script.js"
 import {API_SERVICE} from "../../service/api-service.js"
 
 export default class Main extends HTMLElement {
@@ -17,11 +16,7 @@ export default class Main extends HTMLElement {
             API_SERVICE.loginUser(event.detail.user)
                 .then(data => {
                     console.log('data',data)
-                    USER_CONTROLLER.IsAuth = data.user.IsAuth
-                    USER_CONTROLLER.setIsAuth(data.user.IsAuth)
-                    USER_CONTROLLER.setUser(data)
-                    POST_CONTROLLER.setPosts(data.posts)
-                    CATEGORY_CONTROLLER.setCategories(data.categories)
+                    updateComponents()
                 })
                 .catch(error => {
                     console.error(error);

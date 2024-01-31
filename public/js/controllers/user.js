@@ -3,6 +3,7 @@ import { updateComponents } from "../script.js"
 
 class User {
     constructor() {
+        this.Id = 0
         this.IsAuth = false
         this.FirstName = ''
         this.LastName = ''
@@ -20,14 +21,15 @@ class User {
         this.IsAuth = bool
         updateComponents()
     }
-    setUser(data){
-        this.IsAuth = data.user.IsAuth || this.IsAuth
-        this.FirstName = data.user.Firstname || this.FirstName
-        this.LastName = data.user.Lastname || this.LastName
-        this.UserName = data.user.Username || this.UserName
-        this.Email = data.user.Email || this.Email
-        this.Age = data.user.Age || this.Age
-        this.Gender = data.user.Gender || this.Gender
+    setUser(user){
+        this.Id = user.id || this.Id
+        this.IsAuth = user.IsAuth || this.IsAuth
+        this.FirstName = user.firstname || this.FirstName
+        this.LastName = user.lastname || this.LastName
+        this.UserName = user.username || this.UserName
+        this.Email = user.email || this.Email
+        this.Age = user.age || this.Age
+        this.Gender = user.gender || this.Gender
         updateComponents()
     }
     disconnect(){

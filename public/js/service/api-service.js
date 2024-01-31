@@ -1,3 +1,5 @@
+import { ERROR_CONTROLLER } from "../controllers/error.js";
+
 class ApiService {
     constructor() {
         this.baseURL = 'http://your-backend-api-url'; // Replace with your actual backend API URL
@@ -38,7 +40,8 @@ class ApiService {
             if (!response.ok) {
                 if (response.status === 400) {
                     const error = await response.json()
-                    console.log(error)
+                    ERROR_CONTROLLER.setError('login',error.message)
+                    return
                 } else {
                     throw new Error('Network error')
                 }

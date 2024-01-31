@@ -33,6 +33,7 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 	// might consider creating a response function
 	if !ok {
 		fmt.Println("Wrong credential")
+		res.WriteHeader(http.StatusBadRequest)
 		if err := json.NewEncoder(res).Encode(map[string]any{"message": "wrong credential", "user": models.UserResponseData{}}); err != nil {
 			log.Println("Error encoding JSON response:", err)
 		}
@@ -48,30 +49,7 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	authUser := models.UserResponseData{
-		Id:        user.Id,
-		IsAuth:    true,
-		Firstname: user.Firstname,
-		Lastname:  user.Lastname,
-	}
-
-	posts, err := models.PostRepo.GetAllPost()
-	if err != nil {
-		fmt.Println("Error getting posts", err)
-		return
-	}
-
-	_, postCats := models.CategoryRepo.GetPostCategories()
-
-	fmt.Println(postCats)
-
-	categories, err := models.CategoryRepo.GetCategories()
-
-	if err != nil {
-		fmt.Println("Error retrieving categories: ", err)
-	}
-
-	if err := json.NewEncoder(res).Encode(map[string]any{"message": "Login successful", "user": authUser, "posts": posts, "categories": categories}); err != nil {
+	if err := json.NewEncoder(res).Encode(map[string]any{"message": "Login successful"}); err != nil {
 		log.Println("Error encoding JSON response:", err)
 	}
 

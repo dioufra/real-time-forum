@@ -1,4 +1,5 @@
 import { USER_CONTROLLER } from "../../controllers/user.js"
+import { navigateTo } from "../../routes/routechecker.js"
 
 export default class Header extends HTMLElement {
     constructor() {
@@ -7,6 +8,7 @@ export default class Header extends HTMLElement {
 
     connectedCallback() {
         // console.log(this)
+        this.checkButtonClickListener()
         this.render()
         // this._style()
     }
@@ -18,6 +20,18 @@ export default class Header extends HTMLElement {
     shouldComponentRender() {
         console.log(this.innerHTML)
         return !this.innerHTML
+    }
+    checkButtonClickListener(){
+        // Handle navigation when a link is clicked
+        this.addEventListener('click', function (event) {
+            if (event.target.tagName === 'A' ) {
+                event.preventDefault();
+                if (event.target.href.split('/').reverse()[0] === 'logout') {
+                    document.dispatchEvent(new Event('disconnectWebSocket'))
+                }
+                navigateTo(event.target.href);
+            }
+        });
     }
 
     render() {
