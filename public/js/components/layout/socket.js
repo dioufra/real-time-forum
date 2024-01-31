@@ -7,7 +7,6 @@ export default class Socket extends HTMLElement {
     constructor() {
         super()
         this.isSocketConnected = false
-        this.storedData = []
     }
 
     connectedCallback() {
@@ -36,9 +35,8 @@ export default class Socket extends HTMLElement {
             });
             this.socket.addEventListener("message", (event) => {
                 let response = JSON.parse(event.data)
-                // Mettre à jour le storedData
-                this.storedData = response.data
-                this.dispatchEvent(new Event(response.event))
+                // Faire un Dipach Event
+                this.dispatchEvent(new CustomEvent(response.event,{detail:{data:response.data}}))
                 updateComponents()
             });
             this.socket.addEventListener("close", (event) => {
@@ -54,32 +52,32 @@ export default class Socket extends HTMLElement {
     }
     checkUserInfosListener(){
         this.addEventListener('broadcastUserInfos',e => {
-            console.log("broadcastUserInfos",this.storedData)
-            USER_CONTROLLER.setUser(this.storedData)
+            console.log("broadcastUserInfos",e.detail.data)
+            USER_CONTROLLER.setUser(e.detail.data)
         })
     }
     checkOnlineUsersListener(){
         this.addEventListener('broadcastOnlineUsers',e => {
-            console.log("broadcastOnlineUsers",this.storedData)
-            USER_CONTROLLER.setOnlineUsers(this.storedData)
+            console.log("broadcastOnlineUsers",e.detail.data)
+            USER_CONTROLLER.setOnlineUsers(e.detail.data)
         })
     }
     checkAllUsersListener(){
         this.addEventListener('broadcastAllUsers',e => {
-            console.log("broadcastAllUsers",this.storedData)
-            USER_CONTROLLER.setAllUsers(this.storedData)
+            console.log("broadcastAllUsers",e.detail.data)
+            USER_CONTROLLER.setAllUsers(e.detail.data)
         })
     }
     checkAllPostsListener(){
         this.addEventListener('broadcastAllPosts',e => {
-            console.log("broadcastAllPosts",this.storedData)
-            POST_CONTROLLER.setPosts(this.storedData)
+            console.log("broadcastAllPosts",e.detail.data)
+            POST_CONTROLLER.setPosts(e.detail.data)
         })
     }
     checkAllCategoriesListener(){
         this.addEventListener('broadcastAllCategories',e => {
-            console.log("broadcastAllCategories",this.storedData)
-            CATEGORY_CONTROLLER.setCategories(this.storedData)
+            console.log("broadcastAllCategories",e.detail.data)
+            CATEGORY_CONTROLLER.setCategories(e.detail.data)
         })
     }
     checkLogoutListener(){
