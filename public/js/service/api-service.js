@@ -23,13 +23,7 @@ class ApiService {
                 }
             }
             return response.json()
-        }).then(data => {
-            if (data) {
-                console.log(data)
-                // Redirect to login page
-                navigateTo('login')
-            }
-        }).catch(console.log);
+        })
     }
 
     async loginUser(data) {

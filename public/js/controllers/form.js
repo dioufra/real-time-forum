@@ -13,5 +13,11 @@ class FromController {
         this.forms[form] = this.forms[form] || {}
         this.forms[form][target.name] = target.value
     }
+    resetForms(){
+        this.forms = {}
+    }
+    resetErrors(){
+        this.errors = {}
+    }
 }
 export const FORM_CONTROLLER = new FromController()

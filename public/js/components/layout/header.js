@@ -24,8 +24,10 @@ export default class Header extends HTMLElement {
                 event.preventDefault();
                 if (event.target.href.split('/').reverse()[0] === 'logout') {
                     document.dispatchEvent(new Event('disconnectWebSocket'))
+                    navigateTo('/login');
+                }else{
+                    navigateTo(event.target.href);
                 }
-                navigateTo(event.target.href);
             }
         });
     }
