@@ -28,13 +28,13 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 
 		// Verifiction de inputs
 		fieldsTab := [][]string{
-			{"firstname", "^[A-Za-z]+$", newUser.Firstname},
+			{"firstname", `^(\S)....*$`, newUser.Firstname},
 			{"lastname", "^[A-Za-z]+$", newUser.Lastname},
-			// {"age", "^[0-9]{1,2}$", newUser.Age},
+			{"age", "^[0-9]{1,2}$", newUser.Age},
 			{"gender", "^(Male|Female)$", newUser.Gender},
 			{"username", "^[a-z][a-z0-9]+$", newUser.Username},
 			{"email", `^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`, newUser.Email},
-			{"password", "^(.){4}$", newUser.Password},
+			{"password", "^....+$", newUser.Password},
 		}
 		for _, item := range fieldsTab {
 			field, pattern, str := item[0], item[1], item[2]
@@ -59,6 +59,32 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 				}
 				return
 			}
+		}
+		// Virefy Password Match
+		if newUser.Password != newUser.RepeatPassword {
+			fmt.Println("Error passwords do not match")
+			return
+		}
+
+		// verify if email is used
+		var user models.User
+		if err := models.UserRepo.GetUser(&user, newUser.Email); err != nil {
+			fmt.Println(err)
+			return
+		}
+		if user.Id > 0 {
+			fmt.Println("User already exists")
+			return
+		}
+		// verify if username is used
+		if err := models.UserRepo.GetUser(&user, newUser.Username); err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println("user", user)
+		if user.Id > 0 {
+			fmt.Println("User already exists")
+			return
 		}
 
 		// Hash password

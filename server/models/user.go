@@ -10,14 +10,15 @@ type UserLogin struct {
 }
 
 type User struct {
-	Id        int    `json:"id"`
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
-	Username  string `json:"username"`
-	Gender    string `json:"gender"`
-	Age       string `json:"age"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
+	Id             int    `json:"id"`
+	Firstname      string `json:"firstname"`
+	Lastname       string `json:"lastname"`
+	Username       string `json:"username"`
+	Gender         string `json:"gender"`
+	Age            string `json:"age"`
+	Email          string `json:"email"`
+	Password       string `json:"password"`
+	RepeatPassword string `json:"repeatpassword"`
 }
 
 type UserData struct {

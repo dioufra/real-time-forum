@@ -2,7 +2,8 @@
 
 [] Prevent the home controller from being called twice on page refresh
 
-// Todo list
 [x] manage logout
+
 [x] pagination
-[x] like dislike
+
+[] like dislike

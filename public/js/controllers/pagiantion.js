@@ -2,7 +2,7 @@ import { updateComponents } from "../script.js";
 
 class PaginationController {
     constructor() {
-        this.PageSize = 10
+        this.PageSize = 5
         this.CurrentPage = 1
     }
     setPaginationData({Iterate,LastPage,CurrentPage}){

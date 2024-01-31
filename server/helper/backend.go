@@ -44,7 +44,7 @@ func UpdateSession(db *sql.DB, sssid, useremail string) error {
 		_, errsession = db.Exec("UPDATE Session SET sessionId=?, datefin=? where sessionId=? AND email=?;", sssid, time.Now().Add(time.Hour*24*3), sssid, email)
 	} else {
 		_, errsession = db.Exec("INSERT INTO Session (sessionId,email,datefin) VALUES(?,?,?);", sssid, useremail, time.Now().Add(time.Hour*24*3))
-	}
+	}	
 	return errsession
 
 }
