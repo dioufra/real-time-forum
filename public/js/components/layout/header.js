@@ -5,45 +5,32 @@ import { navigateTo } from "../../routes/routechecker.js"
 export default class Header extends HTMLElement {
     constructor() {
         super()
-        this.isAuth = false
-            this.logout = event => {
-                USER_CONTROLLER.setIsAuth(false)
-                // Implement your logout logic here
-                // You might want to dispatch a custom event for logout or perform other actions
-                fetch('/api/logout')
-                    .then(response => {
-                        if (!response.ok) {
-                            if (response.status === 400) {
-                                const error = response.json()
-                                console.log(error)
-                            } else {
-                                throw new Error('Network error')
-                            }
-                        }
-                        return response
-                        
-                    }).catch(error => {
-                        console.error(error);
-                        throw error;
-                    })
-                    navigateTo('login')
-            }
     }
 
     connectedCallback() {
+        this.checkButtonClickListener()
         this.render()
     }
 
     disconnectedCallback() {
-        // Remove event listener or perform cleanup if needed
-        if (this.logoutBtn) {
-            this.logoutBtn.removeEventListener('click', this.logout);
-        }
     }
 
     shouldComponentRender() {
-        console.log(this.innerHTML)
         return !this.innerHTML
+    }
+    checkButtonClickListener(){
+        // Handle navigation when a link is clicked
+        this.addEventListener('click', function (event) {
+            if (event.target.tagName === 'A' ) {
+                event.preventDefault();
+                if (event.target.href.split('/').reverse()[0] === 'logout') {
+                    document.dispatchEvent(new Event('disconnectWebSocket'))
+                    navigateTo('/login');
+                }else{
+                    navigateTo(event.target.href);
+                }
+            }
+        });
     }
 
     render() {
@@ -76,9 +63,7 @@ export default class Header extends HTMLElement {
         }
     }
 
-    get logoutBtn() {
-        console.log(this.querySelector('a#logout'));
-        return this.querySelector('a#logout')
+    get header() {
+        this.querySelector('.main-header')
     }
-
 }

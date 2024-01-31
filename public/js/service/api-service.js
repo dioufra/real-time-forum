@@ -1,3 +1,4 @@
+import { FORM_CONTROLLER } from "../controllers/form.js";
 import { navigateTo } from "../routes/routechecker.js";
 
 class ApiService {
@@ -13,20 +14,16 @@ class ApiService {
             if (!response.ok) {
                 if (response.status === 400) {
                     response.json()
-                        .then(error => {
-                            console.log(error)
-                        })
+                    .then(error => {
+                        FORM_CONTROLLER.setError('register',error.message)
+                    })
+                    return
                 } else {
                     throw new Error('Erreur de réseau');
                 }
             }
-            return response
-        }).then(data => {
-            if (data) {
-                // Redirect to login page
-                navigateTo('login')
-            }
-        }).catch(console.log);
+            return response.json()
+        })
     }
 
     async loginUser(data) {
@@ -39,7 +36,8 @@ class ApiService {
             if (!response.ok) {
                 if (response.status === 400) {
                     const error = await response.json()
-                    console.log(error)
+                    FORM_CONTROLLER.setError('login',error.message)
+                    return
                 } else {
                     throw new Error('Network error')
                 }

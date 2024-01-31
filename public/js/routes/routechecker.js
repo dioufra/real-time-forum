@@ -5,14 +5,7 @@ import { ROUTER } from "./routes.js";
 document.addEventListener('DOMContentLoaded', function () {
     // Initial setup
     navigateTo(ROUTER.currentRoute)
-
-    // Handle navigation when a link is clicked
-    document.body.addEventListener('click', function (event) {
-        if (event.target.tagName === 'A' ) {
-            event.preventDefault();
-            navigateTo(event.target.href);
-        }
-    });
+    
     // Handle navigation on back/forward button click
     window.addEventListener('popstate', function () {
         navigateTo(window.location.pathname)

@@ -1,4 +1,5 @@
 import { USER_CONTROLLER } from "../controllers/user.js"
+import { navigateTo } from "../routes/routechecker.js"
 
 export default class UserInfo extends HTMLElement {
     constructor() {
@@ -6,9 +7,8 @@ export default class UserInfo extends HTMLElement {
     }
 
     connectedCallback() {
-        // console.log(this)
         this.render()
-        // this._style()
+        this.checkButtonClickListener()
     }
 
     disconnectedCallback() {
@@ -16,6 +16,17 @@ export default class UserInfo extends HTMLElement {
 
     shouldComponentRender() {
         return !this.innerHTML
+    }
+    checkButtonClickListener(){
+        this.addEventListener('click', function (event) {
+            if (event.target.tagName === 'A' ) {
+                event.preventDefault();
+                if (event.target.href.split('/').reverse()[0] === 'logout') {
+                    document.dispatchEvent(new Event('disconnectWebSocket'))
+                }
+                navigateTo(event.target.href);
+            }
+        });
     }
 
     render() {
@@ -28,7 +39,7 @@ export default class UserInfo extends HTMLElement {
                 </a>
                 <p class="user-name">${USER_CONTROLLER.FirstName} ${USER_CONTROLLER.LastName}</p>
                 <div class="dcn-btn">
-                    <a href="/">Disconnet </a href="">
+                    <a href="/logout">Disconnet </a href="">
                 </div>
             </div>
             <div class="user-ac">
@@ -38,11 +49,30 @@ export default class UserInfo extends HTMLElement {
                     <div><a href="/liked">Liked posts</a></div>
                 </div>
             </div>
+            <div class="user-ac">
+                <div id="show-modal" style="cursor:pointer;">Online Users</div>
+                <div class="user-ac">
+                    ${USER_CONTROLLER.onlineUsers.map(user => `
+                        <div>
+                            ${user.firstname} ${user.lastname}
+                        </div>
+                    `).join('') || "No user online"}
+                </div>
+            </div>
+            <div class="user-ac">
+                <div id="show-modal" style="cursor:pointer;">All Users</div>
+                <div class="user-ac">
+                    ${USER_CONTROLLER.allUsers.map(user => `
+                        <div>
+                            ${user.firstname} ${user.lastname}
+                        </div>
+                    `).join('') || "No user found"}
+                </div>
+            </div>
         `
     }
 
     get header() {
-        console.log(this.querySelector('.main-header'))
         this.querySelector('.main-header')
     }
 }

@@ -1,8 +1,9 @@
-import { CATEGORY_CONTROLLER } from "../../controllers/categorie.js"
-import { POST_CONTROLLER } from "../../controllers/post.js"
+
+import { FORM_CONTROLLER } from "../../controllers/form.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
 import { navigateTo } from "../../routes/routechecker.js"
 import { ROUTER } from "../../routes/routes.js"
+import { updateComponents } from "../../script.js"
 import {API_SERVICE} from "../../service/api-service.js"
 
 export default class Main extends HTMLElement {
@@ -10,21 +11,27 @@ export default class Main extends HTMLElement {
         super()
         this.registerUser = (event) => {
             API_SERVICE.registerUser(event.detail.user)
+            .then(data => {
+                console.log(data);
+                if (data) {
+                    console.log(data)
+                    // Redirect to login page
+                    FORM_CONTROLLER.resetForms()
+                    FORM_CONTROLLER.resetErrors()
+                    navigateTo('login')
+                }
+            }).catch(console.log);
         }
         this.loginUser = (event) => {
             if (!event.detail.user) return;
         
             API_SERVICE.loginUser(event.detail.user)
                 .then(data => {
-                    if (data.user.IsAuth) {
-                        USER_CONTROLLER.setIsAuth(data.user.IsAuth)
-                        USER_CONTROLLER.setUser(data)
-                        USER_CONTROLLER.auth = data.user
-                        POST_CONTROLLER.setPosts(data.posts)
-                        CATEGORY_CONTROLLER.setCategories(data.categories)
-                        navigateTo('post')
-                    } else
-                        navigateTo('login')
+                    if (data) {
+                        FORM_CONTROLLER.resetForms()
+                        FORM_CONTROLLER.resetErrors()
+                        navigateTo('/?page=1')
+                    }
                 })
                 .catch(error => {
                     console.error(error);
@@ -39,7 +46,6 @@ export default class Main extends HTMLElement {
     }
 
     disconnectedCallback() {
-        console.log('disconnected main')
     }
 
     shouldComponentRender() {
@@ -47,7 +53,6 @@ export default class Main extends HTMLElement {
     }
 
     render() {
-        console.log('rendering', ROUTER.currentRoute);
         this.innerHTML = /* HTML */ `
         ${!USER_CONTROLLER.IsAuth ? /* HTML */ ` 
             <main>

@@ -2,4 +2,8 @@
 
 [] Prevent the home controller from being called twice on page refresh
 
-[] Add a class for all global data (auth, setAuth, getAuth)
+[x] manage logout
+
+[x] pagination
+
+[] like dislike

@@ -1,26 +1,26 @@
 package controllers
 
 import (
-	"fmt"
+	"encoding/json"
+	"log"
 	"net/http"
-	"real-time-forum/server/models"
+	"time"
 )
 
 func SignOut(res http.ResponseWriter, req *http.Request) {
-	fmt.Println("Hello from logout")
-	sess, err := req.Cookie("sessionid")
-	if err != nil {
-		fmt.Println("Error getting cookie", err)
-		return
+	// Create a new cookie with the same name and set its expiration time to the past
+	clearCookie := http.Cookie{
+		Name:    "sessionid",
+		Value:   "",
+		Expires: time.Now().Add(-time.Hour), // Set expiration time to the past
+		Path:    "/",
 	}
-	err = models.SessionRepo.DeleteSession(sess.Value)
-	if err != nil {
-		fmt.Println("Error Deleting session from database: ", err)
-		return
+	// Add the new cookie to the response
+	http.SetCookie(res, &clearCookie)
+
+	response := map[string]any{"message": "Logout successful"}
+	if err := json.NewEncoder(res).Encode(response); err != nil {
+		log.Println("Error encoding JSON response:", err)
 	}
-	http.SetCookie(res, &http.Cookie{
-		Name:  sess.Name,
-		Path:  sess.Path,
-		Value: "",
-	})
+
 }

@@ -3,10 +3,10 @@ import { updateComponents } from "../script.js";
 class PostController {
     constructor() {
         this.posts = []
+        this.filteredPosts = []
     }
     setPosts(data){
         this.posts = data;
-        this.posts.forEach(_data => console.log(_data.Post))
         updateComponents()
     }
 }

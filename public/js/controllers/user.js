@@ -3,6 +3,7 @@ import { updateComponents } from "../script.js"
 
 class User {
     constructor() {
+        this.Id = 0
         this.IsAuth = false
         this.FirstName = ''
         this.LastName = ''
@@ -10,19 +11,25 @@ class User {
         this.Email = ''
         this.Age = ''
         this.Gender = ''
+        // Data from wesocket
+        this.onlineUsers = []
+        this.allUsers = []
     }
-    setIsAuth(bool) {
+    setOnlineUsers(data){this.onlineUsers = data}
+    setAllUsers(data){this.allUsers = data}
+    setIsAuth(bool){
         this.IsAuth = bool
         updateComponents()
     }
-    setUser(data) {
-        this.IsAuth = data.user.IsAuth || this.IsAuth
-        this.FirstName = data.user.Firstname || this.FirstName
-        this.LastName = data.user.Lastname || this.LastName
-        this.UserName = data.user.Username || this.UserName
-        this.Email = data.user.Email || this.Email
-        this.Age = data.user.Age || this.Age
-        this.Gender = data.user.Gender || this.Gender
+    setUser(user){
+        this.Id = user.id || this.Id
+        this.IsAuth = user.IsAuth || this.IsAuth
+        this.FirstName = user.firstname || this.FirstName
+        this.LastName = user.lastname || this.LastName
+        this.UserName = user.username || this.UserName
+        this.Email = user.email || this.Email
+        this.Age = user.age || this.Age
+        this.Gender = user.gender || this.Gender
         updateComponents()
     }
     disconnect() {
@@ -34,29 +41,7 @@ class User {
         this.Age = ''
         this.Gender = ''
 
-        navigateTo('login')
         updateComponents()
     }
-
-    fetchData() {
-        fetch('/api/getResponse')
-            .then(response => response)
-            .then(data => console.log(data))
-            .catch(console.log)
-    }
-
-    get auth() {
-        const auth = self.localStorage.getItem('auth')
-        return auth ? JSON.parse(auth) : null
-    }
-
-    set auth(auth) {
-        if (auth) {
-            self.localStorage.setItem('auth', JSON.stringify(auth))
-        } else {
-            self.localStorage.removeItem('auth')
-        }
-    }
-
 }
 export const USER_CONTROLLER = new User()
