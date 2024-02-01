@@ -7,6 +7,7 @@ let components = [
     {tagName:'c-posts-container',src:"./components/postsContainer.js"},
     {tagName:'c-socket',src:"./components/layout/socket.js"},
     {tagName:'c-pagination',src:"./components/pagination.js"},
+    {tagName:'c-footer',src:"./components/layout/footer.js"},
     // {tagName:'c-post',src:"./components/post.js"},
 ]
 

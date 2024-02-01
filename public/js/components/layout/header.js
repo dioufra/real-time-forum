@@ -38,7 +38,7 @@ export default class Header extends HTMLElement {
                 <div class="main-header">
                     <div class="logo" >
                         <a href="/">     
-                            <img src="../../../public/img/LOGO.png"  alt="bg-image">
+                            <img src="/img/LOGO.png"  alt="bg-image">
                         </a>
                     </div>
                 
