@@ -9,10 +9,10 @@ export default class PostsContainer extends HTMLElement {
         this.commentPage = true
         this.clickListener = (event) => {
             event.preventDefault()
-            navigateTo(event.target.href)
+            console.log('clicked');
             if (event.target.classList.contains('cmt-title'))
             {
-                console.log('clicked');
+                // navigateTo(event.target.href)
                 let id = parseInt(event.target.href.split('/').reverse()[0])
                 document.dispatchEvent(new CustomEvent('postDetails', {detail: {data: id}}))
             }
@@ -58,7 +58,6 @@ export default class PostsContainer extends HTMLElement {
         ${COMMENT_CONTROLLER.isPostSection
         ?
         `
-        <div class="posts pc">
         <div class="post-teaser">
                 <div class="head">
                     <div class="ctn">
@@ -72,8 +71,8 @@ export default class PostsContainer extends HTMLElement {
                         </div>
                     </div>
                     <div class="feather">
-                        ${COMMENT_CONTROLLER.post.Categories.split(' ').map(cat => `
-                            <span class="cm-time">${cat}</span>
+                        ${COMMENT_CONTROLLER.post.Categories.split(' ').map(category => `
+                            <span class="cm-time">${category}</span>
                         `).join('')
                         } 
                     </div>
@@ -90,7 +89,7 @@ export default class PostsContainer extends HTMLElement {
                 <div class="submenu">
                     <div class="sb-tags">
                         <div class="sb-tags-l like" onclick="Appreciation(${COMMENT_CONTROLLER.post.Id},1,0) ">
-                            <div><img src="/static/img/icones/Heart.svg" alt=""></div>
+                            <div><img src="/public/img/icones/Heart.svg" alt=""></div>
                             <div id="like${COMMENT_CONTROLLER.post.Id}">${COMMENT_CONTROLLER.post.NbrLike}</div>
                         </div>
                         <div class="sb-tags-l" onclick="Appreciation(${COMMENT_CONTROLLER.post.ID},0,1) ">
@@ -100,7 +99,7 @@ export default class PostsContainer extends HTMLElement {
                     </div>
                 </div>
                 <div class="cmts-ct">
-                        ${COMMENT_CONTROLLER.comments.length > 0 ? COMMENT_CONTROLLER.comments.map(comment => (`
+                        ${COMMENT_CONTROLLER.comments.length > 0 ? COMMENT_CONTROLLER.comments.slice(0, 2).map(comment => (`
                             <div class="cmt-ct">
                                 <div class="usr-cmt-photo"><img
                                         src="//ui-avatars.com/api/?name=${comment.Username}&size=90&rounded=true&color=fff&background=random"
@@ -116,11 +115,11 @@ export default class PostsContainer extends HTMLElement {
                                     </div>
                                     <div class="sb-tags">
                                         <div class="sb-tags-l like" onclick="CommentAppre(${comment.Id},1,0) ">
-                                            <div><img src="/static/img/icones/Heart.svg" alt=""></div>
+                                            <div><img src="/public/img/icones/Heart.svg" alt=""></div>
                                             <div id="likecom${comment.Id}">${comment.Like}</div>
                                         </div>
                                         <div class="sb-tags-l" onclick="CommentAppre(${comment.Id},0,1) ">
-                                            <div id="dislikecom${comment.Id}">${Comment.Dislike}</div>
+                                            <div id="dislikecom${comment.Id}">${comment.Dislike}</div>
                                             <div>💔</div>
                                         </div>
                                     </div>
@@ -137,12 +136,11 @@ export default class PostsContainer extends HTMLElement {
                             placeholder="write your comment here...">
                         <div class="nc-cm-btn-p">
                             </br>
-                            <button class="submit-btn" type="submit">envoyer</button>
+                            <button class="submit-btn" type="submit">submit</button>
                         </div>
                     </form>
                 </div>
             </div>
-        </div>
         `
         :
         `
