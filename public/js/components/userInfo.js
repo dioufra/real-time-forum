@@ -1,14 +1,17 @@
+import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 import { navigateTo } from "../routes/routechecker.js"
 
 export default class UserInfo extends HTMLElement {
     constructor() {
         super()
+        this.scrollTop = 0
     }
 
     connectedCallback() {
         this.render()
         this.checkButtonClickListener()
+        this.checkScrollListener()
     }
 
     disconnectedCallback() {
@@ -16,6 +19,12 @@ export default class UserInfo extends HTMLElement {
 
     shouldComponentRender() {
         return !this.innerHTML
+    }
+    checkScrollListener(){
+        this.scrollTop = SCROLL_CONTROLLER.elements.userInfo?.scrollTop || 0
+        this.addEventListener('scroll',e => {
+            SCROLL_CONTROLLER.setScroll('userInfo',e.target)
+        })
     }
     checkButtonClickListener(){
         this.addEventListener('click', function (event) {

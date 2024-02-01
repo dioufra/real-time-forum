@@ -1,5 +1,6 @@
 
 import { FORM_CONTROLLER } from "../../controllers/form.js"
+import { SCROLL_CONTROLLER } from "../../controllers/scroll.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
 import { navigateTo } from "../../routes/routechecker.js"
 import { ROUTER } from "../../routes/routes.js"
@@ -43,6 +44,7 @@ export default class Main extends HTMLElement {
         this.render()
         this.addEventListener('rt-register', this.registerUser)
         this.addEventListener('rt-login', this.loginUser)
+        this.checkScrollListener()
     }
 
     disconnectedCallback() {
@@ -50,6 +52,12 @@ export default class Main extends HTMLElement {
 
     shouldComponentRender() {
         return !this.innerHTML
+    }
+    checkScrollListener(){
+        this.scrollTop = SCROLL_CONTROLLER.elements.main?.scrollTop || 0
+        this.addEventListener('scroll',e => {
+            SCROLL_CONTROLLER.setScroll('main',e.target)
+        })
     }
 
     render() {

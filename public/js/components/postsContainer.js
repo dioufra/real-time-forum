@@ -1,5 +1,6 @@
 import { CATEGORY_CONTROLLER } from "../controllers/categorie.js"
 import { POST_CONTROLLER } from "../controllers/post.js"
+import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
 
 export default class PostsContainer extends HTMLElement {
     constructor() {
@@ -8,6 +9,7 @@ export default class PostsContainer extends HTMLElement {
 
     connectedCallback() {
         this.render()
+        this.checkScrollListener()
     }
 
     disconnectedCallback() {
@@ -15,6 +17,12 @@ export default class PostsContainer extends HTMLElement {
 
     shouldComponentRender() {
         return !this.innerHTML
+    }
+    checkScrollListener(){
+        this.scrollTop = SCROLL_CONTROLLER.elements.postsContainer?.scrollTop || 0
+        this.addEventListener('scroll',e => {
+            SCROLL_CONTROLLER.setScroll('postsContainer',e.target)
+        })
     }
 
     render() {

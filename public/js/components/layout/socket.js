@@ -92,7 +92,7 @@ export default class Socket extends HTMLElement {
     render(){
         this.connectWebSocket()
         this.innerHTML= `
-            <c-header>  </c-header>
+            <c-header></c-header>
             <c-main></c-main>
             <c-footer></c-footer>
         `

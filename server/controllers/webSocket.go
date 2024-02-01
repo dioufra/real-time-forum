@@ -140,7 +140,7 @@ func BroadcastAllPosts() {
 		fmt.Println("Error getting posts", err)
 		return
 	}
-	for client, _ := range clients { //send data
+	for client := range clients { //send data
 		response := map[string]interface{}{"event": "broadcastAllPosts", "data": posts}
 		err := client.WriteJSON(response)
 		if err != nil {
