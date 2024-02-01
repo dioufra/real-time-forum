@@ -28,12 +28,13 @@ export default class UserInfo extends HTMLElement {
     }
     checkButtonClickListener(){
         this.addEventListener('click', function (event) {
-            if (event.target.tagName === 'A' ) {
-                event.preventDefault();
-                if (event.target.href.split('/').reverse()[0] === 'logout') {
+            const { target } = event
+            if (target.tagName === 'A' ) {
+                preventDefault();
+                if (target.href.split('/').reverse()[0] === 'logout') {
                     document.dispatchEvent(new Event('disconnectWebSocket'))
                 }
-                navigateTo(event.target.href);
+                navigateTo(target.href);
             }
         });
     }
@@ -71,10 +72,10 @@ export default class UserInfo extends HTMLElement {
             <div class="user-ac">
                 <div id="show-modal" style="cursor:pointer;">All Users</div>
                 <div class="user-ac">
-                    ${USER_CONTROLLER.allUsers.map(user => `
+                    ${USER_CONTROLLER.allUsers.slice(0,8).map(user => `
                         <div>
                             ${user.firstname} ${user.lastname}
-                        </div>
+                        </div>  
                     `).join('') || "No user found"}
                 </div>
             </div>
