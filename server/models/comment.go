@@ -33,7 +33,7 @@ func (r *CommentRepository) GetCommentsFromPostId(post_id int) ([]Comment, error
 				(SELECT count(id) FROM "Appreciation" a WHERE a."Com_id" = c.id AND like = 1) as like,
 				(SELECT count(id) FROM "Appreciation" a WHERE a."Com_id" = c.id AND dislike = 1) as dislike
 			FROM "Comment" c 
-			INNER JOIN "User" u on c."Use_id"=u.id  WHERE c."Pos_id"=?;`
+			INNER JOIN "Users" u on c."Use_id"=u.id  WHERE c."Pos_id"=?;`
 	row, err := r.db.Query(req, post_id)
 	if err != nil {
 		return comments, err

@@ -1,13 +1,29 @@
 import { CATEGORY_CONTROLLER } from "../controllers/categorie.js"
+import { COMMENT_CONTROLLER } from "../controllers/comment.js"
 import { POST_CONTROLLER } from "../controllers/post.js"
+import { navigateTo } from "../routes/routechecker.js"
 
 export default class PostsContainer extends HTMLElement {
     constructor() {
         super()
+        this.commentPage = true
+        this.clickListener = (event) => {
+            event.preventDefault()
+            navigateTo(event.target.href)
+            if (event.target.classList.contains('cmt-title'))
+            {
+                console.log('clicked');
+                let id = parseInt(event.target.href.split('/').reverse()[0])
+                document.dispatchEvent(new CustomEvent('postDetails', {detail: {data: id}}))
+            }
+        }
     }
+
 
     connectedCallback() {
         this.render()
+        if (this.postSection)
+            this.postSection.addEventListener('click', this.clickListener)
     }
 
     disconnectedCallback() {
@@ -39,6 +55,97 @@ export default class PostsContainer extends HTMLElement {
         </div>
         <c-pagination class="pagination"></c-pagination>
         <div class="posts">
+        ${COMMENT_CONTROLLER.isPostSection
+        ?
+        `
+        <div class="posts pc">
+        <div class="post-teaser">
+                <div class="head">
+                    <div class="ctn">
+                        <div class="img">
+                            <img src="//ui-avatars.com/api/?name=${COMMENT_CONTROLLER.post.Username}&size=90&rounded=true&color=fff&background=random"
+                            alt="">
+                        </div>
+                        <div class="nm-tm">
+                            <p>${COMMENT_CONTROLLER.post.Username}</p>
+                            ${COMMENT_CONTROLLER.post.Date} ago</p>
+                        </div>
+                    </div>
+                    <div class="feather">
+                        ${COMMENT_CONTROLLER.post.Categories.split(' ').map(cat => `
+                            <span class="cm-time">${cat}</span>
+                        `).join('')
+                        } 
+                    </div>
+                </div>
+                <div class="text-area">
+                    <p class="cmt-title">
+                        <a href="#">
+                            ${COMMENT_CONTROLLER.post.Title}
+                        </a></p>
+                    <p class="cmt">
+                        ${COMMENT_CONTROLLER.post.Content}
+                    </p>
+                </div>
+                <div class="submenu">
+                    <div class="sb-tags">
+                        <div class="sb-tags-l like" onclick="Appreciation(${COMMENT_CONTROLLER.post.Id},1,0) ">
+                            <div><img src="/static/img/icones/Heart.svg" alt=""></div>
+                            <div id="like${COMMENT_CONTROLLER.post.Id}">${COMMENT_CONTROLLER.post.NbrLike}</div>
+                        </div>
+                        <div class="sb-tags-l" onclick="Appreciation(${COMMENT_CONTROLLER.post.ID},0,1) ">
+                            <div id="dislike${COMMENT_CONTROLLER.post.Id}">${COMMENT_CONTROLLER.post.NbrDislike}</div>
+                            <div>💔</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cmts-ct">
+                        ${COMMENT_CONTROLLER.comments.length > 0 ? COMMENT_CONTROLLER.comments.map(comment => (`
+                            <div class="cmt-ct">
+                                <div class="usr-cmt-photo"><img
+                                        src="//ui-avatars.com/api/?name=${comment.Username}&size=90&rounded=true&color=fff&background=random"
+                                        alt=""></div>
+                                <div class="comment">
+                                    <div class="cmt-head">
+                                        <p>${comment.Username}</p>
+                                    </div>
+                                    <div class="cmt-text">
+                                        <p class="cmt">
+                                            ${comment.Content}
+                                        </p>
+                                    </div>
+                                    <div class="sb-tags">
+                                        <div class="sb-tags-l like" onclick="CommentAppre(${comment.Id},1,0) ">
+                                            <div><img src="/static/img/icones/Heart.svg" alt=""></div>
+                                            <div id="likecom${comment.Id}">${comment.Like}</div>
+                                        </div>
+                                        <div class="sb-tags-l" onclick="CommentAppre(${comment.Id},0,1) ">
+                                            <div id="dislikecom${comment.Id}">${Comment.Dislike}</div>
+                                            <div>💔</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        `)).join('') : ''
+                    }
+                </div>
+                <div class="new-comment">
+                    <form action="/comment-register" method="post">
+                        <input type="hidden" name="post_id" value="${COMMENT_CONTROLLER.post.Id}">
+                        <input class="nc-ct" type="text" name="comment" required min="3"
+                            placeholder="write your comment here...">
+                        <div class="nc-cm-btn-p">
+                            </br>
+                            <button class="submit-btn" type="submit">envoyer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        `
+        :
+        `
         ${
             POST_CONTROLLER.filteredPosts.map(post => (`
                 <div class="post-teaser">
@@ -87,12 +194,16 @@ export default class PostsContainer extends HTMLElement {
                 </div>
             `)).join('')
         }
+        `
+        }
         </div>
         <c-pagination class="pagination"></c-pagination>
         `
+        this.postSection = this.querySelector('.posts')
     }
 
     get header() {
         this.querySelector('.main-header')
     }
+
 }

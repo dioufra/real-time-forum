@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -18,6 +19,11 @@ var upgrader = websocket.Upgrader{
 var clients = make(map[*websocket.Conn]string) // Connected clients
 var clientsMutex sync.Mutex                    // Mutex to synchronize access to the clients map
 
+type IncomingMessage struct {
+	Type string         `json:"type"`
+	Data map[string]int `json:"data"`
+}
+
 func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	is, email := helper.Auth(DB, r)
 	if !is {
@@ -33,7 +39,10 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 	// Add the new client to the clients map
 	clientsMutex.Lock()
+	fmt.Println(clients)
 	clients[conn] = email
+	fmt.Println(clients)
+
 	clientsMutex.Unlock()
 	BroadcastUserInfos(conn, email)
 	BroadcastOnlineUsers()
@@ -55,12 +64,66 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 
 	for {
 		// Read the message from the client
-		_, _, err := conn.ReadMessage()
+		_, p, err := conn.ReadMessage()
 		if err != nil {
 			break
 		}
+		fmt.Println(string(p))
+
+		var data IncomingMessage
+		if err := json.Unmarshal(p, &data); err != nil {
+			log.Println("Error unmarshalling message", err)
+			return
+		}
+		switch data.Type {
+		case "postDetails":
+			comments, err := models.CommentRepo.GetCommentsFromPostId(data.Data["postId"])
+			if err != nil {
+				log.Println("Error retrieving comments", err)
+				return
+			}
+			fmt.Println(comments)
+			post, err := models.PostRepo.GetPostById(data.Data["postId"])
+			if err != nil {
+				log.Println("Error retrieving post ")
+			}
+			// sendback the comments here
+			response := struct {
+				Post     models.PostInfo
+				Comments []models.Comment
+			}{
+				Post:     post,
+				Comments: comments,
+			}
+			fmt.Println("Succesfully retrieved post details: ", response)
+			BroadcastPostDetails(conn, response)
+		}
+
 	}
 }
+
+func BroadcastPostDetails(client *websocket.Conn, data any) {
+
+	clientsMutex.Lock()
+	defer clientsMutex.Unlock()
+
+	// // Handle logic for fetching comments based on the data
+	// fmt.Println("Received fetchComments event:", data)
+
+	// for client, _ := range clients { //send data
+	// 	response := map[string]interface{}{"event": "broadcastAllCategories", "data": data}
+	// 	err := client.WriteJSON(response)
+	// 	if err != nil {
+	// 		log.Println(err)
+	// 	}
+	// }
+	response := map[string]interface{}{"event": "broadcastPostDetails", "data": data}
+	err := client.WriteJSON(response)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
 func BroadcastUserInfos(client *websocket.Conn, email string) {
 	user, err := GetUserByEmail(DB, email)
 	if err != nil {
@@ -148,6 +211,7 @@ func BroadcastAllPosts() {
 		}
 	}
 }
+
 func BroadcastAllCategories() {
 	// Iterate through all connected clients and send the message
 	clientsMutex.Lock()

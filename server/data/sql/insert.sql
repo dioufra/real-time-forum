@@ -89,3 +89,11 @@ VALUES
     (9, 18),
     (10, 19),
     (10, 20);
+
+
+-- INSERT INTO Comment (Use_id, Pos_id, content) VALUES
+--     (1, 19, 'Great post!'),
+--     (2, 19, 'Nice work!'),
+--     (3, 19, 'Awesome!'),
+--     (4, 19, 'Well done!'),
+--     (5, 19, 'I love it!');
