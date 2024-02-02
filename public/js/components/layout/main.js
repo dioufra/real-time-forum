@@ -29,6 +29,7 @@ export default class Main extends HTMLElement {
             API_SERVICE.loginUser(event.detail.user)
                 .then(data => {
                     if (data) {
+                        document.dispatchEvent(new Event('connectWebSocket'))
                         FORM_CONTROLLER.resetForms()
                         FORM_CONTROLLER.resetErrors()
                         navigateTo('/?page=1')

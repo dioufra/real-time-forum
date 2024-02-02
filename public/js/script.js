@@ -8,6 +8,7 @@ let components = [
     {tagName:'c-socket',src:"./components/layout/socket.js"},
     {tagName:'c-pagination',src:"./components/pagination.js"},
     {tagName:'c-footer',src:"./components/layout/footer.js"},
+    {tagName:'c-chat-container',src:"./components/chat.js"},
     // {tagName:'c-post',src:"./components/post.js"},
 ]
 

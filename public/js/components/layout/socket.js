@@ -24,38 +24,45 @@ export default class Socket extends HTMLElement {
         this.checkAllCategoriesListener()
         this.checkDisconnectListener()
         this.checkPostDetails()
+        this.checkWebSocketConnection()
+        document.dispatchEvent(new Event('connectWebSocket'))
     }
     disconnectedCallback() {
     }
 
-    connectWebSocket(){
-        if (!this.isSocketConnected) {
-            // Créer une connexion WebSocket
-            this.socket = new WebSocket("ws://localhost:8080/api/ws/",);
+    checkWebSocketConnection(){
+        document.addEventListener('connectWebSocket',e => {
+            if (!this.isSocketConnected) {
+                // Créer une connexion WebSocket
+                this.socket = new WebSocket("ws://localhost:8080/api/ws/",);
 
-            // Gérer les événements de la connexion WebSocket
-            this.socket.addEventListener("open", (event) => {
-                // console.log("WebSocket connection opened:", event);
-                this.isSocketConnected = true
-                USER_CONTROLLER.IsAuth = true
-                updateComponents()
-            });
-            this.socket.addEventListener("message", (event) => {
-                let response = JSON.parse(event.data)
-                // Faire un Dipach Event
-                this.dispatchEvent(new CustomEvent(response.event,{detail:{data:response.data}}))
-                updateComponents()
-            });
-            this.socket.addEventListener("close", (event) => {
-                // console.log("WebSocket connection closed:", event);
-                this.isSocketConnected = false
-                USER_CONTROLLER.IsAuth = false
-            });
-            // Gérer les erreurs WebSocket
-            this.socket.addEventListener("error", (event) => {
-                // console.error("WebSocket error:", event);
-            });
-        }
+                // Gérer les événements de la connexion WebSocket
+                this.socket.addEventListener("open", (event) => {
+                    // console.log("WebSocket connection opened:", event);
+                    this.isSocketConnected = true
+                    USER_CONTROLLER.IsAuth = true
+                    updateComponents()
+                });
+                this.socket.addEventListener("message", (event) => {
+                    let response = JSON.parse(event.data)
+                    // Faire un Dipach Event
+                    this.dispatchEvent(new CustomEvent(response.event,{detail:{data:response.data}}))
+                    updateComponents()
+                });
+                this.socket.addEventListener("close", (event) => {
+                    // console.log("WebSocket connection closed:", event);
+                    if (this.isSocketConnected) {
+                        this.isSocketConnected = false
+                        USER_CONTROLLER.IsAuth = false
+                        updateComponents()
+                    }
+                });
+                // Gérer les erreurs WebSocket
+                this.socket.addEventListener("error", (event) => {
+                    // console.error("WebSocket error:", event);
+                });
+            }
+        })
     }
     checkDisconnectListener(){
         document.addEventListener('disconnectWebSocket',e => {
@@ -114,16 +121,14 @@ export default class Socket extends HTMLElement {
     }
 
     render(){
-        this.connectWebSocket()
         this.innerHTML= `
             <c-header></c-header>
             <c-main></c-main>
             <c-footer></c-footer>
+            <c-chat-container></c-chat-container>
         `
     }
     get header() {
         this.querySelector('.main-header')
     }
-
-
 }

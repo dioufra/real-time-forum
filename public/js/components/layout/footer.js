@@ -1,6 +1,3 @@
-import { USER_CONTROLLER } from "../../controllers/user.js"
-import { navigateTo } from "../../routes/routechecker.js"
-
 export default class Footer extends HTMLElement {
     constructor() {
         super()
