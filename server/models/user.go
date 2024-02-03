@@ -83,3 +83,15 @@ func (r *UserRepository) GetUserByEmail(user *User, email string) error {
 	}
 	return nil
 }
+
+func (r *UserRepository) GetUserById(user *User, id int) error {
+	req := `SELECT id, email, lastName, firstName, username from Users Where id=?`
+	row, err := r.DB.Query(req, id)
+	if err != nil {
+		return err
+	}
+	for row.Next() {
+		row.Scan(&user.Id, &user.Email, &user.Lastname, &user.Firstname, &user.Username)
+	}
+	return nil
+}

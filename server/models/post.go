@@ -74,8 +74,7 @@ func (r *PostRepository) GetAllPost() ([]PostInfo, error) {
 	return posts, row.Err()
 }
 
-func (r *PostRepository) GetPostById(postID int) (PostInfo, error) {
-	var post PostInfo
+func (r *PostRepository) GetPostById(post  *PostInfo,postID int) error {
 	req := `
 			SELECT p.id, p.title, p.content, p."date", u.username,
 				( SELECT count(*) FROM "Appreciation" "a" WHERE p.id=a."Pos_id" AND "like"=1) as "likes",
@@ -91,7 +90,7 @@ func (r *PostRepository) GetPostById(postID int) (PostInfo, error) {
 	row := r.db.QueryRow(req, postID)
 	err := row.Scan(&post.Id, &post.Title, &post.Content, &post.Date, &post.Username, &post.NbrLike, &post.NbrDislike, &post.NbrComments, &post.Categories)
 
-	return post, err
+	return err
 }
 
 

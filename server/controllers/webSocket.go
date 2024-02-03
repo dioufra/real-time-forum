@@ -39,9 +39,7 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 	// Add the new client to the clients map
 	clientsMutex.Lock()
-	fmt.Println(clients)
 	clients[conn] = email
-	fmt.Println(clients)
 
 	clientsMutex.Unlock()
 	BroadcastUserInfos(conn, email)
@@ -68,7 +66,6 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			break
 		}
-		fmt.Println(string(p))
 
 		var data IncomingMessage
 		if err := json.Unmarshal(p, &data); err != nil {
@@ -82,20 +79,19 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 				log.Println("Error retrieving comments", err)
 				return
 			}
-			fmt.Println(comments)
-			post, err := models.PostRepo.GetPostById(data.Data["postId"])
+			var post models.PostInfo
+			err = models.PostRepo.GetPostById(&post, data.Data["postId"])
 			if err != nil {
 				log.Println("Error retrieving post ")
 			}
 			// sendback the comments here
 			response := struct {
 				Post     models.PostInfo
-				Comments []models.Comment
+				Comments []models.CommentInfo
 			}{
 				Post:     post,
 				Comments: comments,
 			}
-			fmt.Println("Succesfully retrieved post details: ", response)
 			BroadcastPostDetails(conn, response)
 		}
 
@@ -106,17 +102,6 @@ func BroadcastPostDetails(client *websocket.Conn, data any) {
 
 	clientsMutex.Lock()
 	defer clientsMutex.Unlock()
-
-	// // Handle logic for fetching comments based on the data
-	// fmt.Println("Received fetchComments event:", data)
-
-	// for client, _ := range clients { //send data
-	// 	response := map[string]interface{}{"event": "broadcastAllCategories", "data": data}
-	// 	err := client.WriteJSON(response)
-	// 	if err != nil {
-	// 		log.Println(err)
-	// 	}
-	// }
 	response := map[string]interface{}{"event": "broadcastPostDetails", "data": data}
 	err := client.WriteJSON(response)
 	if err != nil {
@@ -125,7 +110,8 @@ func BroadcastPostDetails(client *websocket.Conn, data any) {
 }
 
 func BroadcastUserInfos(client *websocket.Conn, email string) {
-	user, err := GetUserByEmail(DB, email)
+	var user models.User
+	err := models.UserRepo.GetUserByEmail(&user, email)
 	if err != nil {
 		fmt.Println("user not found")
 		return
@@ -142,10 +128,11 @@ func BroadcastOnlineUsers() {
 	// Iterate through all connected clients and send the message
 	clientsMutex.Lock()
 	defer clientsMutex.Unlock()
-	users := []models.User{}
+	var users []models.User
 
 	for _, email := range clients {
-		user, err := GetUserByEmail(DB, email)
+		var user models.User
+		err := models.UserRepo.GetUserByEmail(&user, email)
 		if err != nil {
 			fmt.Println("user not found")
 			return
@@ -173,8 +160,7 @@ func BroadcastAllUsers() {
 	clientsMutex.Lock()
 	defer clientsMutex.Unlock()
 
-	userRep := models.UserRepository{DB: DB}
-	users, err := userRep.GetAll()
+	users, err := models.UserRepo.GetAll()
 	if err != nil {
 		fmt.Println("Error getting users")
 		return

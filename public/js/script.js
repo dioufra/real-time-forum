@@ -7,7 +7,12 @@ let components = [
     {tagName:'c-posts-container',src:"./components/postsContainer.js"},
     {tagName:'c-socket',src:"./components/layout/socket.js"},
     {tagName:'c-pagination',src:"./components/pagination.js"},
-    // {tagName:'c-post',src:"./components/post.js"},
+    {tagName:'c-posts',src:"./components/posts.js"},
+    {tagName:'c-comment',src:"./components/comment.js"},
+    {tagName:'c-auth',src:"./components/auth.js"},
+    {tagName:'c-filter',src:"./components/filter.js"},
+
+
 ]
 
 // Define the custom web component

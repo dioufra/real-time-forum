@@ -55,24 +55,7 @@ export default class Main extends HTMLElement {
     render() {
         this.innerHTML = /* HTML */ `
         ${!USER_CONTROLLER.IsAuth ? /* HTML */ ` 
-            <main>
-                <div class="main-content">
-                    Communnicate <br>
-                    share and enjoy <br>
-                </div>
-                <div class="contents">
-                    ${ROUTER.currentRoute === '/register' ?
-                    `<c-register class="form-f"></c-register>`
-                    :
-                    `<c-login class="form-f"></c-login>`
-                }
-                    <div class="rigth-des">
-                        <div class="rigth-content">
-                            Join us <br> share <br>enjoy
-                        </div>
-                    </div>
-                </div>          
-            </main> 
+            <c-auth></c-auth>
         `
         : 
         /* HTML */ `

@@ -10,12 +10,12 @@ import (
 )
 
 func SignIn(res http.ResponseWriter, req *http.Request) {
-	fmt.Println("User Authentificated")
-	res.Header().Set("Content-Type", "application/json")
 	if req.Method != http.MethodPost {
 		http.Error(res, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+	res.Header().Set("Content-Type", "application/json")
+	
 	var userLogin models.UserLogin
 	decoder := json.NewDecoder(req.Body)
 	if err := decoder.Decode(&userLogin); err != nil {
