@@ -1,85 +1,51 @@
-import { CATEGORY_CONTROLLER } from "../../controllers/categorie.js"
-import { POST_CONTROLLER } from "../../controllers/post.js"
+
+import { FORM_CONTROLLER } from "../../controllers/form.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
 import { navigateTo } from "../../routes/routechecker.js"
 import { ROUTER } from "../../routes/routes.js"
+import { updateComponents } from "../../script.js"
+import {API_SERVICE} from "../../service/api-service.js"
 
 export default class Main extends HTMLElement {
     constructor() {
         super()
-        this.isAuth = false
         this.registerUser = (event) => {
-            if (!event.detail.user) return
-            fetch('/api/register', {
-                method: 'POST',
-                body: JSON.stringify(event.detail.user),
-            }).then(response => {
-                if (!response.ok) {
-                    if (response.status === 400) {
-                        response.json() 
-                            .then(error => {
-                                console.log(error)
-                            })
-                    } else {
-                        throw new Error('Erreur de réseau');
-                    }
-                }
-                return response
-            }).then(data => {
+            API_SERVICE.registerUser(event.detail.user)
+            .then(data => {
+                console.log(data);
                 if (data) {
+                    console.log(data)
                     // Redirect to login page
+                    FORM_CONTROLLER.resetForms()
+                    FORM_CONTROLLER.resetErrors()
                     navigateTo('login')
                 }
             }).catch(console.log);
         }
         this.loginUser = (event) => {
-            if (!event.detail.user) return
-            fetch('/api/login', {
-                method: 'POST',
-                body: JSON.stringify(event.detail.user),
-            }).then(response => {
-                if (!response.ok) {
-                    if (response.status === 400) {
-                        response.json() // Parse the JSON in the response
-                            .then(error => {
-                                console.log(error)
-                            })
-                    } else {
-                        throw new Error('Network error');
+            if (!event.detail.user) return;
+        
+            API_SERVICE.loginUser(event.detail.user)
+                .then(data => {
+                    if (data) {
+                        FORM_CONTROLLER.resetForms()
+                        FORM_CONTROLLER.resetErrors()
+                        navigateTo('/?page=1')
                     }
-                }
-                return response.json()
-            }).then(data => {
-                if (data) {
-                    console.log(data)
-                    // from there we know wheither or not a user is authenticated
-                    // USER_CONTROLLER.fetchData()
-                    // if (data.user.IsAuth) {
-                    //     this.isAuth = true
-                    //     this.innerHTML = ''
-                    //     this.render()
-                    // }
-                    // navigateTo('')
-                    this.isAuth = data.user.IsAuth
-                    USER_CONTROLLER.setIsAuth(data.user.IsAuth)
-                    USER_CONTROLLER.setUser(data)
-                    POST_CONTROLLER.setPosts(data.posts)
-                    CATEGORY_CONTROLLER.setCategories(data.categories)
-                    // CATEGORY_CONTROLLER.setCurrentCategoryId(login_data.CurrentCategoryId)
-                }
-            }).catch(console.log);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
         }
     }
 
     connectedCallback() {
-        console.log('called')
         this.render()
         this.addEventListener('rt-register', this.registerUser)
         this.addEventListener('rt-login', this.loginUser)
     }
 
     disconnectedCallback() {
-        console.log('disconnected main')
     }
 
     shouldComponentRender() {
@@ -87,9 +53,8 @@ export default class Main extends HTMLElement {
     }
 
     render() {
-        console.log('rendering');
         this.innerHTML = /* HTML */ `
-        ${!this.isAuth ? /* HTML */ ` 
+        ${!USER_CONTROLLER.IsAuth ? /* HTML */ ` 
             <main>
                 <div class="main-content">
                     Communnicate <br>

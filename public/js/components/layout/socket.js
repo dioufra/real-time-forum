@@ -13,10 +13,11 @@ export default class Socket extends HTMLElement {
     
     connectedCallback() {
         this.render()
+
         document.addEventListener('postDetails', (event) => {
-            console.log('fetching comment')
             this.sendData(JSON.stringify({type: 'postDetails', data: {postId: event.detail.data}}))
         })
+
         this.checkAllCategoriesListener()
         this.checkUserInfosListener()
         this.checkOnlineUsersListener()

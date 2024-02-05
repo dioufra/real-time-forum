@@ -17,7 +17,7 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 var SocketClients = make(map[*websocket.Conn][]string) // Connected clients
-var clientsMutex sync.Mutex                      // Mutex to synchronize access to the clients map
+var clientsMutex sync.Mutex                            // Mutex to synchronize access to the clients map
 
 type IncomingMessage struct {
 	Type string         `json:"type"`
@@ -67,7 +67,6 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			break
 		}
-		fmt.Println(string(p))
 
 		var data IncomingMessage
 		if err := json.Unmarshal(p, &data); err != nil {
@@ -81,20 +80,19 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 				log.Println("Error retrieving comments", err)
 				return
 			}
-			fmt.Println(comments)
-			post, err := models.PostRepo.GetPostById(data.Data["postId"])
+			var post models.PostInfo
+			err = models.PostRepo.GetPostById(&post, data.Data["postId"])
 			if err != nil {
 				log.Println("Error retrieving post ")
 			}
 			// sendback the comments here
 			response := struct {
 				Post     models.PostInfo
-				Comments []models.Comment
+				Comments []models.CommentInfo
 			}{
 				Post:     post,
 				Comments: comments,
 			}
-			fmt.Println("Succesfully retrieved post details: ", response)
 			BroadcastPostDetails(conn, response)
 		}
 
@@ -105,7 +103,6 @@ func BroadcastPostDetails(client *websocket.Conn, data any) {
 
 	clientsMutex.Lock()
 	defer clientsMutex.Unlock()
-
 	response := map[string]interface{}{"event": "broadcastPostDetails", "data": data}
 	err := client.WriteJSON(response)
 	if err != nil {
@@ -131,7 +128,7 @@ func BroadcastOnlineUsers() {
 	// Iterate through all connected clients and send the message
 	clientsMutex.Lock()
 	defer clientsMutex.Unlock()
-	users := []models.User{}
+	var users []models.User
 
 	for _, tab := range SocketClients {
 		email := tab[0]
@@ -162,8 +159,7 @@ func BroadcastAllUsers() {
 	clientsMutex.Lock()
 	defer clientsMutex.Unlock()
 
-	userRep := models.UserRepository{DB: DB}
-	users, err := userRep.GetAll()
+	users, err := models.UserRepo.GetAll()
 	if err != nil {
 		fmt.Println("Error getting users")
 		return

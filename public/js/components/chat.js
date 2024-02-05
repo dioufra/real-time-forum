@@ -23,6 +23,7 @@ export default class Chat extends HTMLElement {
         this.addEventListener('click',e => {
             if (e.target.tagName === 'BUTTON' && e.target.className === 'close-btn') {
                 this.modal?.classList.add('hidden')
+                CHAT_CONTROLLER.displayBox = false
             }
         })
     }

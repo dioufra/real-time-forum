@@ -22,7 +22,7 @@ class ApiService {
                     throw new Error('Erreur de réseau');
                 }
             }
-            return response.json()
+            return response
         })
     }
 

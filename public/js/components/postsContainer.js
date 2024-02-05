@@ -43,167 +43,18 @@ export default class PostsContainer extends HTMLElement {
 
     render() {
         this.innerHTML = /* HTML */ `
-        <div class="filter">
-            <div class="sec-center"> 	
-                <input class="dropdown" type="checkbox" id="dropdown" name="dropdown"/>
-                <label class="for-dropdown" for="dropdown">Categories</label>
-                <div class="section-dropdown">
-                  <a href="/filter-categorie?categorie=default">All</a>
-                    ${
-                        CATEGORY_CONTROLLER.categories.map((category)=> (
-                            category.Id === CATEGORY_CONTROLLER.currentCategoryId?`
-                                <a style="background-color: #002EA3; border-radius: 2px;" href="/filter-categorie?categorie=${category.Id}">${category.Name}</a>
-                            `:`
-                                <a href="/filter-categorie?categorie=${category.Id}">${category.Name}</a>
-                            `
-                        )).join('')
-                    }
-                </div>
-            </div>
-        </div>
-        <c-pagination class="pagination"></c-pagination>
-        <div class="posts">
-        ${COMMENT_CONTROLLER.isPostSection
-        ?
-        `
-        <div class="post-teaser">
-                <div class="head">
-                    <div class="ctn">
-                        <div class="img">
-                            <img src="//ui-avatars.com/api/?name=${COMMENT_CONTROLLER.post.Username}&size=90&rounded=true&color=fff&background=random"
-                            alt="">
-                        </div>
-                        <div class="nm-tm">
-                            <p>${COMMENT_CONTROLLER.post.Username}</p>
-                            ${COMMENT_CONTROLLER.post.Date} ago</p>
-                        </div>
-                    </div>
-                    <div class="feather">
-                        ${COMMENT_CONTROLLER.post.Categories.split(' ').map(category => `
-                            <span class="cm-time">${category}</span>
-                        `).join('')
-                        } 
-                    </div>
-                </div>
-                <div class="text-area">
-                    <p class="cmt-title">
-                        <a href="#">
-                            ${COMMENT_CONTROLLER.post.Title}
-                        </a></p>
-                    <p class="cmt">
-                        ${COMMENT_CONTROLLER.post.Content}
-                    </p>
-                </div>
-                <div class="submenu">
-                    <div class="sb-tags">
-                        <div class="sb-tags-l like" onclick="Appreciation(${COMMENT_CONTROLLER.post.Id},1,0) ">
-                            <div><img src="/public/img/icones/Heart.svg" alt=""></div>
-                            <div id="like${COMMENT_CONTROLLER.post.Id}">${COMMENT_CONTROLLER.post.NbrLike}</div>
-                        </div>
-                        <div class="sb-tags-l" onclick="Appreciation(${COMMENT_CONTROLLER.post.ID},0,1) ">
-                            <div id="dislike${COMMENT_CONTROLLER.post.Id}">${COMMENT_CONTROLLER.post.NbrDislike}</div>
-                            <div>💔</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="cmts-ct">
-                        ${COMMENT_CONTROLLER.comments.length > 0 ? COMMENT_CONTROLLER.comments.slice(0, 2).map(comment => (`
-                            <div class="cmt-ct">
-                                <div class="usr-cmt-photo"><img
-                                        src="//ui-avatars.com/api/?name=${comment.Username}&size=90&rounded=true&color=fff&background=random"
-                                        alt=""></div>
-                                <div class="comment">
-                                    <div class="cmt-head">
-                                        <p>${comment.Username}</p>
-                                    </div>
-                                    <div class="cmt-text">
-                                        <p class="cmt">
-                                            ${comment.Content}
-                                        </p>
-                                    </div>
-                                    <div class="sb-tags">
-                                        <div class="sb-tags-l like" onclick="CommentAppre(${comment.Id},1,0) ">
-                                            <div><img src="/public/img/icones/Heart.svg" alt=""></div>
-                                            <div id="likecom${comment.Id}">${comment.Like}</div>
-                                        </div>
-                                        <div class="sb-tags-l" onclick="CommentAppre(${comment.Id},0,1) ">
-                                            <div id="dislikecom${comment.Id}">${comment.Dislike}</div>
-                                            <div>💔</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                        `)).join('') : ''
-                    }
-                </div>
-                <div class="new-comment">
-                    <form action="/comment-register" method="post">
-                        <input type="hidden" name="post_id" value="${COMMENT_CONTROLLER.post.Id}">
-                        <input class="nc-ct" type="text" name="comment" required min="3"
-                            placeholder="write your comment here...">
-                        <div class="nc-cm-btn-p">
-                            </br>
-                            <button class="submit-btn" type="submit">submit</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        `
-        :
-        `
+        <c-filter class="filter"></c-filter>
         ${
-            POST_CONTROLLER.filteredPosts.map(post => (`
-                <div class="post-teaser">
-                    <div class="head">
-                        <div class="ctn">
-                            <div class="img">
-                                <img src="//ui-avatars.com/api/?name=${post.Username}&size=90&rounded=true&color=fff&background=random"
-                                    alt="">
-                            </div>
-                            <div class="nm-tm">
-                                <p>${post.Username}</p>
-                            </div>
-                        </div>
-                        <div class="feather">
-                            ${post.Categories.split(' ').map(cat => `
-                                <span class="cm-time">${cat}</span>
-                            `).join('')} 
-                        </div>
-                    </div>
-                    <div class="text-area">
-                        <a href="/post/${post.Id}" class="cmt-title">
-                            ${post.Title}
-                        </a>
-                        <p class="cmt">
-                            ${post.Content}
-                        </p>
-                    </div>
-                    <div class="submenu">
-                        <div class="sb-tags">
-                        <div class="sb-tags-l like" onclick="Appreciation(${post.Id},1,0) ">
-                            <div><img src="/public/img/icones/Heart.svg" alt="img"></div>
-                            <div id="like${post.Id}">${post.NbrLike}</div>
-                        </div>
-                        <div class="sb-tags-l" onclick="Appreciation(${post.ID},0,1) ">
-                            <div id="dislike${post.Id}">${post.NbrDislike}</div>
-                            <div>💔</div>
-                        </div>
-                        </div>
-                        <div class="activity">
-                        <a href="/post/${post.Id}" class="cmt-title">
-                            <div><img src="/public/img/icones/message-square.svg" alt=""></div>
-                            <div>${post.NbrComments}</div>
-                        </a>
-                        </div>
-                    </div>
-                </div>
-            `)).join('')
+            COMMENT_CONTROLLER.isPostSection
+            ?
+            `<c-comment></c-comment>`
+            :
+            `
+            <c-pagination class="pagination"></c-pagination>
+            <c-posts><c-posts>
+
+            `
         }
-        `
-        }
-        </div>
-        <c-pagination class="pagination"></c-pagination>
         `
         this.postSection = this.querySelector('.posts')
     }
