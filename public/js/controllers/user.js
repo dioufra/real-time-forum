@@ -33,6 +33,7 @@ class User {
         updateComponents()
     }
     disconnect(){
+        this.Id = 0
         this.IsAuth = false
         this.FirstName = ''
         this.LastName = ''

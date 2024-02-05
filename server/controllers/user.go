@@ -9,12 +9,12 @@ import (
 func GetUser(res http.ResponseWriter, req *http.Request) {
 
 }
-func GetUserByEmail(db *sql.DB, email string) (user models.User, err error) {
+func GetUserByField(db *sql.DB, field string, value string) (user models.User, err error) {
 
-	req := `SELECT firstname,lastname,email from Users Where email='` + email + `';`
+	req := `SELECT id,firstname,lastname,email,username from Users Where ` + field + `='` + value + `';`
 	row, err := db.Query(req)
 	for row.Next() {
-		row.Scan(&user.Firstname, &user.Lastname, &user.Email)
+		row.Scan(&user.Id, &user.Firstname, &user.Lastname, &user.Email, &user.Username)
 	}
 	return
 }

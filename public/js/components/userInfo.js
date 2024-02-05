@@ -1,3 +1,4 @@
+import { CHAT_CONTROLLER } from "../controllers/chat.js"
 import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 import { navigateTo } from "../routes/routechecker.js"
@@ -30,11 +31,13 @@ export default class UserInfo extends HTMLElement {
         this.addEventListener('click', function (event) {
             const { target } = event
             if (target.tagName === 'A' ) {
-                preventDefault();
+                event.preventDefault();
                 if (target.href.split('/').reverse()[0] === 'logout') {
                     document.dispatchEvent(new Event('disconnectWebSocket'))
+                    navigateTo(target.href);
+                }else if(/\/user\/[0-9]+$/.test(target.href)){
+                    CHAT_CONTROLLER.startNewChat(target.href.match(/[0-9]+$/))
                 }
-                navigateTo(target.href);
             }
         });
     }
@@ -72,9 +75,11 @@ export default class UserInfo extends HTMLElement {
             <div class="user-ac">
                 <div id="show-modal" style="cursor:pointer;">All Users</div>
                 <div class="user-ac">
-                    ${USER_CONTROLLER.allUsers.slice(0,8).map(user => `
+                    ${USER_CONTROLLER.allUsers.map(user => `
                         <div>
-                            ${user.firstname} ${user.lastname}
+                            <a href="/user/${user.id}">
+                                ${user.firstname} ${user.lastname}
+                            </a>
                         </div>  
                     `).join('') || "No user found"}
                 </div>

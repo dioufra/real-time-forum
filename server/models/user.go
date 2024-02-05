@@ -66,7 +66,7 @@ func (r *UserRepository) GetAll() ([]User, error) {
 	}
 	for row.Next() {
 		var user User
-		row.Scan(&user.Id, &user.Firstname, &user.Lastname, &user.Gender, &user.Age, &user.Username, &user.Email)
+		row.Scan(&user.Id, &user.Firstname, &user.Lastname, &user.Username, &user.Gender, &user.Age, &user.Email)
 		users = append(users, user)
 	}
 	return users, nil

@@ -16,8 +16,8 @@ var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 }
-var clients = make(map[*websocket.Conn]string) // Connected clients
-var clientsMutex sync.Mutex                    // Mutex to synchronize access to the clients map
+var SocketClients = make(map[*websocket.Conn][]string) // Connected clients
+var clientsMutex sync.Mutex                      // Mutex to synchronize access to the clients map
 
 type IncomingMessage struct {
 	Type string         `json:"type"`
@@ -30,18 +30,17 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("not connected")
 		return
 	}
-	fmt.Println("connected")
 
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	// Add the new client to the clients map
 	clientsMutex.Lock()
-	fmt.Println(clients)
-	clients[conn] = email
-	fmt.Println(clients)
+	// Get the memory address of the variable
+	address := fmt.Sprintf("%p", &conn)
+	// Add the new client to the clients map
+	SocketClients[conn] = []string{email, address}
 
 	clientsMutex.Unlock()
 	BroadcastUserInfos(conn, email)
@@ -53,7 +52,7 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		// Remove the client when the connection is closed
 		clientsMutex.Lock()
-		delete(clients, conn)
+		delete(SocketClients, conn)
 		clientsMutex.Unlock()
 		conn.Close()
 
@@ -107,16 +106,6 @@ func BroadcastPostDetails(client *websocket.Conn, data any) {
 	clientsMutex.Lock()
 	defer clientsMutex.Unlock()
 
-	// // Handle logic for fetching comments based on the data
-	// fmt.Println("Received fetchComments event:", data)
-
-	// for client, _ := range clients { //send data
-	// 	response := map[string]interface{}{"event": "broadcastAllCategories", "data": data}
-	// 	err := client.WriteJSON(response)
-	// 	if err != nil {
-	// 		log.Println(err)
-	// 	}
-	// }
 	response := map[string]interface{}{"event": "broadcastPostDetails", "data": data}
 	err := client.WriteJSON(response)
 	if err != nil {
@@ -125,7 +114,7 @@ func BroadcastPostDetails(client *websocket.Conn, data any) {
 }
 
 func BroadcastUserInfos(client *websocket.Conn, email string) {
-	user, err := GetUserByEmail(DB, email)
+	user, err := GetUserByField(DB, "email", email)
 	if err != nil {
 		fmt.Println("user not found")
 		return
@@ -144,17 +133,17 @@ func BroadcastOnlineUsers() {
 	defer clientsMutex.Unlock()
 	users := []models.User{}
 
-	for _, email := range clients {
-		user, err := GetUserByEmail(DB, email)
+	for _, tab := range SocketClients {
+		email := tab[0]
+		user, err := GetUserByField(DB, "email", email)
 		if err != nil {
 			fmt.Println("user not found")
 			return
 		}
 		users = append(users, user)
 	}
-	for client, email := range clients { //send data
-		data := []models.User{}
-
+	for client, tab := range SocketClients { //send data
+		data, email := []models.User{}, tab[0]
 		for _, user := range users {
 			if user.Email != email {
 				data = append(data, user)
@@ -179,8 +168,8 @@ func BroadcastAllUsers() {
 		fmt.Println("Error getting users")
 		return
 	}
-	for client, email := range clients { //send data
-		data := []models.User{}
+	for client, tab := range SocketClients { //send data
+		data, email := []models.User{}, tab[0]
 		for _, user := range users {
 			if user.Email != email {
 				data = append(data, user)
@@ -203,7 +192,7 @@ func BroadcastAllPosts() {
 		fmt.Println("Error getting posts", err)
 		return
 	}
-	for client := range clients { //send data
+	for client := range SocketClients { //send data
 		response := map[string]interface{}{"event": "broadcastAllPosts", "data": posts}
 		err := client.WriteJSON(response)
 		if err != nil {
@@ -222,11 +211,29 @@ func BroadcastAllCategories() {
 		fmt.Println("Error retrieving categories: ", err)
 		return
 	}
-	for client, _ := range clients { //send data
+	for client, _ := range SocketClients { //send data
 		response := map[string]interface{}{"event": "broadcastAllCategories", "data": categories}
 		err := client.WriteJSON(response)
 		if err != nil {
 			log.Println(err)
+		}
+	}
+}
+func BroadcastChat(senderId, receiverId int, senderAdress, receverAdress string) {
+	data := []models.Message{}
+	for _, msg := range MESSAGES_TAB {
+		if msg.ReceiverId == receiverId && msg.SenderId == senderId || msg.ReceiverId == senderId && msg.SenderId == receiverId {
+			data = append(data, msg)
+		}
+	}
+	for client, tab := range SocketClients {
+		adress := tab[1]
+		if adress == senderAdress || adress == receverAdress {
+			response := map[string]interface{}{"event": "broadcastChat", "data": data}
+			err := client.WriteJSON(response)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
 }

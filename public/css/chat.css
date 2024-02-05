@@ -64,6 +64,8 @@ c-chat-container{
         }
         & .chat-body{
             flex: 1;
+            color: black;
+            text-align: center;
             & .container-right{
                 text-align: right;
             }

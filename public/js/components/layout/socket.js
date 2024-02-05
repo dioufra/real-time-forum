@@ -1,4 +1,5 @@
 import { CATEGORY_CONTROLLER } from "../../controllers/categorie.js"
+import { CHAT_CONTROLLER } from "../../controllers/chat.js"
 import { COMMENT_CONTROLLER} from "../../controllers/comment.js"
 import { POST_CONTROLLER } from "../../controllers/post.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
@@ -25,6 +26,7 @@ export default class Socket extends HTMLElement {
         this.checkDisconnectListener()
         this.checkPostDetails()
         this.checkWebSocketConnection()
+        this.checkChatListener()
         document.dispatchEvent(new Event('connectWebSocket'))
     }
     disconnectedCallback() {
@@ -38,7 +40,7 @@ export default class Socket extends HTMLElement {
 
                 // Gérer les événements de la connexion WebSocket
                 this.socket.addEventListener("open", (event) => {
-                    // console.log("WebSocket connection opened:", event);
+                    console.log("WebSocket connection opened:", event);
                     this.isSocketConnected = true
                     USER_CONTROLLER.IsAuth = true
                     updateComponents()
@@ -73,6 +75,12 @@ export default class Socket extends HTMLElement {
                     USER_CONTROLLER.disconnect()
                 })
                 .catch(console.log)
+        })
+    }
+    checkChatListener(){
+        this.addEventListener('broadcastChat',e => {
+            console.log("broadcastChat",e.detail.data)
+            CHAT_CONTROLLER.setAllMessages(e.detail.data)
         })
     }
     checkUserInfosListener(){

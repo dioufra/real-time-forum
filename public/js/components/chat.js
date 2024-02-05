@@ -1,3 +1,7 @@
+import { CHAT_CONTROLLER } from "../controllers/chat.js"
+import { FORM_CONTROLLER } from "../controllers/form.js"
+import { USER_CONTROLLER } from "../controllers/user.js"
+
 export default class Chat extends HTMLElement {
     constructor() {
         super()
@@ -6,6 +10,7 @@ export default class Chat extends HTMLElement {
     connectedCallback() {
         this.render()
         this.checkCloseButtonListener()
+        this.checkSubmitListener()
     }
 
     disconnectedCallback() {
@@ -21,44 +26,87 @@ export default class Chat extends HTMLElement {
             }
         })
     }
+    checkSubmitListener(){
+        this.addEventListener('submit', (event) => {
+            event.preventDefault()
+            const formData = new FormData(this.messageForm)
+            
+            fetch('/api/message', {
+                method: 'POST',
+                body: JSON.stringify({
+                    SenderAdress:CHAT_CONTROLLER.SenderAdress,
+                    ReceiverAdress:CHAT_CONTROLLER.ReceiverAdress,
+                    SenderId:USER_CONTROLLER.Id,
+                    ReceiverId:CHAT_CONTROLLER.Receiver.id,
+                    Content:formData.get('content')
+                }),
+            }).then(response => {
+                console.log(response)
+                if (!response.ok) {
+                    if (response.status === 400) {
+                        response.json()
+                        .then(error => {
+                            console.log(error.message)
+                            FORM_CONTROLLER.setError('message',error.message)
+                        })
+                        return
+                    } else {
+                        throw new Error('Erreur de réseau');
+                    }
+                }
+                return response.json()
+            })
+            .then(data => {
+                console.log("data",data)
+                if (data) {
+                    // console.log('data',data)
+                }
+            })
+            .catch(console.error);
+        })
+    }
 
     render() {
         this.innerHTML = /* HTML */ `
-            <div class="chat-modal">
-                <div class="chat-header" >
-                    <div class="user-infos" >
-                        <img class="profil-img" src="https://picsum.photos/200" alt="">
-                        <span class="name_container">
-                            <p class="name">Cheikh Ndiaye</p>
-                            <span class="username">@cheikhndiaye9</span>
-                        </span>
-                    </div>
-                    <button class="close-btn">X</button>
-                </div>
-                <div class="chat-body" >
-                    <div class="container-left">
-                        <div class="message-container left">
-                            <p>Salut comment cava </p>
+            ${USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox? `
+                <div class="chat-modal ">
+                    <div class="chat-header" >
+                        <div class="user-infos" >
+                            <img class="profil-img" src="https://picsum.photos/200" alt="">
+                            <span class="name_container">
+                                <p class="name">${CHAT_CONTROLLER.Receiver.firstname||'firstname'} ${CHAT_CONTROLLER.Receiver.lastname||'lastname'}</p>
+                                <span class="username">@${CHAT_CONTROLLER.Receiver.username || 'username'}</span>
+                            </span>
                         </div>
+                        <button class="close-btn">X</button>
                     </div>
-                    <div class="container-right">
-                        <div class="message-container right">
-                            <p>Salut cava bien</p>
-                        </div>
+                    <div class="chat-body" >
+                        ${CHAT_CONTROLLER.allMessages.map(message => {
+                            let side = message.ReceiverId === USER_CONTROLLER.Id?'left':'right'
+                            return `
+                            <div class="container-${side}">
+                                <div class="message-container ${side}">
+                                    <p>${message.Content}</p>
+                                </div>
+                            </div>`
+                        }).join('') || ""}
+                    </div>
+                    <div class="chat-footer" >
+                        <form action="/api/message" method="post">
+                            <input name="content" placeholder="Message" />
+                            <button type="submit"></button>
+                        </form> 
                     </div>
                 </div>
-                <div class="chat-footer" >
-                    <form action="/api/message" method="post">
-                        <input name="message" placeholder="Message" />
-                        <button type="submit"></button>
-                    </form> 
-                </div>
-            </div>
+            `:``}
         `
     }
 
     get modal (){
         return this.querySelector('.chat-modal')
+    }
+    get messageForm() {
+        return this.querySelector('form')
     }
     get header() {
         this.querySelector('.main-header')

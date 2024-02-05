@@ -9,6 +9,8 @@ import (
 func Route() {
 	// http.HandleFunc("/sign_in", controllers.SignIn)
 
+	http.HandleFunc("/api/chat", middlewares.Ispath(middlewares.Log(controllers.Chat), "/api/chat"))
+	http.HandleFunc("/api/message", middlewares.Ispath(middlewares.Log(controllers.Message), "/api/message"))
 	http.HandleFunc("/api/ws/", controllers.HandleWebSocket)
 	http.HandleFunc("/api/login", middlewares.Ispath(middlewares.IsAuth(controllers.SignIn), "/api/login"))
 	http.HandleFunc("/api/register", middlewares.Ispath(middlewares.IsAuth(controllers.SignUp), "/api/register"))
