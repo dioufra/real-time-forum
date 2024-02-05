@@ -95,7 +95,7 @@ export default class PostsContainer extends HTMLElement {
                     </div>
                 </div>
                 <div class="cmts-ct">
-                        ${COMMENT_CONTROLLER.comments.length > 0 ? COMMENT_CONTROLLER.comments.slice(0, 2).map(comment => (`
+                        ${COMMENT_CONTROLLER.comments.length > 0 ? COMMENT_CONTROLLER.comments.map(comment => (`
                             <div class="cmt-ct">
                                 <div class="usr-cmt-photo"><img
                                         src="//ui-avatars.com/api/?name=${comment.Username}&size=90&rounded=true&color=fff&background=random"
