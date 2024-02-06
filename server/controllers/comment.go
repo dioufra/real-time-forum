@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"real-time-forum/server/models"
 	"time"
@@ -30,7 +31,7 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 		fmt.Println("Error retrieving user")
 		return
 	}
-	
+
 	var post models.PostInfo
 	if err := models.PostRepo.GetPostById(&post, comment.PostId); err != nil {
 		fmt.Println("Error retrieving user")
@@ -42,14 +43,32 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	
 	seconds := int64(comment.Date / 1000)
 	nanos := int64((comment.Date % 1000) * 1e6)
-	
+
 	date := time.Unix(seconds, nanos)
-	
+
 	if err := models.CommentRepo.Create(comment.PostId, comment.UserId, comment.Content, date); err != nil {
 		fmt.Println("Error adding new comment: ", err)
+		return
+	}
+
+	comments, err := models.CommentRepo.GetCommentsFromPostId(comment.PostId)
+	if err != nil {
+		log.Println("Error retrieving comments", err)
+		return
+	}
+	response := struct {
+		Post     models.PostInfo
+		Comments []models.CommentInfo
+	}{
+		Post:     post,
+		Comments: comments,
+	}
+
+	for conn, tab := range SocketClients {
+		fmt.Println("sending info to clients", tab)
+		BroadcastPostDetails(conn, response)
 	}
 }
 
