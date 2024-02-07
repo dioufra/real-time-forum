@@ -42,7 +42,9 @@ function loadData() {
             }, 200);
     
         }else {
-            navigateTo('/page=1')
+            history.pushState(null, null, '/page=1')
+            // navigateTo('/page=1')
+            loadData()
         }
     }else{
         
