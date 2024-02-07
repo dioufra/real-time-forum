@@ -42,8 +42,10 @@ export default class UserInfo extends HTMLElement {
                     CHAT_CONTROLLER.startNewChat(target.href.match(/[0-9]+$/))
                 }
             } else {
-                if (target.getAttribute('id') === 'show-modal')
+                if (target.getAttribute('id') === 'show-modal') {
+                    console.log('rendering post modal');
                     POST_CONTROLLER.addNewPost()
+                }
             }
         });
     }
