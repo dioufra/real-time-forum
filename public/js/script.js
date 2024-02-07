@@ -12,6 +12,7 @@ let components = [
     // {tagName:'c-post',src:"./components/post.js"},
     {tagName:'c-posts',src:"./components/posts.js"},
     {tagName:'c-comment',src:"./components/comment.js"},
+    {tagName:'c-modal',src:"./components/newPost.js"},
     {tagName:'c-auth',src:"./components/auth.js"},
     {tagName:'c-filter',src:"./components/filter.js"},
 

@@ -150,6 +150,7 @@ export default class Socket extends HTMLElement {
     render(){
         this.innerHTML= `
             <c-header></c-header>
+            <c-modal></c-modal>
             <c-main></c-main>
             <c-footer></c-footer>
             <c-chat-container></c-chat-container>

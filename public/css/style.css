@@ -237,10 +237,35 @@ font-weight: 500;
     width: 15px;
     margin-top:-20px
 }
+c-modal .modal-form-container{
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+c-modal .overlay{
+    width: 100%;
+    height: 100%;
+    background-color: rgba(8, 3, 13,0.5);
+    /* background-color: red; */
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
 .modal-form{
+    z-index: 2;
     margin: 0 20px;
     display: flex;
     align-items: center;
+    background-color: gray;
+    border-radius: 15px;
+    padding: 10px;
 }
 .input-form-m>p{
     font-size: 25px;
@@ -814,7 +839,7 @@ input[type="text"] {
     border-radius: 3px;
   }
   
-  .box::before {
+  /* .box::before {
     content: "\f13a";
     font-family: FontAwesome;
     position: absolute;
@@ -828,12 +853,12 @@ input[type="text"] {
     color: rgba(255, 255, 255, 0.5);
     background-color: rgba(255, 255, 255, 0.1);
     pointer-events: none;
-  }
+  } */
   
-  .box:hover::before {
+  /* .box:hover::before {
     color: rgba(255, 255, 255, 0.6);
     background-color: rgba(255, 255, 255, 0.2);
-  }
+  } */
   
   
 /* pagination */
