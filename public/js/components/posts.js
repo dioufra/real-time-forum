@@ -41,11 +41,12 @@ export default class PostsContainer extends HTMLElement {
                         <div class="head">
                             <div class="ctn">
                                 <div class="img">
-                                    <img src="//ui-avatars.com/api/?name=${post.Username}&size=90&rounded=true&color=fff&background=random"
+                                    <img src="//ui-avatars.com/api/?name=${post.Username}&size=60&rounded=true&color=fff&background=random"
                                         alt="">
                                 </div>
                                 <div class="nm-tm">
-                                    <p>${post.Username}</p>
+                                <p>${post.Username}</p>
+                                <p>${post.Date} ago</p>
                                 </div>
                             </div>
                             <div class="feather">
@@ -64,11 +65,11 @@ export default class PostsContainer extends HTMLElement {
                         </div>
                         <div class="submenu">
                             <div class="sb-tags">
-                            <div class="sb-tags-l like" onclick="Appreciation(${post.Id},1,0) ">
+                            <div class="sb-tags-l like">
                                 <div><img src="/public/img/icones/Heart.svg" alt="img"></div>
                                 <div id="like${post.Id}">${post.NbrLike}</div>
                             </div>
-                            <div class="sb-tags-l" onclick="Appreciation(${post.ID},0,1) ">
+                            <div class="sb-tags-l">
                                 <div id="dislike${post.Id}">${post.NbrDislike}</div>
                                 <div>💔</div>
                             </div>

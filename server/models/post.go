@@ -52,7 +52,7 @@ type Posts []PostData
 func (r *PostRepository) GetAllPost() ([]PostInfo, error) {
 	var posts []PostInfo
 	req := `
-			SELECT p.id, p.title, p.content, p."date", u.username,
+			SELECT p.id, p.title, p.use_id, p.content, p."date", u.username,
 				( SELECT count(*) FROM "Appreciation" "a" WHERE p.id=a."Pos_id" AND "like"=1) as "likes",
 				( SELECT count(*) FROM "Appreciation" "a" WHERE p.id=a."Pos_id" AND "dislike"=1) as "dislikes",
 				( SELECT count(*) FROM "Comment" "c" WHERE p.id=c."Pos_id" ) as "Comments",
@@ -68,7 +68,7 @@ func (r *PostRepository) GetAllPost() ([]PostInfo, error) {
 	for row.Next() {
 		// postData := PostData{User: User{}, Post: Post{}}
 		var postData PostInfo
-		row.Scan(&postData.Id, &postData.Title, &postData.Content, &postData.Date, &postData.Username, &postData.NbrLike, &postData.NbrDislike, &postData.NbrComments, &postData.Categories)
+		row.Scan(&postData.Id, &postData.Title, &postData.User_id, &postData.Content, &postData.Date, &postData.Username, &postData.NbrLike, &postData.NbrDislike, &postData.NbrComments, &postData.Categories)
 		posts = append(posts, postData)
 	}
 	return posts, row.Err()
@@ -76,7 +76,7 @@ func (r *PostRepository) GetAllPost() ([]PostInfo, error) {
 
 func (r *PostRepository) GetPostById(post  *PostInfo,postID int) error {
 	req := `
-			SELECT p.id, p.title, p.content, p."date", u.username,
+			SELECT p.id, p.title, p.use_id, p.content, p."date", u.username,
 				( SELECT count(*) FROM "Appreciation" "a" WHERE p.id=a."Pos_id" AND "like"=1) as "likes",
 				( SELECT count(*) FROM "Appreciation" "a" WHERE p.id=a."Pos_id" AND "dislike"=1) as "dislikes",
 				( SELECT count(*) FROM "Comment" "c" WHERE p.id=c."Pos_id" ) as "Comments",
@@ -88,7 +88,7 @@ func (r *PostRepository) GetPostById(post  *PostInfo,postID int) error {
 			`
 
 	row := r.db.QueryRow(req, postID)
-	err := row.Scan(&post.Id, &post.Title, &post.Content, &post.Date, &post.Username, &post.NbrLike, &post.NbrDislike, &post.NbrComments, &post.Categories)
+	err := row.Scan(&post.Id, &post.Title, &post.User_id ,&post.Content, &post.Date, &post.Username, &post.NbrLike, &post.NbrDislike, &post.NbrComments, &post.Categories)
 
 	return err
 }

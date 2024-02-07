@@ -14,10 +14,6 @@ export default class Socket extends HTMLElement {
     connectedCallback() {
         this.render()
 
-        document.addEventListener('postDetails', (event) => {
-            this.sendData(JSON.stringify({type: 'postDetails', data: {postId: event.detail.data}}))
-        })
-
         this.checkAllCategoriesListener()
         this.checkUserInfosListener()
         this.checkOnlineUsersListener()
@@ -28,6 +24,9 @@ export default class Socket extends HTMLElement {
         this.checkPostDetails()
         this.checkWebSocketConnection()
         this.checkChatListener()
+        this.checkPostDetailsListener()
+        this.checkPostAppreciateListener()
+        this.checkCommentAppreciationListerner()
         document.dispatchEvent(new Event('connectWebSocket'))
     }
     disconnectedCallback() {
@@ -78,6 +77,24 @@ export default class Socket extends HTMLElement {
                 .catch(console.log)
         })
     }
+
+    checkPostAppreciateListener(){
+        document.addEventListener('postAppreciate', (event) => {
+            this.sendData(JSON.stringify({type: 'postAppreciate', data: event.detail.data}))
+        })
+    }
+
+    checkCommentAppreciationListerner() {
+        document.addEventListener('commentAppreciate', (event) => {
+            this.sendData(JSON.stringify({type: 'commentAppreciate', data: event.detail.data}))
+        })
+    }
+
+    checkPostDetailsListener(){
+        document.addEventListener('postDetails', (event) => {
+            this.sendData(JSON.stringify({type: 'postDetails', data: {postId: event.detail.data}}))
+        })
+    }
     checkChatListener(){
         this.addEventListener('broadcastChat',e => {
             console.log("broadcastChat",e.detail.data)
@@ -105,6 +122,7 @@ export default class Socket extends HTMLElement {
     checkAllPostsListener(){
         this.addEventListener('broadcastAllPosts',e => {
             // console.log("broadcastAllPosts",e.detail.data)
+            COMMENT_CONTROLLER.post = e.detail.data.filter(post => post.id === COMMENT_CONTROLLER.post.id) || COMMENT_CONTROLLER.post
             POST_CONTROLLER.setPosts(e.detail.data)
         })
     }
@@ -117,7 +135,7 @@ export default class Socket extends HTMLElement {
 
     checkPostDetails() {
         this.addEventListener('broadcastPostDetails', e => {
-            console.log(e.detail.data.Post, typeof e.detail.data.Comments);
+            console.log("broadcastPostDetails",e.detail.data);
             COMMENT_CONTROLLER.setData(e.detail.data.Comments, e.detail.data.Post)
             COMMENT_CONTROLLER.setIsPostSection(true)
         } )

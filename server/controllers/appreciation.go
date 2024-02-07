@@ -1,5 +1,10 @@
 package controllers
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
-func Appreciation(res http.ResponseWriter, req *http.Request) {}
+func Appreciation(res http.ResponseWriter, req *http.Request) {
+	fmt.Println("Hello from appreciation")
+}

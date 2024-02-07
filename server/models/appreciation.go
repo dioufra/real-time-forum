@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 )
 
@@ -19,44 +20,130 @@ type AppreciationRepository struct {
 	db *sql.DB
 }
 
-func (r *AppreciationRepository) Create(user_id, post_id, like, dislike int) error {
-	req := `SELECT id, Use_id, like, dislike FROM Appreciation WHERE Pos_id=? AND Use_id=?;`
+func NewAppreciationRepository(db *sql.DB) *AppreciationRepository {
+	return &AppreciationRepository{
+		db: db,
+	}
+}
 
-	row, err := r.db.Query(req, post_id, user_id)
+func (r *AppreciationRepository) AddForPost(user_id, post_id, like, dislike int) error {
+	appr, err := getByPostAndUser(r, post_id, user_id)
 	if err != nil {
 		return err
 	}
+
+	if appr.UserId != user_id {
+		req := `INSERT INTO Appreciation (Use_id,Pos_id,like, dislike) VALUES(?,?,?,?);`
+		_, err := r.db.Exec(req, user_id, post_id, like, dislike)
+		return err
+	}
+	if like > 0 {
+		if like+appr.Like > 1 {
+			return Update(r.db, user_id, post_id, 0, "like")
+		} else {
+			Update(r.db, user_id, post_id, 1, "like")
+			return Update(r.db, user_id, post_id, 0, "dislike")
+		}
+	} else if dislike > 0 {
+		if dislike+appr.Dislike > 1 {
+			return Update(r.db, user_id, post_id, 0, "dislike")
+		} else {
+			Update(r.db, user_id, post_id, 0, "like")
+			return Update(r.db, user_id, post_id, 1, "dislike")
+		}
+	}
+	return nil
+}
+
+func (r *AppreciationRepository) AddForComment(user_id, com_id, like, dislike int) error {
+	fmt.Println("adding appreciation to comments")
+	appr, err := getByCommentAndUser(r, com_id, user_id)
+	if err != nil {
+		return err
+	}
+
+	if appr.UserId != user_id {
+		req := `INSERT INTO Appreciation (Use_id, Com_id ,Pos_id,like, dislike) VALUES(?,?,?,?,?);`
+		_, err := r.db.Exec(req, user_id, com_id, 0, like, dislike)
+		return err
+	}
+	if like > 0 {
+		if like+appr.Like > 1 {
+			return UpdateComment(r.db, user_id, com_id, 0, "like")
+		} else {
+			UpdateComment(r.db, user_id, com_id, 1, "like")
+			return UpdateComment(r.db, user_id, com_id, 0, "dislike")
+		}
+	} else if dislike > 0 {
+		if dislike+appr.Dislike > 1 {
+			return UpdateComment(r.db, user_id, com_id, 0, "dislike")
+		} else {
+			UpdateComment(r.db, user_id, com_id, 0, "like")
+			return UpdateComment(r.db, user_id, com_id, 1, "dislike")
+		}
+	}
+	return nil
+}
+
+func getByPostAndUser(r *AppreciationRepository, post_id int, user_id int) (Appreciation, error) {
 	appr := Appreciation{}
+	req := `SELECT id, Use_id, like, dislike FROM Appreciation WHERE Pos_id=? AND Use_id=?;`
+	row, err := r.db.Query(req, post_id, user_id)
+	if err != nil {
+		return Appreciation{}, err
+	}
 	for row.Next() {
 		row.Scan(&appr.Id, &appr.UserId, &appr.Like, &appr.Dislike)
 	}
-
-	if appr.UserId == user_id {
-		if like > 0 {
-			if like+appr.Like > 1 {
-				return Update(r.db, user_id, post_id, 0, "like")
-			} else {
-				Update(r.db, user_id, post_id, 1, "like")
-				return Update(r.db, user_id, post_id, 0, "dislike")
-			}
-		} else if dislike > 0 {
-			if dislike+appr.Dislike > 1 {
-				return Update(r.db, user_id, post_id, 0, "dislike")
-			} else {
-				Update(r.db, user_id, post_id, 0, "like")
-				return Update(r.db, user_id, post_id, 1, "dislike")
-			}
-		}
-	} else {
-		req := `INSERT INTO Appreciation (Use_id,Pos_id,like, dislike) VALUES(?,?,?,?);`
-		_, erreq := r.db.Exec(req, user_id, post_id, like, dislike)
-		return erreq
-	}
-
-	return row.Err()
+	return appr, row.Err()
 }
 
-func (r *AppreciationRepository) Get(post_id int) (Appreciation, error) {
+func getByCommentAndUser(r *AppreciationRepository, com_id int, user_id int) (Appreciation, error) {
+	appr := Appreciation{}
+	req := `SELECT id, Use_id, like, dislike FROM Appreciation WHERE Com_id=? AND Use_id=?;`
+	row, err := r.db.Query(req, com_id, user_id)
+	if err != nil {
+		return Appreciation{}, err
+	}
+	for row.Next() {
+		row.Scan(&appr.Id, &appr.UserId, &appr.Like, &appr.Dislike)
+	}
+	return appr, row.Err()
+}
+
+// func (r *AppreciationRepository) AddCommentAprreciation(user_id, post_id, like, dislike int) error {
+// 	appr, err, shouldReturn, returnValue := newFunction(r, post_id, user_id)
+// 	if shouldReturn {
+// 		return returnValue
+// 	}
+// 	// appr, err := getAppreciationByPostAndUser(r, post_id, user_id)
+
+// 	if appr.UserId != user_id {
+// 		req := `INSERT INTO Appreciation (Use_id,Pos_id,like, dislike) VALUES(?,?,?,?);`
+// 		_, erreq := r.db.Exec(req, user_id, post_id, like, dislike)
+// 		return erreq
+// 	}
+
+// 	if like > 0 {
+// 		if like+appr.Like > 1 {
+// 			return Update(r.db, user_id, post_id, 0, "like")
+// 		} else {
+// 			Update(r.db, user_id, post_id, 1, "like")
+// 			return Update(r.db, user_id, post_id, 0, "dislike")
+// 		}
+// 	} else if dislike > 0 {
+// 		if dislike+appr.Dislike > 1 {
+// 			return Update(r.db, user_id, post_id, 0, "dislike")
+// 		} else {
+// 			Update(r.db, user_id, post_id, 0, "like")
+// 			return Update(r.db, user_id, post_id, 1, "dislike")
+// 		}
+// 	}
+
+// 	return err
+// }
+
+func (r *AppreciationRepository) GetByPostId(post_id int) (Appreciation, error) {
 	var apprec Appreciation
 	req := `SELECT count(*) as like  , (SELECT count(*) FROM Appreciation WHERE pos_id=? AND dislike=1) as dislike FROM Appreciation WHERE pos_id=? AND like=1;`
 	row, err := r.db.Query(req, post_id, post_id)

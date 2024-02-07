@@ -10,7 +10,6 @@ export default class PostsContainer extends HTMLElement {
         this.commentPage = true
         this.clickListener = (event) => {
             event.preventDefault()
-            console.log('clicked');
             if (event.target.classList.contains('cmt-title'))
             {
                 // navigateTo(event.target.href)
