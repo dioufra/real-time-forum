@@ -1,9 +1,13 @@
 package controllers
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
-
-func CreatePost(res http.ResponseWriter, req *http.Request) {}
+func AddPost(res http.ResponseWriter, req *http.Request) {
+	fmt.Println("Hello from post creation")
+}
 
 func GetPost(res http.ResponseWriter, req *http.Request) {}
 

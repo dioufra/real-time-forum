@@ -20,6 +20,8 @@ func Route() {
 	// http.HandleFunc("/post", middlewares.Ispath(middlewares.Log(controllers.CreatePost), "/post"))
 	// http.HandleFunc("/post/", controllers.GetPost)
 	http.HandleFunc("/api/appreciation", controllers.Appreciation)
+	http.HandleFunc("/api/posts/add", controllers.AddPost)
+
 	// http.HandleFunc("/comment_like", middlewares.Ispath(middlewares.Log(controllers.AppreciationComment), "/comment_like"))
 	// http.HandleFunc("/filter-category", middlewares.Ispath(controllers.CatFilter, "/filter-category"))
 	// http.HandleFunc("/liked", middlewares.Ispath(middlewares.Log(controllers.LikedPosts), "/liked"))

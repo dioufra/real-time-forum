@@ -3,6 +3,7 @@ import { POST_CONTROLLER } from "../controllers/post.js"
 import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 import { navigateTo } from "../routes/routechecker.js"
+import { updateComponents, updateSingleComponent } from "../script.js"
 
 export default class UserInfo extends HTMLElement {
     constructor() {
@@ -45,6 +46,8 @@ export default class UserInfo extends HTMLElement {
                 if (target.getAttribute('id') === 'show-modal') {
                     console.log('rendering post modal');
                     POST_CONTROLLER.addNewPost()
+                    POST_CONTROLLER.displayBox = true
+                    updateSingleComponent('c-modal')
                 }
             }
         });
