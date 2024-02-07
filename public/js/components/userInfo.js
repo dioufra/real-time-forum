@@ -1,4 +1,5 @@
 import { CHAT_CONTROLLER } from "../controllers/chat.js"
+import { POST_CONTROLLER } from "../controllers/post.js"
 import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 import { navigateTo } from "../routes/routechecker.js"
@@ -21,12 +22,14 @@ export default class UserInfo extends HTMLElement {
     shouldComponentRender() {
         return !this.innerHTML
     }
+
     checkScrollListener(){
         this.scrollTop = SCROLL_CONTROLLER.elements.userInfo?.scrollTop || 0
         this.addEventListener('scroll',e => {
             SCROLL_CONTROLLER.setScroll('userInfo',e.target)
         })
     }
+
     checkButtonClickListener(){
         this.addEventListener('click', function (event) {
             const { target } = event
@@ -35,9 +38,12 @@ export default class UserInfo extends HTMLElement {
                 if (target.href.split('/').reverse()[0] === 'logout') {
                     document.dispatchEvent(new Event('disconnectWebSocket'))
                     navigateTo(target.href);
-                }else if(/\/user\/[0-9]+$/.test(target.href)){
+                } else if(/\/user\/[0-9]+$/.test(target.href)){
                     CHAT_CONTROLLER.startNewChat(target.href.match(/[0-9]+$/))
                 }
+            } else {
+                if (target.getAttribute('id') === 'show-modal')
+                    POST_CONTROLLER.addNewPost()
             }
         });
     }
@@ -52,7 +58,7 @@ export default class UserInfo extends HTMLElement {
                 </a>
                 <p class="user-name">${USER_CONTROLLER.FirstName} ${USER_CONTROLLER.LastName}</p>
                 <div class="dcn-btn">
-                    <a href="/logout">Disconnet </a href="">
+                    <a href="/logout">Logout</a href="">
                 </div>
             </div>
             <div class="user-ac">
@@ -63,7 +69,7 @@ export default class UserInfo extends HTMLElement {
                 </div>
             </div>
             <div class="user-ac">
-                <div id="show-modal" style="cursor:pointer;">Online Users</div>
+                <div >Online Users</div>
                 <div class="user-ac">
                     ${USER_CONTROLLER.onlineUsers.map(user => `
                         <div>
@@ -75,7 +81,7 @@ export default class UserInfo extends HTMLElement {
                 </div>
             </div>
             <div class="user-ac">
-                <div id="show-modal" style="cursor:pointer;">All Users</div>
+                <div >All Users</div>
                 <div class="user-ac">
                     ${USER_CONTROLLER.allUsers.map(user => `
                         <div>
@@ -91,5 +97,9 @@ export default class UserInfo extends HTMLElement {
 
     get header() {
         this.querySelector('.main-header')
+    }
+
+    get displayModalBtn() {
+        return this.querySelector('.show-modal')
     }
 }

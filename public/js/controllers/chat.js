@@ -9,10 +9,12 @@ class ChatController {
         this.ReceiverAdress = ""
         this.allMessages = []
     }
+    
     setReciever(receiver){
         this.Receiver = receiver
         // updateComponents()
     }
+
     startNewChat(receiverId){
         receiverId = parseInt(receiverId) || 0
         let receiver = USER_CONTROLLER.allUsers.filter(user => user.id === receiverId)[0] || null
@@ -46,6 +48,7 @@ class ChatController {
             });
         }
     }
+
     setAllMessages(messages){
         this.allMessages = messages
         // updateComponents()

@@ -69,7 +69,7 @@ export default class Chat extends HTMLElement {
 
     render() {
         this.innerHTML = /* HTML */ `
-            ${USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox? `
+            ${USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox? /*HTML*/`
                 <div class="chat-modal ">
                     <div class="chat-header" >
                         <div class="user-infos" >

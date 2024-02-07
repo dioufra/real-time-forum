@@ -6,6 +6,18 @@
 
 [x] pagination
 
-[] like dislike
+[X] Return comments
 
-[] Return comments
+[X] like dislike for comment section
+
+[] like dislike for post section
+
+[] Add username and date to message section
+
+[] Add scroll up to message section and post section (optionnal)
+
+[] Order users by last message and alphabetic order
+
+
+[] Add post
+
