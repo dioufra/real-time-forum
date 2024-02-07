@@ -33,17 +33,14 @@ export default class Pagination extends HTMLElement {
         });
     }
     filterPosts(page){
-        PAGINATION_CONTROLLER.CurrentPage = page
-        POST_CONTROLLER.filteredPosts = POST_CONTROLLER.posts.filter((post,index)=> {
-            return index>(page-1)*PAGINATION_CONTROLLER.PageSize && index < (page*PAGINATION_CONTROLLER.PageSize)
-        })
+        PAGINATION_CONTROLLER.setCurrentPage(page)
     }
     render() {
         this.innerHTML = /* HTML */ `
             ${((result="")=>{
                 let LastPage = (POST_CONTROLLER.posts.length+1)/PAGINATION_CONTROLLER.PageSize
                 for (let i = Math.max(1,PAGINATION_CONTROLLER.CurrentPage-5); i < Math.min(5,LastPage); i++)
-                    result += `<a href="?page=${i}" class="page ${i===PAGINATION_CONTROLLER.CurrentPage && 'active'}">${i}</a>`
+                    result += `<a href="page=${i}" class="page ${i===PAGINATION_CONTROLLER.CurrentPage && 'active'}">${i}</a>`
                 return result
             })()}
         `

@@ -75,7 +75,9 @@ export default class UserInfo extends HTMLElement {
                 <div class="user-ac">
                     ${USER_CONTROLLER.onlineUsers.map(user => `
                         <div>
-                            ${user.firstname} ${user.lastname}
+                            <a href="/user/${user.id}">
+                                ${user.firstname} ${user.lastname}
+                            </a>
                         </div>
                     `).join('') || "No user online"}
                 </div>

@@ -15,6 +15,7 @@ export default class PostsContainer extends HTMLElement {
                 // navigateTo(event.target.href)
                 let id = parseInt(event.target.href.split('/').reverse()[0])
                 document.dispatchEvent(new CustomEvent('postDetails', {detail: {data: id}}))
+                navigateTo('/post='+id)
             }
         }
     }

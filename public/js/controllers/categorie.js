@@ -16,11 +16,11 @@ class CategoryController {
     }
     setCategories(newCategories){
         this.categories = newCategories;
-        updateComponents()
+        // updateComponents()
     }
     setCurrentCategoryId(id){
         this.currentCategoryId = id
-        updateComponents()
+        // updateComponents()
     }
 }
 export const CATEGORY_CONTROLLER = new CategoryController()

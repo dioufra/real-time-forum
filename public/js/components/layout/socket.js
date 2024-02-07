@@ -3,7 +3,7 @@ import { CHAT_CONTROLLER } from "../../controllers/chat.js"
 import { COMMENT_CONTROLLER} from "../../controllers/comment.js"
 import { POST_CONTROLLER } from "../../controllers/post.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
-import { updateComponents } from "../../script.js"
+import { updateComponents, updateSingleComponent } from "../../script.js"
 
 export default class Socket extends HTMLElement {
     constructor() {
@@ -36,7 +36,7 @@ export default class Socket extends HTMLElement {
         document.addEventListener('connectWebSocket',e => {
             if (!this.isSocketConnected) {
                 // Créer une connexion WebSocket
-                this.socket = new WebSocket("ws://localhost:8080/api/ws/",);
+                this.socket = new WebSocket("ws://"+window.location.host+"/api/ws/",);
 
                 // Gérer les événements de la connexion WebSocket
                 this.socket.addEventListener("open", (event) => {
@@ -49,7 +49,7 @@ export default class Socket extends HTMLElement {
                     let response = JSON.parse(event.data)
                     // Faire un Dipach Event
                     this.dispatchEvent(new CustomEvent(response.event,{detail:{data:response.data}}))
-                    updateComponents()
+                    // updateComponents()
                 });
                 this.socket.addEventListener("close", (event) => {
                     // console.log("WebSocket connection closed:", event);
@@ -99,37 +99,42 @@ export default class Socket extends HTMLElement {
         this.addEventListener('broadcastChat',e => {
             console.log("broadcastChat",e.detail.data)
             CHAT_CONTROLLER.setAllMessages(e.detail.data)
+            updateSingleComponent('c-chat-container')
         })
     }
     checkUserInfosListener(){
         this.addEventListener('broadcastUserInfos',e => {
             // console.log("broadcastUserInfos",e.detail.data)
             USER_CONTROLLER.setUser(e.detail.data)
+            updateSingleComponent('sc-user-info')
         })
     }
     checkOnlineUsersListener(){
         this.addEventListener('broadcastOnlineUsers',e => {
             // console.log("broadcastOnlineUsers",e.detail.data)
             USER_CONTROLLER.setOnlineUsers(e.detail.data)
+            updateSingleComponent('sc-user-info')
         })
     }
     checkAllUsersListener(){
         this.addEventListener('broadcastAllUsers',e => {
             // console.log("broadcastAllUsers",e.detail.data)
             USER_CONTROLLER.setAllUsers(e.detail.data)
+            updateSingleComponent('sc-user-info')
         })
     }
     checkAllPostsListener(){
         this.addEventListener('broadcastAllPosts',e => {
             // console.log("broadcastAllPosts",e.detail.data)
-            COMMENT_CONTROLLER.post = e.detail.data.filter(post => post.id === COMMENT_CONTROLLER.post.id) || COMMENT_CONTROLLER.post
             POST_CONTROLLER.setPosts(e.detail.data)
+            updateSingleComponent('c-posts-container')
         })
     }
     checkAllCategoriesListener(){
         this.addEventListener('broadcastAllCategories',e => {
             // console.log("broadcastAl lCategories",e.detail.data)
             CATEGORY_CONTROLLER.setCategories(e.detail.data)
+            updateSingleComponent('c-filter')
         })
     }
 
@@ -138,6 +143,9 @@ export default class Socket extends HTMLElement {
             console.log("broadcastPostDetails",e.detail.data);
             COMMENT_CONTROLLER.setData(e.detail.data.Comments, e.detail.data.Post)
             COMMENT_CONTROLLER.setIsPostSection(true)
+            COMMENT_CONTROLLER.setData(e.detail.data.Comments, e.detail.data.Post)
+            updateSingleComponent('c-posts-container')
+            // updateComponents()
         } )
     }
 

@@ -1,5 +1,5 @@
 import { navigateTo } from "../routes/routechecker.js"
-import { updateComponents } from "../script.js"
+import { updateComponents, updateSingleComponent } from "../script.js"
 
 class User {
     constructor() {
@@ -19,7 +19,7 @@ class User {
     setAllUsers(data){this.allUsers = data}
     setIsAuth(bool){
         this.IsAuth = bool
-        updateComponents()
+        // updateComponents()
     }
     setUser(user){
         this.Id = user.id || this.Id
@@ -30,7 +30,8 @@ class User {
         this.Email = user.email || this.Email
         this.Age = user.age || this.Age
         this.Gender = user.gender || this.Gender
-        updateComponents()
+        // updateComponents()
+        updateSingleComponent('sc-user-info')
     }
     disconnect(){
         this.Id = 0
