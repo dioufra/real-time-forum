@@ -3,8 +3,6 @@ import { FORM_CONTROLLER } from "../../controllers/form.js"
 import { SCROLL_CONTROLLER } from "../../controllers/scroll.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
 import { navigateTo } from "../../routes/routechecker.js"
-import { ROUTER } from "../../routes/routes.js"
-import { updateComponents } from "../../script.js"
 import {API_SERVICE} from "../../service/api-service.js"
 
 export default class Main extends HTMLElement {

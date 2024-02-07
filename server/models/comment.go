@@ -43,7 +43,7 @@ func NewCommentRepository(db *sql.DB) *CommentRepository {
 // get comment from  post id
 func (r *CommentRepository) GetCommentsFromPostId(post_id int) ([]CommentInfo, error) {
 	var comments []CommentInfo
-	req := `SELECT c.id, c.content, u.username,
+	req := `SELECT c.id, c.content, c.use_id, c.pos_id, u.username,
 				(SELECT count(id) FROM "Appreciation" a WHERE a."Com_id" = c.id AND like = 1) as like,
 				(SELECT count(id) FROM "Appreciation" a WHERE a."Com_id" = c.id AND dislike = 1) as dislike
 			FROM "Comment" c 
@@ -55,7 +55,7 @@ func (r *CommentRepository) GetCommentsFromPostId(post_id int) ([]CommentInfo, e
 	for row.Next() {
 
 		comment := CommentInfo{}
-		row.Scan(&comment.Id, &comment.Content, &comment.Username, &comment.Like, &comment.Dislike)
+		row.Scan(&comment.Id, &comment.Content, &comment.UserId, &comment.PostId, &comment.Username, &comment.Like, &comment.Dislike)
 		formate := time.Now().Sub(comment.Date.Local())
 		comment.Date = time.Date(0, 0, 0, int(formate.Hours()), int(formate.Minutes()), int(formate.Seconds()), int(formate.Milliseconds()), time.UTC)
 		comments = append(comments, comment)

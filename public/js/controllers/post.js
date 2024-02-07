@@ -1,4 +1,4 @@
-import { updateComponents } from "../script.js";
+import { updateComponents, updateSingleComponent } from "../script.js";
 
 class PostController {
     constructor() {
@@ -7,7 +7,8 @@ class PostController {
     }
     setPosts(data){
         this.posts = data;
-        updateComponents()
+        // updateComponents()
+        updateSingleComponent('c-posts-container')
     }
 }
 export const POST_CONTROLLER = new PostController()

@@ -14,8 +14,6 @@ let components = [
     {tagName:'c-comment',src:"./components/comment.js"},
     {tagName:'c-auth',src:"./components/auth.js"},
     {tagName:'c-filter',src:"./components/filter.js"},
-
-
 ]
 
 // Define the custom web component
@@ -30,5 +28,11 @@ export const updateComponents = ()=> {
         elements.forEach(element => {
             if (element?.render) element.render()
         })
+    })
+}
+export const updateSingleComponent = (tagName)=> {
+    let elements = document.querySelectorAll(tagName);
+    elements.forEach(element => {
+        if (element?.render) element.render()
     })
 }

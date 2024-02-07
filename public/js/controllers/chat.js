@@ -1,4 +1,4 @@
-import { updateComponents } from "../script.js";
+import { updateComponents, updateSingleComponent } from "../script.js";
 import { USER_CONTROLLER } from "./user.js";
 
 class ChatController {
@@ -11,7 +11,7 @@ class ChatController {
     }
     setReciever(receiver){
         this.Receiver = receiver
-        updateComponents()
+        // updateComponents()
     }
     startNewChat(receiverId){
         receiverId = parseInt(receiverId) || 0
@@ -38,6 +38,7 @@ class ChatController {
                     this.ReceiverAdress = data.ReceiverAdress
                     this.displayBox = true
                     this.setReciever(receiver)
+                    updateSingleComponent('c-chat-container')
                 }
             })
             .catch(error => {
@@ -47,7 +48,7 @@ class ChatController {
     }
     setAllMessages(messages){
         this.allMessages = messages
-        updateComponents()
+        // updateComponents()
     }
 }
 export const CHAT_CONTROLLER = new ChatController()

@@ -3,7 +3,7 @@ import { CHAT_CONTROLLER } from "../../controllers/chat.js"
 import { COMMENT_CONTROLLER} from "../../controllers/comment.js"
 import { POST_CONTROLLER } from "../../controllers/post.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
-import { updateComponents } from "../../script.js"
+import { updateComponents, updateSingleComponent } from "../../script.js"
 
 export default class Socket extends HTMLElement {
     constructor() {
@@ -13,10 +13,6 @@ export default class Socket extends HTMLElement {
     
     connectedCallback() {
         this.render()
-
-        document.addEventListener('postDetails', (event) => {
-            this.sendData(JSON.stringify({type: 'postDetails', data: {postId: event.detail.data}}))
-        })
 
         this.checkAllCategoriesListener()
         this.checkUserInfosListener()
@@ -28,6 +24,9 @@ export default class Socket extends HTMLElement {
         this.checkPostDetails()
         this.checkWebSocketConnection()
         this.checkChatListener()
+        this.checkPostDetailsListener()
+        this.checkPostAppreciateListener()
+        this.checkCommentAppreciationListerner()
         document.dispatchEvent(new Event('connectWebSocket'))
     }
     disconnectedCallback() {
@@ -50,7 +49,7 @@ export default class Socket extends HTMLElement {
                     let response = JSON.parse(event.data)
                     // Faire un Dipach Event
                     this.dispatchEvent(new CustomEvent(response.event,{detail:{data:response.data}}))
-                    updateComponents()
+                    // updateComponents()
                 });
                 this.socket.addEventListener("close", (event) => {
                     // console.log("WebSocket connection closed:", event);
@@ -78,48 +77,75 @@ export default class Socket extends HTMLElement {
                 .catch(console.log)
         })
     }
+
+    checkPostAppreciateListener(){
+        document.addEventListener('postAppreciate', (event) => {
+            this.sendData(JSON.stringify({type: 'postAppreciate', data: event.detail.data}))
+        })
+    }
+
+    checkCommentAppreciationListerner() {
+        document.addEventListener('commentAppreciate', (event) => {
+            this.sendData(JSON.stringify({type: 'commentAppreciate', data: event.detail.data}))
+        })
+    }
+
+    checkPostDetailsListener(){
+        document.addEventListener('postDetails', (event) => {
+            this.sendData(JSON.stringify({type: 'postDetails', data: {postId: event.detail.data}}))
+        })
+    }
     checkChatListener(){
         this.addEventListener('broadcastChat',e => {
             console.log("broadcastChat",e.detail.data)
             CHAT_CONTROLLER.setAllMessages(e.detail.data)
+            updateSingleComponent('c-chat-container')
         })
     }
     checkUserInfosListener(){
         this.addEventListener('broadcastUserInfos',e => {
             // console.log("broadcastUserInfos",e.detail.data)
             USER_CONTROLLER.setUser(e.detail.data)
+            updateSingleComponent('sc-user-info')
         })
     }
     checkOnlineUsersListener(){
         this.addEventListener('broadcastOnlineUsers',e => {
             // console.log("broadcastOnlineUsers",e.detail.data)
             USER_CONTROLLER.setOnlineUsers(e.detail.data)
+            updateSingleComponent('sc-user-info')
         })
     }
     checkAllUsersListener(){
         this.addEventListener('broadcastAllUsers',e => {
             // console.log("broadcastAllUsers",e.detail.data)
             USER_CONTROLLER.setAllUsers(e.detail.data)
+            updateSingleComponent('sc-user-info')
         })
     }
     checkAllPostsListener(){
         this.addEventListener('broadcastAllPosts',e => {
             // console.log("broadcastAllPosts",e.detail.data)
             POST_CONTROLLER.setPosts(e.detail.data)
+            updateSingleComponent('c-posts-container')
         })
     }
     checkAllCategoriesListener(){
         this.addEventListener('broadcastAllCategories',e => {
             // console.log("broadcastAl lCategories",e.detail.data)
             CATEGORY_CONTROLLER.setCategories(e.detail.data)
+            updateSingleComponent('c-filter')
         })
     }
 
     checkPostDetails() {
         this.addEventListener('broadcastPostDetails', e => {
-            console.log(e.detail.data.Post, typeof e.detail.data.Comments);
+            console.log("broadcastPostDetails",e.detail.data);
+            COMMENT_CONTROLLER.setData(e.detail.data.Comments, e.detail.data.Post)
             COMMENT_CONTROLLER.setIsPostSection(true)
             COMMENT_CONTROLLER.setData(e.detail.data.Comments, e.detail.data.Post)
+            updateSingleComponent('c-posts-container')
+            // updateComponents()
         } )
     }
 

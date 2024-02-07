@@ -1,4 +1,4 @@
-import { updateComponents } from "../script.js";
+import { updateComponents, updateSingleComponent } from "../script.js";
 
 class FromController {
     constructor() {
@@ -7,7 +7,8 @@ class FromController {
     }
     setError(errName,message){
         this.errors[errName] = message
-        updateComponents()
+        // updateComponents()
+        updateSingleComponent('c-main')
     }
     setInput(form,target){
         this.forms[form] = this.forms[form] || {}

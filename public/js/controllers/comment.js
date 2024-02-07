@@ -11,7 +11,7 @@ class CommentController {
         if (newComments != null)
             this.comments = newComments;
         this.post = newPost
-        updateComponents()
+        // updateComponents()
     }
     // setPost(newPost){
     //     this.post = newPost
@@ -24,7 +24,7 @@ class CommentController {
 
     setCurrentCommentId(id){
         this.currentCommentId = id
-        updateComponents()
+        // updateComponents()
     }
 }
 export const COMMENT_CONTROLLER = new CommentController()

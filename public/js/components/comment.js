@@ -38,12 +38,68 @@ export default class PostsContainer extends HTMLElement {
                 console.log(response);
             })
         }
+
+        this.commentAppreciationListerner = event => {
+            event.preventDefault()
+            if (event.target.classList.contains('apprec')) {
+                const postId = event.target.getAttribute('data-postId')
+                const type = event.target.getAttribute('data-appreciation-type')
+                const like = event.target.getAttribute('data-like')
+                const dislike = event.target.getAttribute('data-dislike')
+
+                const likeElement = this.querySelector(`like-${type}-id${postId}`)
+                const dislikeElement = this.querySelector(`like-${type}-id${postId}`)
+
+                let formData = new FormData()
+                formData['type'] = type
+                console.log(event.target);
+                switch (type) {
+                    case 'post':
+                        document.dispatchEvent(new CustomEvent('postAppreciate',{
+                            detail:{
+                                data:{
+                                    userId:USER_CONTROLLER.Id || 0,
+                                    postId:COMMENT_CONTROLLER.post.Id || 0,
+                                    like: parseInt(like) || 0,
+                                    dislike:parseInt(dislike) || 0,
+                                    like: parseInt(event.target.getAttribute('data-like')) || 0,
+                                    dislike: parseInt(event.target.getAttribute('data-dislike')) || 0
+                                }
+                            }
+                        }))
+                        break;
+                    case 'comment':
+                        document.dispatchEvent(new CustomEvent('commentAppreciate',{
+                            detail:{
+                                data:{
+                                    userId:USER_CONTROLLER.Id || 0,
+                                    postId:COMMENT_CONTROLLER.post.Id || 0,
+                                    commentId: parseInt(event.target.getAttribute('data-commentId')) || 0,
+                                    like: parseInt(like) || 0,
+                                    dislike:parseInt(dislike) || 0,
+                                    like: parseInt(event.target.getAttribute('data-like')) || 0,
+                                    dislike: parseInt(event.target.getAttribute('data-dislike')) || 0
+                                }
+                            }
+                        }))
+                }
+
+
+
+                // fetch('/api/appre')
+            }
+        }
+
+        this.postAppreciationListerner = event => {
+
+        }
     }
 
 
     connectedCallback() {
         this.render()
         this.addEventListener('submit', this.commentListerner)
+        this.addEventListener('click', this.commentAppreciationListerner)
     }
 
     disconnectedCallback() {
@@ -64,7 +120,7 @@ export default class PostsContainer extends HTMLElement {
                         </div>
                         <div class="nm-tm">
                             <p>${COMMENT_CONTROLLER.post.Username}</p>
-                            ${COMMENT_CONTROLLER.post.Date} ago</p>
+                            <p>${COMMENT_CONTROLLER.post.Date} ago</p>
                         </div>
                     </div>
                     <div class="feather">
@@ -85,18 +141,18 @@ export default class PostsContainer extends HTMLElement {
                 </div>
                 <div class="submenu">
                     <div class="sb-tags">
-                        <div class="sb-tags-l like" onclick="Appreciation(${COMMENT_CONTROLLER.post.Id},1,0) ">
-                            <div><img src="/public/img/icones/Heart.svg" alt=""></div>
-                            <div id="like${COMMENT_CONTROLLER.post.Id}">${COMMENT_CONTROLLER.post.NbrLike}</div>
+                        <div class="sb-tags-l like">
+                            <div><img class="apprec" src="/public/img/icones/Heart.svg" alt="" data-like="1" data-dislike="0" data-appreciation-type="post" data-postId="${COMMENT_CONTROLLER.post.Id}"></div>
+                            <div id="like-post-id${COMMENT_CONTROLLER.post.Id}">${COMMENT_CONTROLLER.post.NbrLike}</div>
                         </div>
-                        <div class="sb-tags-l" onclick="Appreciation(${COMMENT_CONTROLLER.post.ID},0,1) ">
-                            <div id="dislike${COMMENT_CONTROLLER.post.Id}">${COMMENT_CONTROLLER.post.NbrDislike}</div>
-                            <div>💔</div>
+                        <div class="sb-tags-l">
+                            <div id="dislike-post-id${COMMENT_CONTROLLER.post.Id}">${COMMENT_CONTROLLER.post.NbrDislike}</div>
+                            <div class="apprec" data-like="0" data-dislike="1" data-appreciation-type="post" data-postId="${COMMENT_CONTROLLER.post.Id}">💔</div>
                         </div>
                     </div>
                 </div>
                 <div class="cmts-ct">
-                        ${COMMENT_CONTROLLER.comments.length > 0 ? COMMENT_CONTROLLER.comments.map(comment => (`
+                        ${COMMENT_CONTROLLER.comments.length > 0 ? COMMENT_CONTROLLER.comments.map(comment => ( /* HTML */`
                             <div class="cmt-ct">
                                 <div class="usr-cmt-photo"><img
                                         src="//ui-avatars.com/api/?name=${comment.Username}&size=90&rounded=true&color=fff&background=random"
@@ -111,13 +167,13 @@ export default class PostsContainer extends HTMLElement {
                                         </p>
                                     </div>
                                     <div class="sb-tags">
-                                        <div class="sb-tags-l like" onclick="CommentAppre(${comment.Id},1,0) ">
-                                            <div><img src="/public/img/icones/Heart.svg" alt=""></div>
-                                            <div id="likecom${comment.Id}">${comment.Like}</div>
+                                        <div class="sb-tags-l like">
+                                        <div><img class="apprec" src="/public/img/icones/Heart.svg"  data-commentId="${comment.Id}" data-like="1" data-dislike="0" data-appreciation-type="comment" data-postId="${COMMENT_CONTROLLER.post.Id}" alt=""></div>
+                                            <div id="like-comment-id${comment.Id}">${comment.Like}</div>
                                         </div>
-                                        <div class="sb-tags-l" onclick="CommentAppre(${comment.Id},0,1) ">
-                                            <div id="dislikecom${comment.Id}">${comment.Dislike}</div>
-                                            <div>💔</div>
+                                        <div class="sb-tags-l">
+                                            <div id="dislike-comment-id${comment.Id}">${comment.Dislike}</div>
+                                            <div class="apprec" data-commentId="${comment.Id}" data-like="0" data-dislike="1" data-appreciation-type="comment" data-postId="${COMMENT_CONTROLLER.post.Id}">💔</div>
                                         </div>
                                     </div>
                                 </div>
@@ -127,7 +183,7 @@ export default class PostsContainer extends HTMLElement {
                     }
                 </div>
                 <div class="new-comment">
-                    <form id="comment-form"  action="/api/addComment" method="post">
+                    <form id="comment-form" action="/api/addComment" method="post">
                         <input type="hidden" name="post_id" value="${COMMENT_CONTROLLER.post.Id}">
                         <input class="nc-ct" type="text" name="comment" required min="3"
                             placeholder="write your comment here...">
@@ -143,5 +199,9 @@ export default class PostsContainer extends HTMLElement {
 
     get commentForm() {
         return this.querySelector('form')
+    }
+
+    get appreciationBtn() {
+        return this.querySelector('.sb-tags')
     }
 }

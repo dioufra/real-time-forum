@@ -94,13 +94,60 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 				Comments: comments,
 			}
 			BroadcastPostDetails(conn, response)
+		case "postAppreciate":
+			if err := models.AppreciationRepo.AddForPost(data.Data["userId"], data.Data["postId"], data.Data["like"], data.Data["dislike"]); err != nil {
+				fmt.Println("Error adding a new appreciation: ", err)
+			}
+
+			comments, err := models.CommentRepo.GetCommentsFromPostId(data.Data["postId"])
+			if err != nil {
+				log.Println("Error retrieving comments", err)
+				return
+			}
+			var post models.PostInfo
+			err = models.PostRepo.GetPostById(&post, data.Data["postId"])
+			if err != nil {
+				log.Println("Error retrieving post ")
+			}
+			// sendback the comments here
+			response := struct {
+				Post     models.PostInfo
+				Comments []models.CommentInfo
+			}{
+				Post:     post,
+				Comments: comments,
+			}
+			BroadcastPostDetails(conn, response)
+			case "commentAppreciate":
+				if err := models.AppreciationRepo.AddForComment(data.Data["userId"], data.Data["commentId"], data.Data["like"], data.Data["dislike"]); err != nil {
+					fmt.Println("Error adding a new appreciation: ", err)
+				}
+
+				comments, err := models.CommentRepo.GetCommentsFromPostId(data.Data["postId"])
+				if err != nil {
+					log.Println("Error retrieving comments", err)
+					return
+				}
+				var post models.PostInfo
+				err = models.PostRepo.GetPostById(&post, data.Data["postId"])
+				if err != nil {
+					log.Println("Error retrieving post ")
+				}
+				// sendback the comments here
+				response := struct {
+					Post     models.PostInfo
+					Comments []models.CommentInfo
+				}{
+					Post:     post,
+					Comments: comments,
+				}
+				BroadcastPostDetails(conn, response)
 		}
 
 	}
 }
 
 func BroadcastPostDetails(client *websocket.Conn, data any) {
-
 	clientsMutex.Lock()
 	defer clientsMutex.Unlock()
 	response := map[string]interface{}{"event": "broadcastPostDetails", "data": data}
