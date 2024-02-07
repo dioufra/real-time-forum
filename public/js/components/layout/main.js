@@ -32,7 +32,7 @@ export default class Main extends HTMLElement {
                         document.dispatchEvent(new Event('connectWebSocket'))
                         FORM_CONTROLLER.resetForms()
                         FORM_CONTROLLER.resetErrors()
-                        navigateTo('/?page=1')
+                        navigateTo('/page=1')
                     }
                 })
                 .catch(error => {

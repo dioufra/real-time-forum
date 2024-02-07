@@ -37,7 +37,7 @@ export default class Socket extends HTMLElement {
         document.addEventListener('connectWebSocket',e => {
             if (!this.isSocketConnected) {
                 // Créer une connexion WebSocket
-                this.socket = new WebSocket("ws://localhost:8080/api/ws/",);
+                this.socket = new WebSocket("ws://"+window.location.host+"/api/ws/",);
 
                 // Gérer les événements de la connexion WebSocket
                 this.socket.addEventListener("open", (event) => {
@@ -118,8 +118,8 @@ export default class Socket extends HTMLElement {
     checkPostDetails() {
         this.addEventListener('broadcastPostDetails', e => {
             console.log(e.detail.data.Post, typeof e.detail.data.Comments);
-            COMMENT_CONTROLLER.setData(e.detail.data.Comments, e.detail.data.Post)
             COMMENT_CONTROLLER.setIsPostSection(true)
+            COMMENT_CONTROLLER.setData(e.detail.data.Comments, e.detail.data.Post)
         } )
     }
 

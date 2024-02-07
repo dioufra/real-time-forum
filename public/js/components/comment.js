@@ -1,5 +1,6 @@
 import { CATEGORY_CONTROLLER } from "../controllers/categorie.js"
 import { COMMENT_CONTROLLER } from "../controllers/comment.js"
+import { FORM_CONTROLLER } from "../controllers/form.js"
 import { POST_CONTROLLER } from "../controllers/post.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 import { navigateTo } from "../routes/routechecker.js"
@@ -67,19 +68,19 @@ export default class PostsContainer extends HTMLElement {
                         </div>
                     </div>
                     <div class="feather">
-                        ${COMMENT_CONTROLLER.post.Categories.split(' ').map(category => `
+                        ${COMMENT_CONTROLLER.post?.Categories?.split(' ')?.map(category => `
                             <span class="cm-time">${category}</span>
-                        `).join('')
+                        `).join('') || ''
                         } 
                     </div>
                 </div>
                 <div class="text-area">
                     <p class="cmt-title">
                         <p href="#">
-                            ${COMMENT_CONTROLLER.post.Title}
+                            ${COMMENT_CONTROLLER.post.Title || ''}
                         </p></p>
                     <p class="cmt">
-                        ${COMMENT_CONTROLLER.post.Content}
+                        ${COMMENT_CONTROLLER.post.Content || ''}
                     </p>
                 </div>
                 <div class="submenu">
