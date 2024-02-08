@@ -9,6 +9,7 @@ export default class PostsContainer extends HTMLElement {
     constructor() {
         super()
         this.commentListerner = (event) => {
+            console.log('submitted a new comment');
             event.preventDefault()
             const date = Date.now()
             const formData = new FormData(this.commentForm)
@@ -183,7 +184,7 @@ export default class PostsContainer extends HTMLElement {
                     }
                 </div>
                 <div class="new-comment">
-                    <form id="comment-form" action="/api/addComment" method="post">
+                    <form id="comment-form" action="/api/comment" method="post">
                         <input type="hidden" name="post_id" value="${COMMENT_CONTROLLER.post.Id}">
                         <input class="nc-ct" type="text" name="comment" required min="3"
                             placeholder="write your comment here...">

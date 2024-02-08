@@ -39,7 +39,7 @@ export default class Pagination extends HTMLElement {
         this.innerHTML = /* HTML */ `
             ${((result="")=>{
                 let LastPage = (POST_CONTROLLER.posts.length+1)/PAGINATION_CONTROLLER.PageSize
-                for (let i = Math.max(1,PAGINATION_CONTROLLER.CurrentPage-5); i < Math.min(5,LastPage); i++)
+                for (let i = 1; i <= Math.ceil(POST_CONTROLLER.posts.length / PAGINATION_CONTROLLER.PageSize) ; i++)
                     result += `<a href="page=${i}" class="page ${i===PAGINATION_CONTROLLER.CurrentPage && 'active'}">${i}</a>`
                 return result
             })()}
