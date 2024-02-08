@@ -10,7 +10,7 @@ import (
 )
 
 func AddComment(res http.ResponseWriter, req *http.Request) {
-	fmt.Println("Hello from comment end")
+	fmt.Println("Hello from new comment end")
 	if req.Method != http.MethodPost {
 		http.Error(res, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -26,15 +26,17 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	fmt.Println(comment)
+
 	var user models.User
 	if err := models.UserRepo.GetUserById(&user, comment.UserId); err != nil {
-		fmt.Println("Error retrieving user")
+		fmt.Println("Error retrieving user", err)
 		return
 	}
 
 	var post models.PostInfo
 	if err := models.PostRepo.GetPostById(&post, comment.PostId); err != nil {
-		fmt.Println("Error retrieving user")
+		fmt.Println("Error retrieving user", err)
 		return
 	}
 
@@ -65,6 +67,8 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 		Post:     post,
 		Comments: comments,
 	}
+
+	fmt.Println(response)
 
 	for conn, tab := range SocketClients {
 		fmt.Println("sending info to clients", tab)

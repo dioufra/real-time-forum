@@ -15,6 +15,13 @@ type Post struct {
 	Date       time.Time
 }
 
+type PostPlayload struct {
+	UserId     int    `json:"userId"`
+	Title      string `json:"title"`
+	Categories []int  `json:"categories"`
+	Content    string `json:"content"`
+}
+
 type PostData struct {
 	Post        Post `json:"Post"`
 	User        User `json:"User"`
@@ -74,7 +81,7 @@ func (r *PostRepository) GetAllPost() ([]PostInfo, error) {
 	return posts, row.Err()
 }
 
-func (r *PostRepository) GetPostById(post  *PostInfo,postID int) error {
+func (r *PostRepository) GetPostById(post *PostInfo, postID int) error {
 	req := `
 			SELECT p.id, p.title, p.use_id, p.content, p."date", u.username,
 				( SELECT count(*) FROM "Appreciation" "a" WHERE p.id=a."Pos_id" AND "like"=1) as "likes",
@@ -88,11 +95,10 @@ func (r *PostRepository) GetPostById(post  *PostInfo,postID int) error {
 			`
 
 	row := r.db.QueryRow(req, postID)
-	err := row.Scan(&post.Id, &post.Title, &post.User_id ,&post.Content, &post.Date, &post.Username, &post.NbrLike, &post.NbrDislike, &post.NbrComments, &post.Categories)
+	err := row.Scan(&post.Id, &post.Title, &post.User_id, &post.Content, &post.Date, &post.Username, &post.NbrLike, &post.NbrDislike, &post.NbrComments, &post.Categories)
 
 	return err
 }
-
 
 func (r *PostRepository) GetPostsByUser(user User) (Posts, error) {
 	var posts Posts
@@ -146,7 +152,6 @@ func (r *PostRepository) GetPostsByCatId(cat_id string) (Posts, error) {
 	return posts, row.Err()
 }
 
-
 func (r *PostRepository) GetPostsById(post_id string) (Posts, error) {
 	var posts Posts
 	req := `
@@ -186,7 +191,7 @@ func (r *PostRepository) CreatePost(title, content string, user_id int, categori
 	}
 
 	for _, _id := range categories_id {
-		req = `INSERT INTO Post_Category (Post_id, Cat_id) VALUES (?, ?);`
+		req = `INSERT INTO Post_Category (Pos_id, Cat_id) VALUES (?, ?);`
 		_, err = r.db.Exec(req, id, _id)
 		if err != nil {
 			return err

@@ -8,7 +8,7 @@ class PaginationController {
     setCurrentPage(page){
         this.CurrentPage = page
         POST_CONTROLLER.filteredPosts = POST_CONTROLLER.posts.filter((post,index)=> {
-            return index>(page-1)*PAGINATION_CONTROLLER.PageSize && index < (page*PAGINATION_CONTROLLER.PageSize)
+            return index >= (page - 1) * this.PageSize && index < (page *  this.PageSize)
         })
     }
 }

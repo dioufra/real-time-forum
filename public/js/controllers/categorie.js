@@ -3,16 +3,7 @@ import { updateComponents } from "../script.js";
 class CategoryController {
     constructor() {
         this.currentCategoryId = 0
-        this.categories = [
-            { //just an exemple
-                Id:0,
-                Name:"",
-            },
-            { //just an exemple
-                Id:0,
-                Name:"",
-            },
-        ]
+        this.categories = []
     }
     setCategories(newCategories){
         this.categories = newCategories;

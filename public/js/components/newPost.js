@@ -10,7 +10,6 @@ export default class NewPost extends HTMLElement {
     }
 
     connectedCallback() {
-        console.log("rendering post modal");
         this.render()
         this.checkCloseButtonListener()
         this.checkSubmitListener()
@@ -33,12 +32,25 @@ export default class NewPost extends HTMLElement {
     checkSubmitListener(){
         this.addEventListener('submit', (event) => {
             event.preventDefault()
-            const formData = new FormData(this.postForm)
-            
+            const data = new FormData(this.postForm)
+            const categories = []
+            data.forEach((value, key) => {
+                if (key !== 'category') {
+                    data[key] = value
+                } else {
+                    categories.push(parseInt(value) || 0)
+                }
+            })
+
+            data['categories'] = categories
+            data['userId'] = parseInt(USER_CONTROLLER.Id) || 0
+
+            console.log(data);
+                
             fetch('/api/posts/add', {
                 method: 'POST',
-                body: JSON.stringify({
-                    
+                body: JSON.stringify(data, {
+                    method: 'POST',
                 }),
             }).then(response => {
                 if (!response.ok) {
@@ -66,43 +78,44 @@ export default class NewPost extends HTMLElement {
     }
 
     render() {
-        this.innerHTML = /* HTML */ `
-        ${POST_CONTROLLER.IsAuth && POST_CONTROLLER.displayBox? /*HTML*/`
-            <div class="overlay" ></div>
-            <div class="modal-form-container" >
-                <div class="modal-form">
-                    <form action="/post" method="post" class="form-modal">
-                        <input type="hidden" name="user_id" value="{{.User.Id }}">
-                        <div class="input-form-m">
-                            <p>
-                                <label for="title-form">Title</label>
-                            </p>
-                            <input type="text" name="title" placeholder="title" required id="title-form">
-                        </div>
-                        <div class="box" style="width:200px;">
-                        <details>
-                            <summary>Categories</summary>
-                            <ul>
-                                <li>
-                                    ${CATEGORY_CONTROLLER.categories.forEach(category => { /*HTML*/
-                                        `<label><input type="checkbox" name="cat" value="${category.Id}" />${category.Name}</label>`
-                                    })}
-                                </li>
-                            </ul>
-                        </details>
-                        </div>
-                        <div class="input-form-m">
-                            <p>
-                                <label for="content-form">Content</label>
-                            </p>
-                            <textarea required name="content" id="content-form" cols="30" rows="10"></textarea>
-                        </div>
-                        <button class="post-submit" type="submit">Post</button>
-                    </form>
+        this.innerHTML = /*HTML*/`
+            ${POST_CONTROLLER.displayBox && USER_CONTROLLER.IsAuth ? /*HTML*/`
+                <div class="overlay"></div>
+                <div class="modal-form-container">
+                    <div class="modal-form">
+                        <form action="/post" method="post" class="form-modal">
+                            <div class="input-form-m">
+                                <p>
+                                    <label for="title-form">Title</label>
+                                </p>
+                                <input type="text" name="title" placeholder="title" required id="title-form">
+                            </div>
+                            <div class="box" style="width:200px;">
+                                <details>
+                                    <summary>Categories</summary>
+                                    <ul>
+                                        <li>
+                                            ${CATEGORY_CONTROLLER.categories.map(category => {
+                                                return `<label><input type="checkbox" name="category" value="${category.Id}" />${category.Name}</label>`;
+                                            }).join('')}
+                                        </li>
+                                    </ul>
+                                </details>
+                            </div>
+                            <div class="input-form-m">
+                                <p>
+                                    <label for="content-form">Content</label>
+                                </p>
+                                <textarea required name="content" id="content-form" cols="30" rows="10"></textarea>
+                            </div>
+                            <button class="post-submit" type="submit">Post</button>
+                        </form>
+                    </div>
                 </div>
-            </div>
-        ` : ``}
-        `
+             ` : ''
+            }
+`;
+
     }
 
     get modal (){
