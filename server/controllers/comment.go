@@ -30,13 +30,13 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 
 	var user models.User
 	if err := models.UserRepo.GetUserById(&user, comment.UserId); err != nil {
-		fmt.Println("Error retrieving user")
+		fmt.Println("Error retrieving user", err)
 		return
 	}
 
 	var post models.PostInfo
 	if err := models.PostRepo.GetPostById(&post, comment.PostId); err != nil {
-		fmt.Println("Error retrieving user")
+		fmt.Println("Error retrieving user", err)
 		return
 	}
 

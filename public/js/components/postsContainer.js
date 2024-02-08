@@ -15,6 +15,8 @@ export default class PostsContainer extends HTMLElement {
                 // navigateTo(event.target.href)
                 let id = parseInt(event.target.href.split('/').reverse()[0])
                 document.dispatchEvent(new CustomEvent('postDetails', {detail: {data: id}}))
+            } else {
+                console.log(event.target);
             }
         }
     }
@@ -33,7 +35,7 @@ export default class PostsContainer extends HTMLElement {
     shouldComponentRender() {
         return !this.innerHTML
     }
-    checkScrollListener(){
+    checkScrollListener() {
         this.scrollTop = SCROLL_CONTROLLER.elements.postsContainer?.scrollTop || 0
         this.addEventListener('scroll',e => {
             SCROLL_CONTROLLER.setScroll('postsContainer',e.target)
@@ -51,7 +53,6 @@ export default class PostsContainer extends HTMLElement {
             `
             <c-pagination class="pagination"></c-pagination>
             <c-posts><c-posts>
-
             `
         }
         `

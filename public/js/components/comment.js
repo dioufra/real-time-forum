@@ -5,11 +5,10 @@ import { POST_CONTROLLER } from "../controllers/post.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 import { navigateTo } from "../routes/routechecker.js"
 
-export default class PostsContainer extends HTMLElement {
+export default class Comment extends HTMLElement {
     constructor() {
         super()
         this.commentListerner = (event) => {
-            console.log('submitted a new comment');
             event.preventDefault()
             const date = Date.now()
             const formData = new FormData(this.commentForm)
@@ -21,7 +20,7 @@ export default class PostsContainer extends HTMLElement {
             data['Use_id'] = USER_CONTROLLER.Id
             data['date'] = date
             console.log(data);
-            fetch('/api/comment', {
+            fetch('/api/comments/add', {
                 method: 'POST',
                 body: JSON.stringify(data)
             }).then(response => {
@@ -41,19 +40,15 @@ export default class PostsContainer extends HTMLElement {
         }
 
         this.commentAppreciationListerner = event => {
+            if (event.target.type === 'submit') return
             event.preventDefault()
             if (event.target.classList.contains('apprec')) {
-                const postId = event.target.getAttribute('data-postId')
                 const type = event.target.getAttribute('data-appreciation-type')
                 const like = event.target.getAttribute('data-like')
                 const dislike = event.target.getAttribute('data-dislike')
 
-                const likeElement = this.querySelector(`like-${type}-id${postId}`)
-                const dislikeElement = this.querySelector(`like-${type}-id${postId}`)
-
                 let formData = new FormData()
                 formData['type'] = type
-                console.log(event.target);
                 switch (type) {
                     case 'post':
                         document.dispatchEvent(new CustomEvent('postAppreciate',{
@@ -84,15 +79,7 @@ export default class PostsContainer extends HTMLElement {
                             }
                         }))
                 }
-
-
-
-                // fetch('/api/appre')
             }
-        }
-
-        this.postAppreciationListerner = event => {
-
         }
     }
 
@@ -133,12 +120,9 @@ export default class PostsContainer extends HTMLElement {
                 </div>
                 <div class="text-area">
                     <p class="cmt-title">
-                        <p href="#">
-                            ${COMMENT_CONTROLLER.post.Title || ''}
-                        </p></p>
-                    <p class="cmt">
-                        ${COMMENT_CONTROLLER.post.Content || ''}
+                        ${COMMENT_CONTROLLER.post.Title || ''}
                     </p>
+                    <p class="cmt">${COMMENT_CONTROLLER.post.Content || ''}</p>
                 </div>
                 <div class="submenu">
                     <div class="sb-tags">
@@ -184,12 +168,11 @@ export default class PostsContainer extends HTMLElement {
                     }
                 </div>
                 <div class="new-comment">
-                    <form id="comment-form" action="/api/comment" method="post">
+                    <form id="comment-form">
                         <input type="hidden" name="post_id" value="${COMMENT_CONTROLLER.post.Id}">
-                        <input class="nc-ct" type="text" name="comment" required min="3"
-                            placeholder="write your comment here...">
+                        <input class="nc-ct" type="text" name="comment" placeholder="write your comment here...">
                         <div class="nc-cm-btn-p">
-                            </br>
+                        </br>
                             <button class="submit-btn" type="submit">submit</button>
                         </div>
                     </form>
