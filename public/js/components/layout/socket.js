@@ -25,8 +25,8 @@ export default class Socket extends HTMLElement {
         this.checkWebSocketConnection()
         this.checkChatListener()
         this.checkPostDetailsListener()
-        this.checkPostAppreciateListener()
-        this.checkCommentAppreciationListerner()
+        // this.checkPostAppreciateListener()
+        // this.checkCommentAppreciationListerner()
         this.checkAppreciation()
         document.dispatchEvent(new Event('connectWebSocket'))
     }
@@ -88,17 +88,17 @@ export default class Socket extends HTMLElement {
     }
 
 
-    checkPostAppreciateListener(){
-        document.addEventListener('postAppreciate', (event) => {
-            this.sendData(JSON.stringify({type: 'postAppreciate', data: event.detail.data}))
-        })
-    }
+    // checkPostAppreciateListener(){
+    //     document.addEventListener('postAppreciate', (event) => {
+    //         this.sendData(JSON.stringify({type: 'postAppreciate', data: event.detail.data}))
+    //     })
+    // }
 
-    checkCommentAppreciationListerner() {
-        document.addEventListener('commentAppreciate', (event) => {
-            this.sendData(JSON.stringify({type: 'commentAppreciate', data: event.detail.data}))
-        })
-    }
+    // checkCommentAppreciationListerner() {
+    //     document.addEventListener('commentAppreciate', (event) => {
+    //         this.sendData(JSON.stringify({type: 'commentAppreciate', data: event.detail.data}))
+    //     })
+    // }
 
     checkPostDetailsListener(){
         document.addEventListener('postDetails', (event) => {

@@ -8,18 +8,20 @@
 
 [X] Return comments
 
+[X] Add post
+
 [X] like dislike for comment section
 
-[] like dislike for post section
+[X] like dislike for post section
 
 [] Add username and date to message section
 
 [] Add scroll up to message section and post section (optionnal)
 
+[] Add message table
+
 [] Order users by last message and alphabetic order
 
-
-[] Add post
 
 [] Send json response from controllers upon error
 
