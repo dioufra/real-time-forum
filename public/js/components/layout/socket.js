@@ -27,6 +27,7 @@ export default class Socket extends HTMLElement {
         this.checkPostDetailsListener()
         this.checkPostAppreciateListener()
         this.checkCommentAppreciationListerner()
+        this.checkAppreciation()
         document.dispatchEvent(new Event('connectWebSocket'))
     }
     disconnectedCallback() {
@@ -78,6 +79,15 @@ export default class Socket extends HTMLElement {
         })
     }
 
+    checkAppreciation() {
+        document.addEventListener('appreciation', (event) => {
+            console.log(event.detail);
+            this.sendData(JSON.stringify({event: "appreciation", type: event.detail.type, component: event.detail.component,data: event.detail.data}))
+
+        })
+    }
+
+
     checkPostAppreciateListener(){
         document.addEventListener('postAppreciate', (event) => {
             this.sendData(JSON.stringify({type: 'postAppreciate', data: event.detail.data}))
@@ -92,7 +102,7 @@ export default class Socket extends HTMLElement {
 
     checkPostDetailsListener(){
         document.addEventListener('postDetails', (event) => {
-            this.sendData(JSON.stringify({type: 'postDetails', data: {postId: event.detail.data}}))
+            this.sendData(JSON.stringify({event: 'postDetails', type: 'postDetails', data: {postId: event.detail.data}}))
         })
     }
     checkChatListener(){
@@ -140,7 +150,6 @@ export default class Socket extends HTMLElement {
 
     checkPostDetails() {
         this.addEventListener('broadcastPostDetails', e => {
-            console.log("broadcastPostDetails",e.detail.data);
             COMMENT_CONTROLLER.setData(e.detail.data.Comments, e.detail.data.Post)
             COMMENT_CONTROLLER.setIsPostSection(true)
             COMMENT_CONTROLLER.setData(e.detail.data.Comments, e.detail.data.Post)

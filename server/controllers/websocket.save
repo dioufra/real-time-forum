@@ -20,7 +20,6 @@ var SocketClients = make(map[*websocket.Conn][]string) // Connected clients
 var clientsMutex sync.Mutex                            // Mutex to synchronize access to the clients map
 
 type IncomingMessage struct {
-	Event     string         `json:"event"`
 	Type      string         `json:"type"`
 	Component string         `json:"component"`
 	Data      map[string]int `json:"data"`
@@ -75,7 +74,8 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 			log.Println("Error unmarshalling message", err)
 			return
 		}
-		switch data.Event {
+		fmt.Println(data)
+		switch data.Type {
 		case "postDetails":
 			comments, err := models.CommentRepo.GetCommentsFromPostId(data.Data["postId"])
 			if err != nil {
@@ -96,65 +96,54 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 				Comments: comments,
 			}
 			BroadcastPostDetails(conn, response)
-		case "appreciation":
-			switch data.Type {
-			case "post":
-				if data.Component == "c-comment" {
-					if err := models.AppreciationRepo.AddForPost(data.Data["userId"], data.Data["postId"], data.Data["like"], data.Data["dislike"]); err != nil {
-						fmt.Println("Error adding a new appreciation: ", err)
-						return
-					}
-					comments, err := models.CommentRepo.GetCommentsFromPostId(data.Data["postId"])
-					if err != nil {
-						log.Println("Error retrieving comments", err)
-						return
-					}
-					var post models.PostInfo
-					if err := models.PostRepo.GetPostById(&post, data.Data["postId"]); err != nil {
-						log.Println("Error retrieving post ")
-						return
-
-					}
-					response := struct {
-						Post     models.PostInfo
-						Comments []models.CommentInfo
-					}{
-						Post:     post,
-						Comments: comments,
-					}
-					BroadcastPostDetails(conn, response)
-				} else {
-					if err := models.AppreciationRepo.AddForPost(data.Data["userId"], data.Data["postId"], data.Data["like"], data.Data["dislike"]); err != nil {
-						fmt.Println("Error adding a new appreciation: ", err)
-						return
-					}
-					BroadcastAllPosts()
-				}
-			case "comment":
-				if err := models.AppreciationRepo.AddForComment(data.Data["userId"], data.Data["commentId"], data.Data["like"], data.Data["dislike"]); err != nil {
-					fmt.Println("Error adding a new appreciation: ", err)
-				}
-
-				comments, err := models.CommentRepo.GetCommentsFromPostId(data.Data["postId"])
-				if err != nil {
-					log.Println("Error retrieving comments", err)
-					return
-				}
-				var post models.PostInfo
-				err = models.PostRepo.GetPostById(&post, data.Data["postId"])
-				if err != nil {
-					log.Println("Error retrieving post ")
-				}
-				// sendback the comments here
-				response := struct {
-					Post     models.PostInfo
-					Comments []models.CommentInfo
-				}{
-					Post:     post,
-					Comments: comments,
-				}
-				BroadcastPostDetails(conn, response)
+		case "postAppreciate":
+			if err := models.AppreciationRepo.AddForPost(data.Data["userId"], data.Data["postId"], data.Data["like"], data.Data["dislike"]); err != nil {
+				fmt.Println("Error adding a new appreciation: ", err)
 			}
+
+			comments, err := models.CommentRepo.GetCommentsFromPostId(data.Data["postId"])
+			if err != nil {
+				log.Println("Error retrieving comments", err)
+				return
+			}
+			var post models.PostInfo
+			err = models.PostRepo.GetPostById(&post, data.Data["postId"])
+			if err != nil {
+				log.Println("Error retrieving post ")
+			}
+			// sendback the comments here
+			response := struct {
+				Post     models.PostInfo
+				Comments []models.CommentInfo
+			}{
+				Post:     post,
+				Comments: comments,
+			}
+			BroadcastPostDetails(conn, response)
+		case "commentAppreciate":
+			if err := models.AppreciationRepo.AddForComment(data.Data["userId"], data.Data["commentId"], data.Data["like"], data.Data["dislike"]); err != nil {
+				fmt.Println("Error adding a new appreciation: ", err)
+			}
+
+			comments, err := models.CommentRepo.GetCommentsFromPostId(data.Data["postId"])
+			if err != nil {
+				log.Println("Error retrieving comments", err)
+				return
+			}
+			var post models.PostInfo
+			err = models.PostRepo.GetPostById(&post, data.Data["postId"])
+			if err != nil {
+				log.Println("Error retrieving post ")
+			}
+			// sendback the comments here
+			response := struct {
+				Post     models.PostInfo
+				Comments []models.CommentInfo
+			}{
+				Post:     post,
+				Comments: comments,
+			}
+			BroadcastPostDetails(conn, response)
 		}
 
 	}

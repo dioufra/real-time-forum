@@ -47,10 +47,8 @@ export default class Comment extends HTMLElement {
 
                 switch (type) {
                     case 'post':
-                        document.dispatchEvent(new CustomEvent('appreciation', {
+                        document.dispatchEvent(new CustomEvent('postAppreciate', {
                             detail: {
-                                type: event.target.getAttribute('data-appreciation-type'),
-                                component: 'c-comment',
                                 data: {
                                     userId: USER_CONTROLLER.Id || 0,
                                     postId: COMMENT_CONTROLLER.post.Id || 0,
@@ -61,10 +59,8 @@ export default class Comment extends HTMLElement {
                         }))
                         break;
                     case 'comment':
-                        document.dispatchEvent(new CustomEvent('appreciation', {
+                        document.dispatchEvent(new CustomEvent('commentAppreciate', {
                             detail: {
-                                type: event.target.getAttribute('data-appreciation-type'),
-                                component: 'c-comment',
                                 data: {
                                     userId: USER_CONTROLLER.Id || 0,
                                     postId: COMMENT_CONTROLLER.post.Id || 0,
