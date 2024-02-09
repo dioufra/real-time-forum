@@ -46,8 +46,6 @@ export default class UserInfo extends HTMLElement {
                 if (target.getAttribute('id') === 'show-modal') {
                     console.log('rendering post modal');
                     POST_CONTROLLER.addNewPost()
-                    POST_CONTROLLER.displayBox = true
-                    updateSingleComponent('c-modal')
                 }
             }
         });

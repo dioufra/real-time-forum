@@ -16,8 +16,12 @@ class PostController {
     addNewPost(user_id) {
         this.displayBox = true
         this.postcreatorId = user_id || this.postcreatorId
+        updateSingleComponent('c-modal')
     }
-
-    
+    hideBox() {
+        this.displayBox = false
+        this.postcreatorId = 0
+        updateSingleComponent('c-modal')
+    }    
 }
 export const POST_CONTROLLER = new PostController()

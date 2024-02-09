@@ -3,6 +3,7 @@ import { CHAT_CONTROLLER } from "../../controllers/chat.js"
 import { COMMENT_CONTROLLER} from "../../controllers/comment.js"
 import { POST_CONTROLLER } from "../../controllers/post.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
+import { verifyLocationHref } from "../../routes/routechecker.js"
 import { updateComponents, updateSingleComponent } from "../../script.js"
 
 export default class Socket extends HTMLElement {
@@ -12,7 +13,6 @@ export default class Socket extends HTMLElement {
     }
     
     connectedCallback() {
-        this.render()
 
         this.checkAllCategoriesListener()
         this.checkUserInfosListener()
@@ -28,6 +28,8 @@ export default class Socket extends HTMLElement {
         this.checkPostAppreciateListener()
         this.checkCommentAppreciationListerner()
         document.dispatchEvent(new Event('connectWebSocket'))
+
+        this.render()
     }
     disconnectedCallback() {
     }
@@ -44,6 +46,7 @@ export default class Socket extends HTMLElement {
                     this.isSocketConnected = true
                     USER_CONTROLLER.IsAuth = true
                     updateComponents()
+                    verifyLocationHref()
                 });
                 this.socket.addEventListener("message", (event) => {
                     let response = JSON.parse(event.data)
@@ -55,7 +58,7 @@ export default class Socket extends HTMLElement {
                     // console.log("WebSocket connection closed:", event);
                     if (this.isSocketConnected) {
                         this.isSocketConnected = false
-                        USER_CONTROLLER.IsAuth = false
+                        USER_CONTROLLER.disconnect()
                         updateComponents()
                     }
                 });

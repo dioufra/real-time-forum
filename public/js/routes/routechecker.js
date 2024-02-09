@@ -1,19 +1,19 @@
 import { COMMENT_CONTROLLER } from "../controllers/comment.js";
 import { PAGINATION_CONTROLLER } from "../controllers/pagiantion.js";
+import { POST_CONTROLLER } from "../controllers/post.js";
 import { USER_CONTROLLER } from "../controllers/user.js";
-import { updateComponents } from "../script.js";
+import { updateComponents, updateSingleComponent } from "../script.js";
 import { ROUTER } from "./routes.js";
 
 // Route change listener
 document.addEventListener('DOMContentLoaded', function () {
     // Initial setup
-    navigateTo(ROUTER.currentRoute)
-    loadData()
+    // navigateTo(ROUTER.currentRoute)
     
     // Handle navigation on back/forward button click
     window.addEventListener('popstate', function () {
         // navigateTo(window.location.pathname)
-        loadData()
+        verifyLocationHref()
     });
 });
 
@@ -24,7 +24,7 @@ export function navigateTo(url) {
     updateComponents()
 }
 
-function loadData() {
+export function verifyLocationHref() {
     let href  = window.location.href
     let host  = window.location.host
     let paginationRegex = new RegExp('^http:\/\/'+host+'\/page=[0-9]+$')
@@ -34,17 +34,15 @@ function loadData() {
         if (paginationRegex.test(href)) {
             PAGINATION_CONTROLLER.setCurrentPage(parseInt(href.match(/[0-9]+$/)))
             COMMENT_CONTROLLER.isPostSection = false
+            updateSingleComponent('c-posts-container')
         }else if (postRegex.test(href)) {
             COMMENT_CONTROLLER.isPostSection = true
-            setTimeout(() => {
-                let id = parseInt(href.match(/[0-9]+$/))
-                document.dispatchEvent(new CustomEvent('postDetails', {detail: {data: id}}))
-            }, 200);
-    
+            let id = parseInt(href.match(/[0-9]+$/))
+            document.dispatchEvent(new CustomEvent('postDetails', {detail: {data: id}}))
         }else {
             history.pushState(null, null, '/page=1')
             // navigateTo('/page=1')
-            loadData()
+            verifyLocationHref()
         }
     }else{
         

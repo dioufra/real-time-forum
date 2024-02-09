@@ -4,7 +4,7 @@ import { updateComponents, updateSingleComponent } from "../script.js"
 class User {
     constructor() {
         this.Id = 0
-        this.IsAuth = false
+        this.IsAuth = true
         this.FirstName = ''
         this.LastName = ''
         this.UserName = ''
