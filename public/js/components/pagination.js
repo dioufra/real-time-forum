@@ -1,4 +1,4 @@
-import { PAGINATION_CONTROLLER } from "../controllers/pagiantion.js"
+import { PAGE_CONTROLLER } from "../controllers/pagiantion.js"
 import { POST_CONTROLLER } from "../controllers/post.js"
 import { navigateTo } from "../routes/routechecker.js"
 
@@ -10,7 +10,7 @@ export default class Pagination extends HTMLElement {
     connectedCallback() {
         this.render()
         this.checkButtonClickListener()
-        this.filterPosts(PAGINATION_CONTROLLER.CurrentPage)
+        this.filterPosts(PAGE_CONTROLLER.CurrentPage)
     }
 
     disconnectedCallback() {
@@ -33,13 +33,13 @@ export default class Pagination extends HTMLElement {
         });
     }
     filterPosts(page){
-        PAGINATION_CONTROLLER.setCurrentPage(page)
+        PAGE_CONTROLLER.setCurrentPage(page)
     }
     render() {
         this.innerHTML = /* HTML */ `
             ${((result="")=>{
-                for (let i = 1; i <= Math.ceil(POST_CONTROLLER.posts.length / PAGINATION_CONTROLLER.PageSize) ; i++)
-                    result += `<a href="page=${i}" class="page ${i===PAGINATION_CONTROLLER.CurrentPage && 'active'}">${i}</a>`
+                for (let i = 1; i <= Math.ceil(POST_CONTROLLER.posts.length / PAGE_CONTROLLER.PageSize) ; i++)
+                    result += `<a href="page=${i}" class="page ${i===PAGE_CONTROLLER.CurrentPage && 'active'}">${i}</a>`
                 return result
             })()}
         `

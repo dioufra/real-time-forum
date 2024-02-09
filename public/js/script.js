@@ -14,6 +14,7 @@ let components = [
     {tagName:'c-modal',src:"./components/newPost.js"},
     {tagName:'c-auth',src:"./components/auth.js"},
     {tagName:'c-filter',src:"./components/filter.js"},
+    {tagName:'c-page-loader',src:"./components/pageLoader.js"},
 ]
 
 // Define the custom web component

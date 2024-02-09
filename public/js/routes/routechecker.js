@@ -1,5 +1,5 @@
 import { COMMENT_CONTROLLER } from "../controllers/comment.js";
-import { PAGINATION_CONTROLLER } from "../controllers/pagiantion.js";
+import { PAGE_CONTROLLER } from "../controllers/pagiantion.js";
 import { POST_CONTROLLER } from "../controllers/post.js";
 import { USER_CONTROLLER } from "../controllers/user.js";
 import { updateComponents, updateSingleComponent } from "../script.js";
@@ -23,7 +23,10 @@ export function navigateTo(url) {
     ROUTER.currentRoute = window.location.pathname
     updateComponents()
 }
-
+function backToHomePage() {
+    history.pushState(null, null, '/page=1')
+    verifyLocationHref()
+}
 export function verifyLocationHref() {
     let href  = window.location.href
     let host  = window.location.host
@@ -32,17 +35,24 @@ export function verifyLocationHref() {
 
     if(USER_CONTROLLER.IsAuth){
         if (paginationRegex.test(href)) {
-            PAGINATION_CONTROLLER.setCurrentPage(parseInt(href.match(/[0-9]+$/)))
-            COMMENT_CONTROLLER.isPostSection = false
-            updateSingleComponent('c-posts-container')
+            let page = parseInt(href.match(/[0-9]+$/))
+            if (page <= Math.ceil(POST_CONTROLLER.posts.length / PAGE_CONTROLLER.PageSize)) {
+                PAGE_CONTROLLER.setCurrentPage(parseInt(href.match(/[0-9]+$/)))
+                COMMENT_CONTROLLER.isPostSection = false
+                updateSingleComponent('c-posts-container')
+            }else{
+                backToHomePage()
+            }
         }else if (postRegex.test(href)) {
             COMMENT_CONTROLLER.isPostSection = true
             let id = parseInt(href.match(/[0-9]+$/))
-            document.dispatchEvent(new CustomEvent('postDetails', {detail: {data: id}}))
+            if(Boolean(POST_CONTROLLER.posts.filter(p => p.Id === id)[0])){
+                document.dispatchEvent(new CustomEvent('postDetails', {detail: {data: id}}))
+            }else{
+                backToHomePage()
+            }
         }else {
-            history.pushState(null, null, '/page=1')
-            // navigateTo('/page=1')
-            verifyLocationHref()
+            backToHomePage()
         }
     }else{
         
