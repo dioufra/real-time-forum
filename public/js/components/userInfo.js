@@ -39,13 +39,16 @@ export default class UserInfo extends HTMLElement {
                 if (target.href.split('/').reverse()[0] === 'logout') {
                     document.dispatchEvent(new Event('disconnectWebSocket'))
                     navigateTo(target.href);
-                } else if(/\/user\/[0-9]+$/.test(target.href)){
-                    CHAT_CONTROLLER.startNewChat(target.href.match(/[0-9]+$/))
                 }
             } else {
                 if (target.getAttribute('id') === 'show-modal') {
                     console.log('rendering post modal');
                     POST_CONTROLLER.addNewPost()
+                }else if (target.tagName === 'BUTTON') {
+                    let userId = parseInt(target.getAttribute('userId'))
+                    if (userId) {
+                        CHAT_CONTROLLER.startNewChat(userId)
+                    }
                 }
             }
         });
@@ -71,8 +74,8 @@ export default class UserInfo extends HTMLElement {
                     <div><a href="/liked">Liked posts</a></div>
                 </div>
             </div>
-            <div class="user-ac">
-                <div >Online Users</div>
+            <div class="users-list">
+                <label>Online Users</label>
                 <div class="user-ac">
                     ${USER_CONTROLLER.onlineUsers.map(user => `
                         <div>
@@ -80,20 +83,26 @@ export default class UserInfo extends HTMLElement {
                                 ${user.firstname} ${user.lastname}
                             </a>
                         </div>
-                    `).join('') || "No user online"}
+                    `).join('') || '<p class="no-user">No user online</p>'}
                 </div>
             </div>
-            <div class="user-ac">
-                <div >All Users</div>
-                <div class="user-ac">
-                    ${USER_CONTROLLER.allUsers.map(user => `
+            <div class="users-list">
+                <label >All Users</label>
+                ${USER_CONTROLLER.allUsers.map(user => `
+                    <button class="user" userId="${user.id}">
+                        <img src="//ui-avatars.com/api/?name=${user.username}&size=60&rounded=true&color=fff&background=random" alt="" />
                         <div>
-                            <a href="/user/${user.id}">
-                                ${user.firstname} ${user.lastname}
-                            </a>
-                        </div>  
-                    `).join('') || "No user found"}
-                </div>
+                            <div>
+                                <p>
+                                    ${user.firstname} ${user.lastname}
+                                    <br/>
+                                    <span>@${user.username}</span>
+                                </p>
+                                <span>Just Now</span>
+                            </div>
+                        </div>
+                    </button>  
+                `).join('') || '<p class="no-user">No user found</p>'}
             </div>
         `
     }
