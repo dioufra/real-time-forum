@@ -13,6 +13,7 @@ export default class NewPost extends HTMLElement {
         this.render()
         this.checkCloseButtonListener()
         this.checkSubmitListener()
+        this.checkOverlayclickListener()
     }
 
     disconnectedCallback() {
@@ -26,6 +27,13 @@ export default class NewPost extends HTMLElement {
             if (e.target.tagName === 'BUTTON' && e.target.className === 'close-btn') {
                 this.modal?.classList.add('hidden')
                 CHAT_CONTROLLER.displayBox = false
+            }
+        })
+    }
+    checkOverlayclickListener(){
+        this.addEventListener('click',e => {
+            if (e.target.classList.contains('overlay')) {
+                POST_CONTROLLER.hideBox()
             }
         })
     }

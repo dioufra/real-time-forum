@@ -1,9 +1,11 @@
+import { verifyLocationHref } from "../routes/routechecker.js";
 import { POST_CONTROLLER } from "./post.js";
 
 class PaginationController {
     constructor() {
         this.PageSize = 5
         this.CurrentPage = 1
+        this.isLoading = true
     }
     setCurrentPage(page){
         this.CurrentPage = page
@@ -11,5 +13,12 @@ class PaginationController {
             return index >= (page - 1) * this.PageSize && index < (page *  this.PageSize)
         })
     }
+    setIsLoading(bool){
+        setTimeout(() => {
+            this.isLoading = bool
+            verifyLocationHref()
+            // updateComponents()
+        }, 1000);
+    }
 }
-export const PAGINATION_CONTROLLER = new PaginationController()
+export const PAGE_CONTROLLER = new PaginationController()

@@ -1,8 +1,10 @@
 import { CATEGORY_CONTROLLER } from "../../controllers/categorie.js"
 import { CHAT_CONTROLLER } from "../../controllers/chat.js"
 import { COMMENT_CONTROLLER} from "../../controllers/comment.js"
+import { PAGE_CONTROLLER } from "../../controllers/pagiantion.js"
 import { POST_CONTROLLER } from "../../controllers/post.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
+import { verifyLocationHref } from "../../routes/routechecker.js"
 import { updateComponents, updateSingleComponent } from "../../script.js"
 
 export default class Socket extends HTMLElement {
@@ -12,7 +14,6 @@ export default class Socket extends HTMLElement {
     }
     
     connectedCallback() {
-        this.render()
 
         this.checkAllCategoriesListener()
         this.checkUserInfosListener()
@@ -29,6 +30,8 @@ export default class Socket extends HTMLElement {
         // this.checkCommentAppreciationListerner()
         this.checkAppreciation()
         document.dispatchEvent(new Event('connectWebSocket'))
+
+        this.render()
     }
     disconnectedCallback() {
     }
@@ -44,7 +47,7 @@ export default class Socket extends HTMLElement {
                     console.log("WebSocket connection opened:", event);
                     this.isSocketConnected = true
                     USER_CONTROLLER.IsAuth = true
-                    updateComponents()
+                    PAGE_CONTROLLER.setIsLoading(false)
                 });
                 this.socket.addEventListener("message", (event) => {
                     let response = JSON.parse(event.data)
@@ -56,13 +59,16 @@ export default class Socket extends HTMLElement {
                     // console.log("WebSocket connection closed:", event);
                     if (this.isSocketConnected) {
                         this.isSocketConnected = false
-                        USER_CONTROLLER.IsAuth = false
-                        updateComponents()
+                        USER_CONTROLLER.disconnect()
+                        PAGE_CONTROLLER.setIsLoading(false)
                     }
                 });
                 // Gérer les erreurs WebSocket
                 this.socket.addEventListener("error", (event) => {
                     // console.error("WebSocket error:", event);
+                    this.isSocketConnected = false
+                    USER_CONTROLLER.disconnect()
+                    PAGE_CONTROLLER.setIsLoading(false)
                 });
             }
         })
@@ -107,7 +113,7 @@ export default class Socket extends HTMLElement {
     }
     checkChatListener(){
         this.addEventListener('broadcastChat',e => {
-            console.log("broadcastChat",e.detail.data)
+            // console.log("broadcastChat",e.detail.data)
             CHAT_CONTROLLER.setAllMessages(e.detail.data)
             updateSingleComponent('c-chat-container')
         })
@@ -166,11 +172,15 @@ export default class Socket extends HTMLElement {
 
     render(){
         this.innerHTML= `
-            <c-header></c-header>
-            <c-modal></c-modal>
-            <c-main></c-main>
-            <c-footer></c-footer>
-            <c-chat-container></c-chat-container>
+            ${PAGE_CONTROLLER.isLoading?`
+                <c-page-loader></c-page-loader>
+            `:`
+                <c-header></c-header>
+                <c-modal></c-modal>
+                <c-main></c-main>
+                <c-footer></c-footer>
+                <c-chat-container></c-chat-container>
+            `}
         `
     }
     get header() {

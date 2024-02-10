@@ -73,7 +73,7 @@ export default class Chat extends HTMLElement {
                 <div class="chat-modal ">
                     <div class="chat-header" >
                         <div class="user-infos" >
-                            <img class="profil-img" src="https://picsum.photos/200" alt="">
+                            <img class="profil-img" src="//ui-avatars.com/api/?name=${CHAT_CONTROLLER.Receiver.username}&size=60&rounded=true&color=fff&background=random" alt="">
                             <span class="name_container">
                                 <p class="name">${CHAT_CONTROLLER.Receiver.firstname||'firstname'} ${CHAT_CONTROLLER.Receiver.lastname||'lastname'}</p>
                                 <span class="username">@${CHAT_CONTROLLER.Receiver.username || 'username'}</span>
