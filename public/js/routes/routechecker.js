@@ -36,7 +36,7 @@ export function verifyLocationHref() {
     if(USER_CONTROLLER.IsAuth){
         if (paginationRegex.test(href)) {
             let page = parseInt(href.match(/[0-9]+$/))
-            if (page <= Math.ceil(POST_CONTROLLER.posts.length / PAGE_CONTROLLER.PageSize)) {
+            if (page > 0 && page <= Math.ceil(POST_CONTROLLER.posts.length / PAGE_CONTROLLER.PageSize)) {
                 PAGE_CONTROLLER.setCurrentPage(parseInt(href.match(/[0-9]+$/)))
                 COMMENT_CONTROLLER.isPostSection = false
                 updateSingleComponent('c-posts-container')
