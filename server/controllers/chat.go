@@ -10,7 +10,6 @@ import (
 )
 
 func Chat(res http.ResponseWriter, req *http.Request) {
-
 	if req.Method == http.MethodPost {
 		var body models.Message
 		decoder := json.NewDecoder(req.Body)
@@ -19,6 +18,7 @@ func Chat(res http.ResponseWriter, req *http.Request) {
 			http.Error(res, "Invalid request payload", http.StatusBadRequest)
 			return
 		}
+		fmt.Println(body)
 		sender, err := GetUserByField(DB, "id", strconv.Itoa(body.SenderId))
 		if err != nil {
 			fmt.Println("Sender not found")

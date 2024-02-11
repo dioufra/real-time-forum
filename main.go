@@ -40,6 +40,15 @@ func init() {
 			datefin		TIMESTAMP,
 			constraint  PK_SESS primary key (id)
 		);`,
+		`CREATE TABLE IF NOT EXISTS Message (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			sender_id INTEGER NOT NULL,
+			receiver_id INTEGER NOT NULL,
+			content VARCHAR(255) NOT NULL,
+			date TIMESTAMP NOT NULL,
+			CONSTRAINT FK_Message_Sender FOREIGN KEY (sender_id) REFERENCES "User" (id),
+			CONSTRAINT FK_Message_Receiver FOREIGN KEY (receiver_id) REFERENCES "User" (id)
+		);`,		
 	}
 	for _, req := range tabRequest {
 		_, queryErr := controllers.DB.Exec(req)

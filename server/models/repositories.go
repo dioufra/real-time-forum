@@ -3,13 +3,13 @@ package models
 import "database/sql"
 
 var (
-	UserRepo     *UserRepository
-	PostRepo     *PostRepository
-	CommentRepo  *CommentRepository
-	CategoryRepo *CategoryRepository
+	UserRepo         *UserRepository
+	PostRepo         *PostRepository
+	CommentRepo      *CommentRepository
+	CategoryRepo     *CategoryRepository
 	AppreciationRepo *AppreciationRepository
+	MessageRepo      *MessageRepository
 	// PostCategoryRepo *PostCategoryRepository
-	// MessageRepo      *MessageRepository
 )
 
 func AddRepositories(db *sql.DB) {
@@ -18,4 +18,6 @@ func AddRepositories(db *sql.DB) {
 	CategoryRepo = NewCategoryRepository(db)
 	CommentRepo = NewCommentRepository(db)
 	AppreciationRepo = NewAppreciationRepository(db)
+	MessageRepo = NewMessageRepository(db)
+
 }

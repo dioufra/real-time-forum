@@ -276,12 +276,20 @@ func BroadcastAllCategories() {
 	}
 }
 func BroadcastChat(senderId, receiverId int, senderAdress, receverAdress string) {
-	data := []models.Message{}
-	for _, msg := range MESSAGES_TAB {
-		if msg.ReceiverId == receiverId && msg.SenderId == senderId || msg.ReceiverId == senderId && msg.SenderId == receiverId {
-			data = append(data, msg)
-		}
+	// data := []models.Message{}
+	// // get all the messages from the database here
+	// for _, msg := range MESSAGES_TAB {
+	// 	if msg.ReceiverId == receiverId && msg.SenderId == senderId || msg.ReceiverId == senderId && msg.SenderId == receiverId {
+	// 		data = append(data, msg)
+	// 	}
+	// }
+
+	data, err := models.MessageRepo.Get(senderId, receiverId)
+	if err != nil {
+		fmt.Println("Error loading chat messages: ", err)
+		return
 	}
+	fmt.Println("broadcast chat", data)
 	for client, tab := range SocketClients {
 		adress := tab[1]
 		if adress == senderAdress || adress == receverAdress {
