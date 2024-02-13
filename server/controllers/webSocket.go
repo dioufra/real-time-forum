@@ -47,6 +47,7 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	clientsMutex.Unlock()
 	BroadcastUserInfos(conn, email)
 	BroadcastOnlineUsers()
+	// BroadcastAllUsers(email)
 	BroadcastAllUsers()
 	BroadcastAllPosts()
 	BroadcastAllCategories()
@@ -60,6 +61,7 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 
 		// Broadcast the disconnection event to other clients
 		BroadcastOnlineUsers()
+		// BroadcastAllUsers(email)
 		BroadcastAllUsers()
 	}()
 
@@ -238,6 +240,34 @@ func BroadcastAllUsers() {
 		}
 	}
 }
+
+// func BroadcastAllUsers(email string) {
+// 	// Iterate through all connected clients and send the message
+// 	clientsMutex.Lock()
+// 	defer clientsMutex.Unlock()
+
+// 	var user models.User
+// 	for client, tab := range SocketClients { //send data
+// 		_, email := []models.User{}, tab[0]
+// 		if err := models.UserRepo.GetUser(&user, email); err != nil {
+// 			fmt.Println("Error getting user: ", err)
+// 			return
+// 		}
+// 		fmt.Println("User: ", user)
+// 		users, err := models.UserRepo.GetUsersList(user.Id)
+// 		if err != nil {
+// 			fmt.Println("Error getting users", err)
+// 			return
+// 		}
+// 		fmt.Println("Users list: ", users)
+// 		response := map[string]interface{}{"event": "broadcastAllUsers", "data": users}
+// 		err = client.WriteJSON(response)
+// 		if err != nil {
+// 			log.Println(err)
+// 		}
+// 	}
+// }
+
 func BroadcastAllPosts() {
 	// Iterate through all connected clients and send the message
 	clientsMutex.Lock()

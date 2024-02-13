@@ -116,3 +116,36 @@ func (r *AppreciationRepository) AddPostAprreciation(user_id, post_id, like, dis
 
 	return row.Err()
 }
+
+
+
+
+SELECT * FROM (
+    SELECT u.id, u.username, u.firstname, u.lastname, 'Receiver' AS user_type 
+    FROM "Users" u
+    WHERE u.id IN (
+        SELECT m.receiver_id
+        FROM message m
+        WHERE m.sender_id = 1
+        UNION
+        SELECT m.sender_id
+        FROM message m
+        WHERE m.receiver_id = 1
+    )
+    ORDER BY (
+        SELECT MAX(date)
+        FROM message m 
+        WHERE m.sender_id = u.id OR m.receiver_id = u.id
+    ) DESC
+)
+UNION ALL
+SELECT * FROM (
+    SELECT u.id, u.username, u.firstname, u.lastname, 'NotReceiver' AS user_type 
+    FROM "Users" u
+    WHERE  u.id NOT IN (
+        SELECT sender_id FROM message WHERE receiver_id = 1
+        UNION
+        SELECT receiver_id FROM message WHERE sender_id = 1
+    ) AND u.id != 1
+    ORDER BY u.username
+) LIMIT 100

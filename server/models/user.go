@@ -19,6 +19,20 @@ type User struct {
 	Email          string `json:"email"`
 	Password       string `json:"password"`
 	RepeatPassword string `json:"repeatpassword"`
+	Type           string `json:"receiver"`
+}
+
+type UserList struct {
+	Id             int    `json:"id"`
+	Firstname      string `json:"firstname"`
+	Lastname       string `json:"lastname"`
+	Username       string `json:"username"`
+	Gender         string `json:"gender"`
+	Age            string `json:"age"`
+	Email          string `json:"email"`
+	Password       string `json:"password"`
+	RepeatPassword string `json:"repeatpassword"`
+	Type           string `json:"receiver"`
 }
 
 type UserData struct {
@@ -51,6 +65,7 @@ func (r *UserRepository) GetUser(user *User, login string) error {
 	}
 	return nil
 }
+
 func NewUserRepository(db *sql.DB) *UserRepository {
 	return &UserRepository{
 		DB: db,
@@ -67,6 +82,51 @@ func (r *UserRepository) GetAll() ([]User, error) {
 	for row.Next() {
 		var user User
 		row.Scan(&user.Id, &user.Firstname, &user.Lastname, &user.Username, &user.Gender, &user.Age, &user.Email)
+		users = append(users, user)
+	}
+	return users, nil
+}
+
+func (r *UserRepository) GetUsersList(id int) ([]UserList, error) {
+	var users []UserList
+	req := `
+	SELECT * FROM (
+		SELECT u.id, u.username, u.firstname, u.lastname, 'Receiver' AS user_type 
+		FROM "Users" u
+		WHERE u.id IN (
+			SELECT m.receiver_id
+			FROM message m
+			WHERE m.sender_id = ?
+			UNION
+			SELECT m.sender_id
+			FROM message m
+			WHERE m.receiver_id = ?
+		)
+		ORDER BY (
+			SELECT MAX(date)
+			FROM message m 
+			WHERE m.sender_id = u.id OR m.receiver_id = u.id
+		) DESC
+	)
+	UNION ALL
+	SELECT * FROM (
+		SELECT u.id, u.username, u.firstname, u.lastname, 'NotReceiver' AS user_type 
+		FROM "Users" u
+		WHERE  u.id NOT IN (
+			SELECT sender_id FROM message WHERE receiver_id = ?
+			UNION
+			SELECT receiver_id FROM message WHERE sender_id = ?
+		) AND u.id != ?
+		ORDER BY u.username
+	)	
+	`
+	row, err := r.DB.Query(req, id, id, id, id, id)
+	if err != nil {
+		return nil, err
+	}
+	for row.Next() {
+		var user UserList
+		row.Scan(&user.Id, &user.Username, &user.Firstname, &user.Lastname, &user.Type)
 		users = append(users, user)
 	}
 	return users, nil

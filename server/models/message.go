@@ -41,7 +41,7 @@ func (r *MessageRepository) Get(senderId int, receiverId int) ([]Message, error)
 	req := `SELECT m.id, m.sender_id, m.receiver_id, m.content, m.date
 			FROM "Message" m 
 			WHERE (m.sender_id = ? AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = ?)
-			ORDER By m.date DESC
+			ORDER By m.date ASC
 			`
 	var messages []Message
 	row, err := r.db.Query(req, senderId, receiverId, receiverId,  senderId)

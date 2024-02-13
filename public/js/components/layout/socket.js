@@ -114,7 +114,8 @@ export default class Socket extends HTMLElement {
     checkChatListener(){
         this.addEventListener('broadcastChat',e => {
             // console.log("broadcastChat",e.detail.data)
-            CHAT_CONTROLLER.setAllMessages(e.detail.data)
+            const messages = e.detail.data !== null ? e.detail.data : []
+            CHAT_CONTROLLER.setAllMessages(messages)
             updateSingleComponent('c-chat-container')
         })
     }

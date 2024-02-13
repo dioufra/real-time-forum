@@ -50,7 +50,8 @@ class ChatController {
     }
 
     setAllMessages(messages){
-        this.allMessages = messages
+        if (messages !== null) this.allMessages = messages
+        else this.messages = []
         // updateComponents()
     }
 }
