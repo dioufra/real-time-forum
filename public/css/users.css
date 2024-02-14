@@ -34,6 +34,22 @@ sc-user-info {
 
                     display: flex;
                     justify-content:space-between;
+                    & p {
+                        /* display: flex; */
+                        justify-content:space-between;
+                        
+                        & .unread-messages {
+                            width: 20px;
+                            height: 20px;
+                            border-radius: 50%;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            background-color: #888;
+                            color: black;
+                            margin-left: auto;
+                        }
+                    }
                 }
             }
             &.user:hover{

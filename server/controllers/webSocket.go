@@ -199,17 +199,33 @@ func BroadcastOnlineUsers() {
 			fmt.Println("user not found")
 			return
 		}
+		if err != nil {
+			fmt.Println("user not found")
+			return
+		}
 		users = append(users, user)
 	}
 	for client, tab := range SocketClients { //send data
 		data, email := []models.User{}, tab[0]
+		recever, err := GetUserByField(DB, "email", email)
+		if err != nil {
+			fmt.Println("user not found")
+			return
+		}
 		for _, user := range users {
 			if user.Email != email {
+				nb, err := models.MessageRepo.GetUnReadMessages(user.Id, recever.Id)
+				if err != nil {
+					fmt.Println("Error counting unread messages")
+					return
+				}
+				fmt.Println("UnRead Messages", nb)
+				user.UnReadMessages = nb
 				data = append(data, user)
 			}
 		}
 		response := map[string]interface{}{"event": "broadcastOnlineUsers", "data": data}
-		err := client.WriteJSON(response)
+		err = client.WriteJSON(response)
 		if err != nil {
 			log.Println(err)
 		}

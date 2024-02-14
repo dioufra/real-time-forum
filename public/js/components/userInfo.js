@@ -85,6 +85,10 @@ export default class UserInfo extends HTMLElement {
                                     ${user.firstname} ${user.lastname}
                                     <br/>
                                     <span>@${user.username}</span>
+                                    ${user.unread_mesages > 0?`
+                                        <span class="unread-messages">${user.unread_mesages}</span>
+                                    `:``
+                                    }
                                 </p>
                                 <span>Online</span>
                             </div>

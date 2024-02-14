@@ -20,6 +20,7 @@ type User struct {
 	Password       string `json:"password"`
 	RepeatPassword string `json:"repeatpassword"`
 	Type           string `json:"receiver"`
+	UnReadMessages int    `json:"unread_mesages"`
 }
 
 type UserList struct {

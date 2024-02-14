@@ -23,7 +23,6 @@ func Message(res http.ResponseWriter, req *http.Request) {
 			http.Error(res, "Invalid request payload", http.StatusBadRequest)
 			return
 		}
-		fmt.Println(message)
 		message.Content = strings.Trim(message.Content, " ")
 		if message.Content == "" {
 			res.WriteHeader(http.StatusBadRequest)
