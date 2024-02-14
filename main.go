@@ -45,10 +45,10 @@ func init() {
 			sender_id INTEGER NOT NULL,
 			receiver_id INTEGER NOT NULL,
 			content VARCHAR(255) NOT NULL,
-			date TIMESTAMP NOT NULL,
 			is_read BOOLEAN DEFAULT FALSE,
-			CONSTRAINT FK_Message_Sender FOREIGN KEY (sender_id) REFERENCES "User" (id),
-			CONSTRAINT FK_Message_Receiver FOREIGN KEY (receiver_id) REFERENCES "User" (id)
+			date TIMESTAMP NOT NULL,
+			CONSTRAINT FK_Message_Sender FOREIGN KEY (sender_id) REFERENCES "Users" (id),
+			CONSTRAINT FK_Message_Receiver FOREIGN KEY (receiver_id) REFERENCES "Users" (id)
 		);`,
 	}
 	for _, req := range tabRequest {

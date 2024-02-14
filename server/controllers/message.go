@@ -41,6 +41,7 @@ func Message(res http.ResponseWriter, req *http.Request) {
 		if err := json.NewEncoder(res).Encode(map[string]any{"message": "Message sent"}); err != nil {
 			log.Println("Error encoding JSON response:", err)
 		}
+		BroadcastOnlineUsers()
 		BroadcastChat(message.SenderId, message.ReceiverId, message.SenderAdress, message.ReceiverAdress)
 	}
 	defer req.Body.Close()

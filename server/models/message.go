@@ -55,9 +55,9 @@ func (r *MessageRepository) Get(senderId int, receiverId int) ([]Message, error)
 
 func (r *MessageRepository) GetUnReadMessages(senderId int, receiverId int) (result int, err error) {
 	req := `SELECT COUNT(*) FROM "Message" m
-			WHERE (m.sender_id = ? AND m.receiver_id = ?)
+			WHERE (m.sender_id = ? AND m.receiver_id = ? AND m.is_read = ?)
 			`
-	row, err := r.db.Query(req, senderId, receiverId)
+	row, err := r.db.Query(req, senderId, receiverId, false)
 	if err != nil {
 		return result, err
 	}
@@ -65,4 +65,15 @@ func (r *MessageRepository) GetUnReadMessages(senderId int, receiverId int) (res
 		row.Scan(&result)
 	}
 	return result, row.Err()
+}
+func (r *MessageRepository) UpdateUnReadMessages(senderId int, receiverId int) (err error) {
+	req := `UPDATE "Message"
+			SET is_read = ?
+			WHERE (sender_id = ? AND receiver_id = ?)
+			`
+	_, err = r.db.Exec(req, true, senderId, receiverId)
+	if err != nil {
+		return
+	}
+	return
 }

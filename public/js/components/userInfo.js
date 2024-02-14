@@ -75,6 +75,28 @@ export default class UserInfo extends HTMLElement {
                 </div>
             </div>
             <div class="users-list">
+                <label>Recent discussions</label>
+                ${USER_CONTROLLER.contactedUsers.map(user => `
+                    <button class="user online" userId="${user.id}">
+                        <img src="//ui-avatars.com/api/?name=${user.username}&size=60&rounded=true&color=fff&background=random" alt="" />
+                        <div>
+                            <div>
+                                <p>
+                                    ${user.firstname} ${user.lastname}
+                                    <br/>
+                                    <span>@${user.username}</span>
+                                    ${user.unread_mesages > 0?`
+                                        <span class="unread-messages">${user.unread_mesages}</span>
+                                    `:``
+                                    }
+                                </p>
+                                <span>Online</span>
+                            </div>
+                        </div>
+                    </button>
+                `).join('') || '<p class="no-user">no recent discussion</p>'}
+            </div>
+            <div class="users-list">
                 <label>Online Users</label>
                 ${USER_CONTROLLER.onlineUsers.map(user => `
                     <button class="user online" userId="${user.id}">

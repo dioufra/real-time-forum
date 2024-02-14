@@ -37,6 +37,12 @@ func Chat(res http.ResponseWriter, req *http.Request) {
 				body.ReceiverAdress = adress
 			}
 		}
+		err = models.MessageRepo.UpdateUnReadMessages(receiver.Id, sender.Id)
+		if err != nil {
+			fmt.Println("Error updating unread messages")
+			return
+		}
+		// fmt.Println(nb)
 		if err := json.NewEncoder(res).Encode(map[string]any{
 			"message":        "Chat started",
 			"SenderAdress":   body.SenderAdress,
@@ -45,6 +51,7 @@ func Chat(res http.ResponseWriter, req *http.Request) {
 			log.Println("Error encoding JSON response:", err)
 		}
 		BroadcastChat(body.SenderId, body.ReceiverId, body.SenderAdress, body.ReceiverAdress)
+		BroadcastOnlineUsers()
 	}
 	defer req.Body.Close()
 }

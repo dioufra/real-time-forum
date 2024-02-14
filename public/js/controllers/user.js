@@ -1,7 +1,7 @@
 import { navigateTo } from "../routes/routechecker.js"
 import { updateComponents, updateSingleComponent } from "../script.js"
 
-class User {
+class UserController {
     constructor() {
         this.Id = 0
         this.IsAuth = false
@@ -12,9 +12,11 @@ class User {
         this.Age = ''
         this.Gender = ''
         // Data from wesocket
+        this.contactedUsers = []
         this.onlineUsers = []
         this.allUsers = []
     }
+    setContactedUsers(data){this.contactedUsers = data}
     setOnlineUsers(data){this.onlineUsers = data}
     setAllUsers(data){this.allUsers = data}
     setIsAuth(bool){
@@ -46,4 +48,4 @@ class User {
         updateComponents()
     }
 }
-export const USER_CONTROLLER = new User()
+export const USER_CONTROLLER = new UserController()
