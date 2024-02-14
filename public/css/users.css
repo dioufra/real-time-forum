@@ -8,9 +8,7 @@ sc-user-info {
             font-size: 110%;
             opacity: 0.5;
         }
-        & button.user:hover{
-            background-color: rgba(255, 255, 255, 0.04)
-        }
+        
         & button.user{
             padding-top: 10px;
             padding-bottom: 10px;
@@ -37,6 +35,20 @@ sc-user-info {
                     display: flex;
                     justify-content:space-between;
                 }
+            }
+            &.user:hover{
+                background-color: rgba(255, 255, 255, 0.04)
+            }
+            &.online::after {
+                content: '';
+                width: 15px;
+                height: 15px;
+                border-radius: 50%;
+                background-color: green;
+                display: block;
+                margin-top: 25px;
+                position: relative;
+
             }
         }
     }

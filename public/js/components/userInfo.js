@@ -77,7 +77,7 @@ export default class UserInfo extends HTMLElement {
             <div class="users-list">
                 <label>Online Users</label>
                 ${USER_CONTROLLER.onlineUsers.map(user => `
-                    <button class="user" userId="${user.id}">
+                    <button class="user online" userId="${user.id}">
                         <img src="//ui-avatars.com/api/?name=${user.username}&size=60&rounded=true&color=fff&background=random" alt="" />
                         <div>
                             <div>
@@ -86,7 +86,7 @@ export default class UserInfo extends HTMLElement {
                                     <br/>
                                     <span>@${user.username}</span>
                                 </p>
-                                <span>Just Now</span>
+                                <span>Online</span>
                             </div>
                         </div>
                     </button>
