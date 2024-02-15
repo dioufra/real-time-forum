@@ -47,8 +47,8 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	clientsMutex.Unlock()
 	BroadcastUserInfos(conn, email)
 	BroadcastOnlineUsers()
-	// BroadcastAllUsers(email)
-	BroadcastAllUsers()
+	BroadcastAllUsers(email)
+	// BroadcastAllUsers()
 	BroadcastAllPosts()
 	BroadcastAllCategories()
 
@@ -61,8 +61,8 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 
 		// Broadcast the disconnection event to other clients
 		BroadcastOnlineUsers()
-		// BroadcastAllUsers(email)
-		BroadcastAllUsers()
+		BroadcastAllUsers(email)
+		// BroadcastAllUsers()
 	}()
 
 	for {
@@ -191,7 +191,6 @@ func BroadcastOnlineUsers() {
 	clientsMutex.Lock()
 	defer clientsMutex.Unlock()
 	var users []models.User
-
 	for _, tab := range SocketClients {
 		email := tab[0]
 		user, err := GetUserByField(DB, "email", email)
@@ -216,57 +215,60 @@ func BroadcastOnlineUsers() {
 	}
 }
 
-func BroadcastAllUsers() {
-	// Iterate through all connected clients and send the message
-	clientsMutex.Lock()
-	defer clientsMutex.Unlock()
-
-	users, err := models.UserRepo.GetAll()
-	if err != nil {
-		fmt.Println("Error getting users")
-		return
-	}
-	for client, tab := range SocketClients { //send data
-		data, email := []models.User{}, tab[0]
-		for _, user := range users {
-			if user.Email != email {
-				data = append(data, user)
-			}
-		}
-		response := map[string]interface{}{"event": "broadcastAllUsers", "data": data}
-		err := client.WriteJSON(response)
-		if err != nil {
-			log.Println(err)
-		}
-	}
-}
-
-// func BroadcastAllUsers(email string) {
+// func BroadcastAllUsers() {
 // 	// Iterate through all connected clients and send the message
 // 	clientsMutex.Lock()
 // 	defer clientsMutex.Unlock()
 
-// 	var user models.User
+// 	users, err := models.UserRepo.GetAll()
+// 	if err != nil {
+// 		fmt.Println("Error getting users")
+// 		return
+// 	}
 // 	for client, tab := range SocketClients { //send data
-// 		_, email := []models.User{}, tab[0]
-// 		if err := models.UserRepo.GetUser(&user, email); err != nil {
-// 			fmt.Println("Error getting user: ", err)
-// 			return
+// 		data, email := []models.User{}, tab[0]
+// 		for _, user := range users {
+// 			if user.Email != email {
+// 				data = append(data, user)
+// 			}
 // 		}
-// 		fmt.Println("User: ", user)
-// 		users, err := models.UserRepo.GetUsersList(user.Id)
-// 		if err != nil {
-// 			fmt.Println("Error getting users", err)
-// 			return
-// 		}
-// 		fmt.Println("Users list: ", users)
-// 		response := map[string]interface{}{"event": "broadcastAllUsers", "data": users}
-// 		err = client.WriteJSON(response)
+// 		response := map[string]interface{}{"event": "broadcastAllUsers", "data": data}
+// 		err := client.WriteJSON(response)
 // 		if err != nil {
 // 			log.Println(err)
 // 		}
 // 	}
 // }
+
+func BroadcastAllUsers(email string) {
+	// Iterate through all connected clients and send the message
+	clientsMutex.Lock()
+	defer clientsMutex.Unlock()
+	var test []models.UserList
+	var user models.User
+	for client, tab := range SocketClients { //send data
+		_, email := []models.User{}, tab[0]
+		if err := models.UserRepo.GetUser(&user, email); err != nil {
+			fmt.Println("Error getting user: ", err)
+			return
+		}
+		fmt.Println("User: ", user)
+		users, err := models.UserRepo.GetUsersList(user.Id)
+		test = users
+		if err != nil {
+			fmt.Println("Error getting users", err)
+			return
+		}
+		response := map[string]interface{}{"event": "broadcastAllUsers", "data": users}
+		err = client.WriteJSON(response)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+	for _, user := range test {
+		fmt.Println("User: ", user)
+	}
+}
 
 func BroadcastAllPosts() {
 	// Iterate through all connected clients and send the message
@@ -306,20 +308,11 @@ func BroadcastAllCategories() {
 	}
 }
 func BroadcastChat(senderId, receiverId int, senderAdress, receverAdress string) {
-	// data := []models.Message{}
-	// // get all the messages from the database here
-	// for _, msg := range MESSAGES_TAB {
-	// 	if msg.ReceiverId == receiverId && msg.SenderId == senderId || msg.ReceiverId == senderId && msg.SenderId == receiverId {
-	// 		data = append(data, msg)
-	// 	}
-	// }
-
 	data, err := models.MessageRepo.Get(senderId, receiverId)
 	if err != nil {
 		fmt.Println("Error loading chat messages: ", err)
 		return
 	}
-	fmt.Println("broadcast chat", data)
 	for client, tab := range SocketClients {
 		adress := tab[1]
 		if adress == senderAdress || adress == receverAdress {
