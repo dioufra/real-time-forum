@@ -18,6 +18,7 @@ export default class Socket extends HTMLElement {
         this.checkAllCategoriesListener()
         this.checkUserInfosListener()
         this.checkOnlineUsersListener()
+        this.checkContactedUsersListener()
         this.checkAllUsersListener()
         this.checkAllPostsListener()
         this.checkAllCategoriesListener()
@@ -130,6 +131,13 @@ export default class Socket extends HTMLElement {
         this.addEventListener('broadcastOnlineUsers',e => {
             // console.log("broadcastOnlineUsers",e.detail.data)
             USER_CONTROLLER.setOnlineUsers(e.detail.data)
+            updateSingleComponent('sc-user-info')
+        })
+    }
+    checkContactedUsersListener(){
+        this.addEventListener('broadcastContactedUsers',e => {
+            // console.log("broadcastAllUsers",e.detail.data)
+            USER_CONTROLLER.setContactedUsers(e.detail.data)
             updateSingleComponent('sc-user-info')
         })
     }

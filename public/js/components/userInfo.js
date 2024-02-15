@@ -77,7 +77,7 @@ export default class UserInfo extends HTMLElement {
             <div class="users-list">
                 <label>Recent discussions</label>
                 ${USER_CONTROLLER.contactedUsers.map(user => `
-                    <button class="user online" userId="${user.id}">
+                    <button class="user" userId="${user.id}">
                         <img src="//ui-avatars.com/api/?name=${user.username}&size=60&rounded=true&color=fff&background=random" alt="" />
                         <div>
                             <div>

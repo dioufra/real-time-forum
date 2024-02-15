@@ -16,12 +16,18 @@ class UserController {
         this.onlineUsers = []
         this.allUsers = []
     }
-    setContactedUsers(data){this.contactedUsers = data}
-    setOnlineUsers(data){this.onlineUsers = data}
-    setAllUsers(data){this.allUsers = data}
+    setContactedUsers(data){this.contactedUsers = this.filterUsers(data)}
+    setOnlineUsers(data){this.onlineUsers = this.filterUsers(data)}
+    setAllUsers(data){this.allUsers = this.filterUsers(data)}
     setIsAuth(bool){
         this.IsAuth = bool
-        // updateComponents()
+    }
+    filterUsers(array) {
+        return array.filter((obj, index, self) =>
+            index === self.findIndex((t) => (
+                t.id === obj.id
+            ))
+        );
     }
     setUser(user){
         this.Id = user.id || this.Id

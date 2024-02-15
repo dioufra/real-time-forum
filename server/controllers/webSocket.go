@@ -48,6 +48,7 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	BroadcastUserInfos(conn, email)
 	BroadcastOnlineUsers()
 	// BroadcastAllUsers(email)
+	BroadcastContactedUsers()
 	BroadcastAllUsers()
 	BroadcastAllPosts()
 	BroadcastAllCategories()
@@ -232,6 +233,31 @@ func BroadcastOnlineUsers() {
 	}
 }
 
+func BroadcastContactedUsers() {
+	// Iterate through all connected clients and send the message
+	clientsMutex.Lock()
+	defer clientsMutex.Unlock()
+
+	for client, tab := range SocketClients { //send data
+		email := tab[0]
+		user, err := GetUserByField(DB, "email", email)
+		if err != nil {
+			fmt.Println("Error getting user by email field")
+			return
+		}
+		users, err := models.UserRepo.GetContactedUsers(user.Id)
+		if err != nil {
+			fmt.Println("Error getting contacted users")
+			return
+		}
+		fmt.Println("users", users)
+		response := map[string]interface{}{"event": "broadcastContactedUsers", "data": users}
+		err = client.WriteJSON(response)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+}
 func BroadcastAllUsers() {
 	// Iterate through all connected clients and send the message
 	clientsMutex.Lock()

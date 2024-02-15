@@ -87,6 +87,24 @@ func (r *UserRepository) GetAll() ([]User, error) {
 	}
 	return users, nil
 }
+func (r *UserRepository) GetContactedUsers(userId int) ([]User, error) {
+	var users []User
+	req := `SELECT u.id, u.firstname, u.lastname, u.username, u.gender, u.age, u.email
+			FROM "Users" u,"Message" m
+			WHERE (m.sender_id = ? AND m.receiver_id = u.id) OR (m.sender_id = u.id AND m.receiver_id = ?)
+			ORDER BY m.date
+			`
+	row, err := r.DB.Query(req, userId, userId)
+	if err != nil {
+		return nil, err
+	}
+	for row.Next() {
+		var user User
+		row.Scan(&user.Id, &user.Firstname, &user.Lastname, &user.Username, &user.Gender, &user.Age, &user.Email)
+		users = append(users, user)
+	}
+	return users, nil
+}
 
 func (r *UserRepository) GetUsersList(id int) ([]UserList, error) {
 	var users []UserList
