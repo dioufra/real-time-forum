@@ -68,7 +68,6 @@ export default class Chat extends HTMLElement {
     }
 
     render() {
-        console.log(CHAT_CONTROLLER.allMessages.length);
         this.innerHTML = /* HTML */ `
             ${USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox? /*HTML*/`
                 <div class="chat-modal ">

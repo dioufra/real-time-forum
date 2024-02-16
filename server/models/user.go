@@ -143,7 +143,7 @@ func (r *UserRepository) GetUsersList(id int) ([]UserList, error) {
 			UNION
 			SELECT receiver_id FROM message WHERE sender_id = ?
 		) AND u.id != ?
-		ORDER BY u.username
+		ORDER BY LOWER(u.firstname)
 	)	
 	`
 	row, err := r.DB.Query(req, id, id, id, id, id)
