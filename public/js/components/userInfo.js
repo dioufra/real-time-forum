@@ -85,12 +85,15 @@ export default class UserInfo extends HTMLElement {
                                     ${user.firstname} ${user.lastname}
                                     <br/>
                                     <span>@${user.username}</span>
+                                </p>
+                                <p>
+                                    <span>Just now</span>
+                                    <br/>
                                     ${user.unread_mesages > 0?`
                                         <span class="unread-messages">${user.unread_mesages}</span>
                                     `:``
                                     }
                                 </p>
-                                <span>Online</span>
                             </div>
                         </div>
                     </button>
@@ -107,12 +110,15 @@ export default class UserInfo extends HTMLElement {
                                     ${user.firstname} ${user.lastname}
                                     <br/>
                                     <span>@${user.username}</span>
+                                </p>
+                                <p>
+                                    <span>Online</span>
+                                    <br/>
                                     ${user.unread_mesages > 0?`
                                         <span class="unread-messages">${user.unread_mesages}</span>
                                     `:``
                                     }
                                 </p>
-                                <span>Online</span>
                             </div>
                         </div>
                     </button>
@@ -130,7 +136,14 @@ export default class UserInfo extends HTMLElement {
                                     <br/>
                                     <span>@${user.username}</span>
                                 </p>
-                                <span>Just Now</span>
+                                <p>
+                                    <span>Just now</span>
+                                    <br/>
+                                    ${user.unread_mesages > 0?`
+                                        <span class="unread-messages">${user.unread_mesages}</span>
+                                    `:``
+                                    }
+                                </p>
                             </div>
                         </div>
                     </button>  

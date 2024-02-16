@@ -48,12 +48,16 @@ sc-user-info {
                             background-color: #888;
                             color: black;
                             margin-left: auto;
+                            margin-right: 20px;
                         }
                     }
                 }
             }
             &.user:hover{
                 background-color: rgba(255, 255, 255, 0.04)
+            }
+            &.online .unread-messages{
+                margin-right: 5px;
             }
             &.online::after {
                 content: '';
@@ -62,7 +66,7 @@ sc-user-info {
                 border-radius: 50%;
                 background-color: green;
                 display: block;
-                margin-top: 25px;
+                margin-top: 22px;
                 position: relative;
 
             }

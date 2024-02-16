@@ -51,6 +51,7 @@ func Chat(res http.ResponseWriter, req *http.Request) {
 			log.Println("Error encoding JSON response:", err)
 		}
 		BroadcastChat(body.SenderId, body.ReceiverId, body.SenderAdress, body.ReceiverAdress)
+		BroadcastContactedUsers()
 		BroadcastOnlineUsers()
 	}
 	defer req.Body.Close()

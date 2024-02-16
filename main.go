@@ -75,8 +75,11 @@ func main() {
 	router.Route()
 
 	fmt.Println("Listening in http://localhost" + PORT)
-
-	http.ListenAndServe(PORT, nil)
+	err := http.ListenAndServe(PORT, nil)
+	if err != nil {
+		fmt.Println("ListenAndServe error", err)
+		return
+	}
 
 	defer controllers.DB.Close()
 

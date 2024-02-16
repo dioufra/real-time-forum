@@ -131,6 +131,7 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 						fmt.Println("Error adding a new appreciation: ", err)
 						return
 					}
+					fmt.Println("test")
 					BroadcastAllPosts()
 				}
 			case "comment":
@@ -220,7 +221,6 @@ func BroadcastOnlineUsers() {
 					fmt.Println("Error counting unread messages")
 					return
 				}
-				fmt.Println("UnRead Messages", nb)
 				user.UnReadMessages = nb
 				data = append(data, user)
 			}
@@ -250,7 +250,6 @@ func BroadcastContactedUsers() {
 			fmt.Println("Error getting contacted users")
 			return
 		}
-		fmt.Println("users", users)
 		response := map[string]interface{}{"event": "broadcastContactedUsers", "data": users}
 		err = client.WriteJSON(response)
 		if err != nil {
@@ -270,13 +269,24 @@ func BroadcastAllUsers() {
 	}
 	for client, tab := range SocketClients { //send data
 		data, email := []models.User{}, tab[0]
+		receiver, err := GetUserByField(DB, "email", email)
+		if err != nil {
+			fmt.Println("Error getting user by email field")
+			return
+		}
 		for _, user := range users {
 			if user.Email != email {
+				nb, err := models.MessageRepo.GetUnReadMessages(user.Id, receiver.Id)
+				if err != nil {
+					fmt.Println("Error counting unread messages")
+					return
+				}
+				user.UnReadMessages = nb
 				data = append(data, user)
 			}
 		}
 		response := map[string]interface{}{"event": "broadcastAllUsers", "data": data}
-		err := client.WriteJSON(response)
+		err = client.WriteJSON(response)
 		if err != nil {
 			log.Println(err)
 		}
@@ -321,9 +331,11 @@ func BroadcastAllPosts() {
 		return
 	}
 	for client := range SocketClients { //send data
+		fmt.Println("test2")
 		response := map[string]interface{}{"event": "broadcastAllPosts", "data": posts}
 		err := client.WriteJSON(response)
 		if err != nil {
+			fmt.Println("Error")
 			log.Println(err)
 		}
 	}
