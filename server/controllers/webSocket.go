@@ -215,31 +215,6 @@ func BroadcastOnlineUsers() {
 	}
 }
 
-// func BroadcastAllUsers() {
-// 	// Iterate through all connected clients and send the message
-// 	clientsMutex.Lock()
-// 	defer clientsMutex.Unlock()
-
-// 	users, err := models.UserRepo.GetAll()
-// 	if err != nil {
-// 		fmt.Println("Error getting users")
-// 		return
-// 	}
-// 	for client, tab := range SocketClients { //send data
-// 		data, email := []models.User{}, tab[0]
-// 		for _, user := range users {
-// 			if user.Email != email {
-// 				data = append(data, user)
-// 			}
-// 		}
-// 		response := map[string]interface{}{"event": "broadcastAllUsers", "data": data}
-// 		err := client.WriteJSON(response)
-// 		if err != nil {
-// 			log.Println(err)
-// 		}
-// 	}
-// }
-
 func BroadcastAllUsers(email string) {
 	// Iterate through all connected clients and send the message
 	clientsMutex.Lock()
@@ -299,7 +274,7 @@ func BroadcastAllCategories() {
 		fmt.Println("Error retrieving categories: ", err)
 		return
 	}
-	for client, _ := range SocketClients { //send data
+	for client, _ := range SocketClients {
 		response := map[string]interface{}{"event": "broadcastAllCategories", "data": categories}
 		err := client.WriteJSON(response)
 		if err != nil {

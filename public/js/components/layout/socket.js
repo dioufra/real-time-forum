@@ -155,6 +155,12 @@ export default class Socket extends HTMLElement {
         })
     }
 
+    checkAllCategoriesListener(){
+        this.addEventListener('Notify', e => {
+            console.log("notificatication", e.detail.data)
+        })
+    }
+
     checkPostDetails() {
         this.addEventListener('broadcastPostDetails', e => {
             COMMENT_CONTROLLER.setData(e.detail.data.Comments, e.detail.data.Post)
