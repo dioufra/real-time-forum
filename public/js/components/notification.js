@@ -1,47 +1,49 @@
+import { NOTIFICATION_CONTROLLER } from "../controllers/notification.js";
 import { USER_CONTROLLER } from "../controllers/user.js"
 
 export default class Notification extends HTMLElement {
     constructor() {
         super()
         this.timer = null
-
-        this.displayListener = (event) => {
-            console.log('I have been triggered');
-            this.render()
-            this.timer = setTimeout(() => {
-                this.remove()
-            }, 1000)
-        }
-
     }
 
 
     connectedCallback() {
-        this.addEventListener('display-notif', this.displayListener)
+        this.render()
     }
 
     
 
     disconnectedCallback() {
         clearTimeout(this.timer)
-        this.removeEventListener('display-notif', this.displayListener)
     }
 
     render() {
         this.innerHTML = /*HTML*/`
-            ${USER_CONTROLLER.IsAuth
+            ${USER_CONTROLLER.IsAuth && NOTIFICATION_CONTROLLER.display
             ? /*HTML*/
             `
                 <div class="notification">
-                    <div><img src="//ui-avatars.com/api/?name=Francois Pape&size=50&rounded=true&color=fff&background=random" alt="" />
+                    <div><img src="//ui-avatars.com/api/?name=${NOTIFICATION_CONTROLLER.Sender}&size=50&rounded=true&color=fff&background=random" alt="" />
                     </div>
                     <div>
-                    <p><span class="username">Francois Pape</span> sent you a new message</p>
+                    <p class="content"><span class="username">${NOTIFICATION_CONTROLLER.Sender}</span> sent you a new message</p>
+                    <p class="content">${NOTIFICATION_CONTROLLER.Message}</p>
                     </div>
                 </div> 
             `
             : ``
             }
         `
+        if (USER_CONTROLLER.IsAuth && NOTIFICATION_CONTROLLER.display) {
+            this.timer = setTimeout(() => {
+                this.notificationBox?.classList.add('hidden')
+                NOTIFICATION_CONTROLLER.display = false
+            }, 100000); // 3 seconds
+        }
+    }
+
+    get notificationBox() {
+        return this.querySelector('.notification')
     }
 }

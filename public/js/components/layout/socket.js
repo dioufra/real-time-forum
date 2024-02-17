@@ -1,11 +1,11 @@
 import { CATEGORY_CONTROLLER } from "../../controllers/categorie.js"
 import { CHAT_CONTROLLER } from "../../controllers/chat.js"
 import { COMMENT_CONTROLLER} from "../../controllers/comment.js"
+import { NOTIFICATION_CONTROLLER } from "../../controllers/notification.js"
 import { PAGE_CONTROLLER } from "../../controllers/pagiantion.js"
 import { POST_CONTROLLER } from "../../controllers/post.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
-import { verifyLocationHref } from "../../routes/routechecker.js"
-import { updateComponents, updateSingleComponent } from "../../script.js"
+import { updateSingleComponent } from "../../script.js"
 
 export default class Socket extends HTMLElement {
     constructor() {
@@ -26,9 +26,8 @@ export default class Socket extends HTMLElement {
         this.checkWebSocketConnection()
         this.checkChatListener()
         this.checkPostDetailsListener()
-        // this.checkPostAppreciateListener()
-        // this.checkCommentAppreciationListerner()
         this.checkAppreciation()
+        this.checkNotificationListener()
         document.dispatchEvent(new Event('connectWebSocket'))
 
         this.render()
@@ -93,19 +92,6 @@ export default class Socket extends HTMLElement {
         })
     }
 
-
-    // checkPostAppreciateListener(){
-    //     document.addEventListener('postAppreciate', (event) => {
-    //         this.sendData(JSON.stringify({type: 'postAppreciate', data: event.detail.data}))
-    //     })
-    // }
-
-    // checkCommentAppreciationListerner() {
-    //     document.addEventListener('commentAppreciate', (event) => {
-    //         this.sendData(JSON.stringify({type: 'commentAppreciate', data: event.detail.data}))
-    //     })
-    // }
-
     checkPostDetailsListener(){
         document.addEventListener('postDetails', (event) => {
             this.sendData(JSON.stringify({event: 'postDetails', type: 'postDetails', data: {postId: event.detail.data}}))
@@ -155,9 +141,15 @@ export default class Socket extends HTMLElement {
         })
     }
 
-    checkAllCategoriesListener(){
+    checkNotificationListener(){
         this.addEventListener('Notify', e => {
-            this.dispatchEvent(new CustomEvent('display-notif'))
+            // this.dispatchEvent(new CustomEvent('display-notif'))
+            console.log("Notifying:", e);
+            NOTIFICATION_CONTROLLER.display = true
+            NOTIFICATION_CONTROLLER.setDate(e.detail.data.Message.Date)
+            NOTIFICATION_CONTROLLER.setMessage(e.detail.data.Message.Content)
+            NOTIFICATION_CONTROLLER.setSender(e.detail.data.Author)
+            updateSingleComponent('c-notification')
         })
     }
 

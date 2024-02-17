@@ -1,7 +1,7 @@
 
-class notificationController {
+class NotificationController {
     constructor() {
-        this.displayBox = false
+        this.display = false
         this.Sender = ""
         this.Message = ""
         this.date = Date.now()
@@ -16,7 +16,7 @@ class notificationController {
     }
     
     setDate(date) {
-        this.date = data
+        this.date = date
     }
 }
 export const NOTIFICATION_CONTROLLER = new NotificationController()
