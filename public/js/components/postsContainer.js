@@ -1,8 +1,5 @@
-import { CATEGORY_CONTROLLER } from "../controllers/categorie.js"
 import { COMMENT_CONTROLLER } from "../controllers/comment.js"
-import { POST_CONTROLLER } from "../controllers/post.js"
 import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
-import { navigateTo } from "../routes/routechecker.js"
 
 export default class PostsContainer extends HTMLElement {
     constructor() {

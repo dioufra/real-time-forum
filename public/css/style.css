@@ -378,6 +378,7 @@ nav {
     display: inline-block;
     width: 150px;
     height: 80px;
+    z-index: -1;
 }
 
 .sc-user-info {
@@ -1137,13 +1138,12 @@ input[type="text"] {
   justify-content: space-between;
     -ms-flex-pack: distribute;
 }
-.dark-light:checked ~ .sec-center .section-dropdown a {
-  color: #102770;
+.section-dropdown a {
+  color: white;
 }
 
-.dark-light:checked ~ .sec-center .section-dropdown a:hover {
-  color:  #002EA3;;
-  background-color: #102770;
+.section-dropdown a:hover {
+  background-color: #888;
 }
 a .uil {
   font-size: 22px;

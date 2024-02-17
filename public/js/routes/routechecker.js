@@ -1,3 +1,4 @@
+import { CATEGORY_CONTROLLER } from "../controllers/categorie.js";
 import { COMMENT_CONTROLLER } from "../controllers/comment.js";
 import { PAGE_CONTROLLER } from "../controllers/pagiantion.js";
 import { POST_CONTROLLER } from "../controllers/post.js";
@@ -30,13 +31,17 @@ function backToHomePage() {
 export function verifyLocationHref() {
     let href  = window.location.href
     let host  = window.location.host
-    let paginationRegex = new RegExp('^http:\/\/'+host+'\/page=[0-9]+$')
-    let postRegex = new RegExp('^http:\/\/'+host+'\/post=[0-9]+$')
+    let paginationRegex = new RegExp(host+'\/page=[0-9]+$')
+    let postRegex = new RegExp(host+'\/post=[0-9]+$')
+    let categoryRegex = new RegExp(host +'\\/page=\\d+\\?categorie=[(\\d)]+$')
 
     if(USER_CONTROLLER.IsAuth){
         if (paginationRegex.test(href)) {
             let page = parseInt(href.match(/[0-9]+$/))
-            if (page > 0 && page <= Math.ceil(POST_CONTROLLER.posts.length / PAGE_CONTROLLER.PageSize)) {
+            if (
+                POST_CONTROLLER.posts.length === 0 
+                ||
+                page >= 1 && page <= Math.ceil(POST_CONTROLLER.posts.length / PAGE_CONTROLLER.PageSize)) {
                 PAGE_CONTROLLER.setCurrentPage(parseInt(href.match(/[0-9]+$/)))
                 COMMENT_CONTROLLER.isPostSection = false
                 updateSingleComponent('c-posts-container')
@@ -46,11 +51,19 @@ export function verifyLocationHref() {
         }else if (postRegex.test(href)) {
             COMMENT_CONTROLLER.isPostSection = true
             let id = parseInt(href.match(/[0-9]+$/))
-            if(Boolean(POST_CONTROLLER.posts.filter(p => p.Id === id)[0])){
+            if(Boolean(POST_CONTROLLER.allPosts.find(p => p.Id === id))){
                 document.dispatchEvent(new CustomEvent('postDetails', {detail: {data: id}}))
+                updateSingleComponent('c-posts-container')
             }else{
                 backToHomePage()
             }
+        }else if (categoryRegex.test(href)) {
+            let id = parseInt(href.match(/[(\d)(default)]+$/))||0
+            CATEGORY_CONTROLLER.setCurrentCategoryId(id)
+
+            PAGE_CONTROLLER.setCurrentPage(parseInt(href.match(/[0-9]+\?/)))
+            COMMENT_CONTROLLER.isPostSection = false
+            updateSingleComponent('c-posts-container')
         }else {
             backToHomePage()
         }

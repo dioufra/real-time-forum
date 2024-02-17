@@ -1,3 +1,4 @@
+import { CATEGORY_CONTROLLER } from "../controllers/categorie.js"
 import { PAGE_CONTROLLER } from "../controllers/pagiantion.js"
 import { POST_CONTROLLER } from "../controllers/post.js"
 import { navigateTo } from "../routes/routechecker.js"
@@ -33,6 +34,7 @@ export default class Pagination extends HTMLElement {
         });
     }
     filterPosts(page){
+        POST_CONTROLLER.filterByCategory(CATEGORY_CONTROLLER.currentCategoryId)
         PAGE_CONTROLLER.setCurrentPage(page)
     }
     render() {

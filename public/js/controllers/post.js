@@ -1,18 +1,27 @@
 import { updateComponents, updateSingleComponent } from "../script.js";
+import { CATEGORY_CONTROLLER } from "./categorie.js";
 
 class PostController {
     constructor() {
+        this.allPosts = []
         this.posts = []
         this.filteredPosts = []
         this.postcreatorId = 0
         this.displayBox = false
     }
     setPosts(data){
-        this.posts = data;
+        this.allPosts = data;
+        // this.posts = data
         // updateComponents()
         updateSingleComponent('c-posts-container')
     }
-
+    filterByCategory(id){
+        let category = CATEGORY_CONTROLLER.categories.find(c => c.Id===id)
+        this.posts = this.allPosts.filter((p)=> {
+            return new RegExp(category?.Name).test(p.Categories) ||id===0
+        })
+        updateSingleComponent('c-posts')
+    }
     addNewPost(user_id) {
         this.displayBox = true
         this.postcreatorId = user_id || this.postcreatorId

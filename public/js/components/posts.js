@@ -63,7 +63,7 @@ export default class PostsContainer extends HTMLElement {
                                 </div>
                             </div>
                             <div class="feather">
-                                ${post.Categories.split(' ').map(cat => `
+                                ${post.Categories.split(',').map(cat => `
                                     <span class="cm-time">${cat}</span>
                                 `).join('')} 
                             </div>

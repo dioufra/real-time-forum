@@ -93,7 +93,7 @@ func (r *UserRepository) GetContactedUsers(userId int) ([]User, error) {
 	req := `SELECT u.id, u.firstname, u.lastname, u.username, u.gender, u.age, u.email
 			FROM "Users" u,"Message" m
 			WHERE (m.sender_id = ? AND m.receiver_id = u.id) OR (m.sender_id = u.id AND m.receiver_id = ?)
-			ORDER BY m.id
+			ORDER BY m.id DESC
 			`
 	row, err := r.DB.Query(req, userId, userId)
 	if err != nil {
