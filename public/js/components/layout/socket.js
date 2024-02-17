@@ -157,7 +157,7 @@ export default class Socket extends HTMLElement {
 
     checkAllCategoriesListener(){
         this.addEventListener('Notify', e => {
-            console.log("notificatication", e.detail.data)
+            this.dispatchEvent(new CustomEvent('display-notif'))
         })
     }
 
@@ -184,6 +184,7 @@ export default class Socket extends HTMLElement {
             `:`
                 <c-header></c-header>
                 <c-modal></c-modal>
+                <c-notification></c-notification>
                 <c-main></c-main>
                 <c-footer></c-footer>
                 <c-chat-container></c-chat-container>
