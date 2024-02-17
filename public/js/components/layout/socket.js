@@ -152,7 +152,8 @@ export default class Socket extends HTMLElement {
         this.addEventListener('broadcastAllPosts',e => {
             // console.log("broadcastAllPosts",e.detail.data)
             POST_CONTROLLER.setPosts(e.detail.data)
-            updateSingleComponent('c-posts-container')
+            // updateSingleComponent('c-posts-container')
+            verifyLocationHref()
         })
     }
     checkAllCategoriesListener(){

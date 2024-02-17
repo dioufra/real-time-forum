@@ -26,7 +26,7 @@ export default class Filter extends HTMLElement {
             if (e.target.tagName === 'A') {
                 e.preventDefault()
                 let href = e.target.href
-                let regex = new RegExp(window.location.host +'\\/page=\\d+\\?categorie=[(\\d)(default)]+$')
+                let regex = new RegExp(window.location.host +'\\/page=[1-9]\\d*\\?categorie=[(\\d)(default)]+$')
                 if (regex.test(href)) {
                     let id = parseInt(href.match(/[(\d)(default)]+$/))||0
                     PAGE_CONTROLLER.setCurrentPage(1)

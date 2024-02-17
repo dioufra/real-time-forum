@@ -1,7 +1,7 @@
 import { CATEGORY_CONTROLLER } from "../controllers/categorie.js"
 import { PAGE_CONTROLLER } from "../controllers/pagiantion.js"
 import { POST_CONTROLLER } from "../controllers/post.js"
-import { navigateTo } from "../routes/routechecker.js"
+import { navigateTo, verifyLocationHref } from "../routes/routechecker.js"
 
 export default class Pagination extends HTMLElement {
     constructor() {
@@ -27,9 +27,9 @@ export default class Pagination extends HTMLElement {
                 event.preventDefault();
                 let page = parseInt(event.target.href.split('=').reverse()[0])
                 if ( Boolean(page)) {
-                    this.filterPosts(page)
+                    navigateTo(window.location.href.replace(new RegExp('page=[0-9]+'),'page='+page));
+                    verifyLocationHref()
                 }
-                navigateTo(event.target.href);
             }
         });
     }

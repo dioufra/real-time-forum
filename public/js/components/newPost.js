@@ -79,6 +79,7 @@ export default class NewPost extends HTMLElement {
                 console.log("data",data)
                 if (data) {
                     // console.log('data',data)
+                    POST_CONTROLLER.hideBox()
                 }
             })
             .catch(console.error);

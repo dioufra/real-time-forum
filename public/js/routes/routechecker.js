@@ -33,7 +33,7 @@ export function verifyLocationHref() {
     let host  = window.location.host
     let paginationRegex = new RegExp(host+'\/page=[0-9]+$')
     let postRegex = new RegExp(host+'\/post=[0-9]+$')
-    let categoryRegex = new RegExp(host +'\\/page=\\d+\\?categorie=[(\\d)]+$')
+    let categoryRegex = new RegExp(host +'\\/page=[1-9]\\d*\\?categorie=[1-9]\\d*$')
 
     if(USER_CONTROLLER.IsAuth){
         if (paginationRegex.test(href)) {

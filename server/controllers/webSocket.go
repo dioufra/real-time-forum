@@ -131,7 +131,6 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 						fmt.Println("Error adding a new appreciation: ", err)
 						return
 					}
-					fmt.Println("test")
 					BroadcastAllPosts()
 				}
 			case "comment":
@@ -358,7 +357,6 @@ func BroadcastAllPosts() {
 		return
 	}
 	for client := range SocketClients { //send data
-		fmt.Println("test2")
 		response := map[string]interface{}{"event": "broadcastAllPosts", "data": posts}
 		err := client.WriteJSON(response)
 		if err != nil {
