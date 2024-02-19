@@ -92,7 +92,7 @@ export default class Chat extends HTMLElement {
                     <div class="chat-body" >
                         ${CHAT_CONTROLLER.allMessages.map(message => {
                             let side = message.ReceiverId === USER_CONTROLLER.Id?'left':'right'
-                            return `
+                            return `date
                             <div class="container-${side}">
                                 <div class="message-container ${side}">
                                     <p>${message.Content}</p>

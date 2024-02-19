@@ -20,8 +20,12 @@
 
 [X] Add message table
 
-[] Order users by last message and alphabetic order
+[X] Order users by last message and alphabetic order
 
+[X] Handle messaging with more than one user
 
 [] Send json response from controllers upon error
+
+
+
 
