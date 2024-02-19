@@ -31,7 +31,7 @@ function backToHomePage() {
 export function verifyLocationHref() {
     let href  = window.location.href
     let host  = window.location.host
-    let paginationRegex = new RegExp(host+'\/page=[0-9]+$')
+    let paginationRegex = new RegExp(host+'\/page=[1-9]\\d*$')
     let postRegex = new RegExp(host+'\/post=[0-9]+$')
     let categoryRegex = new RegExp(host +'\\/page=[1-9]\\d*\\?categorie=[1-9]\\d*$')
 
@@ -39,9 +39,14 @@ export function verifyLocationHref() {
         if (paginationRegex.test(href)) {
             let page = parseInt(href.match(/[0-9]+$/))
             if (
-                POST_CONTROLLER.posts.length === 0 
+                POST_CONTROLLER.posts.length === 0
                 ||
-                page >= 1 && page <= Math.ceil(POST_CONTROLLER.posts.length / PAGE_CONTROLLER.PageSize)) {
+                page >= 1 && page <= Math.ceil(POST_CONTROLLER.posts.length / PAGE_CONTROLLER.PageSize)
+            ) {
+                if (page > Math.ceil(POST_CONTROLLER.allPosts.length / PAGE_CONTROLLER.PageSize) ) {
+                    alert('dd')
+                }
+
                 PAGE_CONTROLLER.setCurrentPage(parseInt(href.match(/[0-9]+$/)))
                 COMMENT_CONTROLLER.isPostSection = false
                 updateSingleComponent('c-posts-container')
@@ -59,6 +64,17 @@ export function verifyLocationHref() {
             }
         }else if (categoryRegex.test(href)) {
             let id = parseInt(href.match(/[(\d)(default)]+$/))||0
+            let page = parseInt(href.match(/[0-9]+\?/))
+            setTimeout(() => {
+                if (
+                    !CATEGORY_CONTROLLER.categories.find(c=>c.Id === id)
+                    ||
+                    page > Math.ceil(POST_CONTROLLER.posts.length / PAGE_CONTROLLER.PageSize)
+                ) {
+                    backToHomePage()
+                    return
+                }
+            }, 1000);
             CATEGORY_CONTROLLER.setCurrentCategoryId(id)
 
             PAGE_CONTROLLER.setCurrentPage(parseInt(href.match(/[0-9]+\?/)))

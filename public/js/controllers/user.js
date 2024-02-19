@@ -23,11 +23,15 @@ class UserController {
         this.IsAuth = bool
     }
     filterUsers(array) {
-        return array.filter((obj, index, self) =>
-            index === self.findIndex((t) => (
-                t.id === obj.id
-            ))
-        );
+        try {
+            return array.filter((obj, index, self) =>
+                index === self.findIndex((t) => (
+                    t.id === obj.id
+                ))
+            );
+        } catch (error) {
+            return []
+        }
     }
     setUser(user){
         this.Id = user.id || this.Id
