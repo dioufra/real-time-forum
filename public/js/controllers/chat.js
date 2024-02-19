@@ -8,6 +8,7 @@ class ChatController {
         this.SenderAdress = ""
         this.ReceiverAdress = ""
         this.allMessages = []
+        this.chatId = ''
     }
     
     setReciever(receiver){
@@ -15,8 +16,10 @@ class ChatController {
         // updateComponents()
     }
 
-    startNewChat(receiverId){
+    startNewChat(senderId, receiverId){
+        senderId = parseInt(senderId) || 0
         receiverId = parseInt(receiverId) || 0
+        this.chatId = senderId + receiverId
         let receiver = USER_CONTROLLER.allUsers.filter(user => user.id === receiverId)[0] || null
         if(receiver){
 
@@ -25,6 +28,7 @@ class ChatController {
                 body: JSON.stringify({
                     SenderId:USER_CONTROLLER.Id,
                     ReceiverId:receiverId,
+                    ChatId: CHAT_CONTROLLER.chatId
                 }),
             }).then(response => {
                 // console.log(response)
@@ -35,7 +39,6 @@ class ChatController {
             })
             .then(data => {
                 if (data) {
-                    console.log("data",data)
                     this.SenderAdress = data.SenderAdress
                     this.ReceiverAdress = data.ReceiverAdress
                     this.displayBox = true

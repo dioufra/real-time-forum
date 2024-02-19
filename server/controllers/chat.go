@@ -18,7 +18,7 @@ func Chat(res http.ResponseWriter, req *http.Request) {
 			http.Error(res, "Invalid request payload", http.StatusBadRequest)
 			return
 		}
-		fmt.Println(body)
+		fmt.Println("new chat: ", body)
 		sender, err := GetUserByField(DB, "id", strconv.Itoa(body.SenderId))
 		if err != nil {
 			fmt.Println("Sender not found")
@@ -44,7 +44,7 @@ func Chat(res http.ResponseWriter, req *http.Request) {
 		}); err != nil {
 			log.Println("Error encoding JSON response:", err)
 		}
-		BroadcastChat(body.SenderId, body.ReceiverId, body.SenderAdress, body.ReceiverAdress)
+		BroadcastChat(body.SenderId, body.ReceiverId, body.ChatId ,body.SenderAdress, body.ReceiverAdress)
 	}
 	defer req.Body.Close()
 }

@@ -99,10 +99,10 @@ export default class Socket extends HTMLElement {
     }
     checkChatListener(){
         this.addEventListener('broadcastChat',e => {
-            // console.log("broadcastChat",e.detail.data)
-            const messages = e.detail.data !== null ? e.detail.data : []
-            CHAT_CONTROLLER.setAllMessages(messages)
-            updateSingleComponent('c-chat-container')
+            console.log("broadcastChat",e.detail)
+            const messages = e.detail.data.Message !== null ? e.detail.data.Message : []
+            CHAT_CONTROLLER.setAllMessages(messages)      
+            if (CHAT_CONTROLLER.chatId ===e.detail.data.ChatId)    updateSingleComponent('c-chat-container')
         })
     }
     checkUserInfosListener(){

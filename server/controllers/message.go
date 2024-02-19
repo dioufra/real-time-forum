@@ -20,6 +20,8 @@ func Message(res http.ResponseWriter, req *http.Request) {
 			http.Error(res, "Invalid request payload", http.StatusBadRequest)
 			return
 		}
+		fmt.Println("new messsage: ", message)
+
 		message.Content = strings.Trim(message.Content, " ")
 		if message.Content == "" {
 			res.WriteHeader(http.StatusBadRequest)
@@ -35,7 +37,7 @@ func Message(res http.ResponseWriter, req *http.Request) {
 		if err := json.NewEncoder(res).Encode(map[string]any{"message": "Message sent"}); err != nil {
 			log.Println("Error encoding JSON response:", err)
 		}
-		BroadcastChat(message.SenderId, message.ReceiverId, message.SenderAdress, message.ReceiverAdress)
+		BroadcastChat(message.SenderId, message.ReceiverId, message.ChatId , message.SenderAdress, message.ReceiverAdress)
 		if err := Notify(message.ReceiverAdress, message.SenderId, message); err != nil {
 			fmt.Println("Error notifying user: ", err)
 		}

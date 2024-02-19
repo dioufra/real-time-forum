@@ -13,20 +13,18 @@ type Message struct {
 	Date           time.Time
 	SenderAdress   string //ne pas enregister dans la base de donnees
 	ReceiverAdress string //ne pas enregister dans la base de donnees
+	ChatId         int
 }
-
 
 type MessageRepository struct {
 	db *sql.DB
 }
-
 
 func NewMessageRepository(db *sql.DB) *MessageRepository {
 	return &MessageRepository{
 		db: db,
 	}
 }
-
 
 func (r *MessageRepository) Add(message *Message) error {
 	req := `INSERT INTO Message (sender_id, receiver_id, content, date) VALUES(?,?,?,?)`
@@ -44,7 +42,7 @@ func (r *MessageRepository) Get(senderId int, receiverId int) ([]Message, error)
 			ORDER By m.date ASC
 			`
 	var messages []Message
-	row, err := r.db.Query(req, senderId, receiverId, receiverId,  senderId)
+	row, err := r.db.Query(req, senderId, receiverId, receiverId, senderId)
 	if err != nil {
 		return messages, err
 	}

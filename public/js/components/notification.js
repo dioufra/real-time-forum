@@ -39,7 +39,7 @@ export default class Notification extends HTMLElement {
             this.timer = setTimeout(() => {
                 this.notificationBox?.classList.add('hidden')
                 NOTIFICATION_CONTROLLER.display = false
-            }, 100000); // 3 seconds
+            }, 5000);
         }
     }
 
