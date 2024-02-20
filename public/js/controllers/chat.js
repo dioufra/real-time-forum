@@ -8,6 +8,10 @@ class ChatController {
         this.SenderAdress = ""
         this.ReceiverAdress = ""
         this.allMessages = []
+        this.filteredMessages = []
+        this.scrollLimit = 10
+        this.chatId = ''
+        this.scroll={top:2000,left:0}
     }
     
     setReciever(receiver){
@@ -15,8 +19,11 @@ class ChatController {
         // updateComponents()
     }
 
-    startNewChat(receiverId){
+    startNewChat(senderId, receiverId){
+        senderId = parseInt(senderId) || 0
         receiverId = parseInt(receiverId) || 0
+        this.chatId = senderId + receiverId
+        this.scroll={top:2000,left:0}
         let receiver = USER_CONTROLLER.allUsers.filter(user => user.id === receiverId)[0] || null
         if(receiver){
 
@@ -25,6 +32,7 @@ class ChatController {
                 body: JSON.stringify({
                     SenderId:USER_CONTROLLER.Id,
                     ReceiverId:receiverId,
+                    ChatId: CHAT_CONTROLLER.chatId
                 }),
             }).then(response => {
                 // console.log(response)
@@ -35,7 +43,6 @@ class ChatController {
             })
             .then(data => {
                 if (data) {
-                    console.log("data",data)
                     this.SenderAdress = data.SenderAdress
                     this.ReceiverAdress = data.ReceiverAdress
                     this.displayBox = true
@@ -48,11 +55,33 @@ class ChatController {
             });
         }
     }
-
     setAllMessages(messages){
-        if (messages !== null) this.allMessages = messages
+        if (messages !== null) {
+            this.allMessages = messages
+            this.filterMesages()
+        }
         else this.messages = []
         // updateComponents()
+    }
+    filterMesages(){
+        this.filteredMessages = this.allMessages.filter((_,i) => {
+            return i> this.allMessages.length - this.scrollLimit
+        })
+    }
+    setScroll(target,firstMessage){
+        let {scrollTop: top,scrollLeft: left} = target
+        this.scroll ={top,left}
+        if (top <= 0) {
+            this.scrollLimit += 10
+            let beforeLen = this.filteredMessages.length
+            this.filterMesages()
+            if(firstMessage){
+                let afterLen = this.filteredMessages.length
+                this.scroll.top = (afterLen-beforeLen)*54 || this.scroll.top
+                // firstMessage.scrollIntoView({behavior:'smooth'})
+            }
+            updateSingleComponent('c-chat-container')
+        }
     }
 }
 export const CHAT_CONTROLLER = new ChatController()

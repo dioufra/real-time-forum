@@ -1,5 +1,5 @@
-c-chat-container{
-    & .chat-modal{
+c-chat-container {
+    & .chat-modal {
         width: 300px;
         height: 400px;
         background-color: white;
@@ -14,27 +14,30 @@ c-chat-container{
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        & .chat-header{
+
+        & .chat-header {
             height: 60px;
             background-color: #888;
             display: flex;
             justify-content: space-between;
             align-items: center;
-    
-            & .user-infos{
+
+            & .user-infos {
                 display: flex;
             }
-            & .name_container{
+
+            & .name_container {
                 margin-left: 10px;
-    
-                & .name{
+
+                & .name {
                     color: white;
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
                     width: 190px;
                 }
-                & .username{
+
+                & .username {
                     color: black;
                     font-size: 90%;
                     white-space: nowrap;
@@ -43,13 +46,15 @@ c-chat-container{
                     width: 190px;
                 }
             }
-            & .profil-img{
+
+            & .profil-img {
                 width: 40px;
                 height: 40px;
                 border-radius: 50%;
                 margin-left: 10px;
             }
-            & .close-btn{
+
+            & .close-btn {
                 width: 30px;
                 height: 30px;
                 margin-right: 10px;
@@ -62,17 +67,22 @@ c-chat-container{
                 font-weight: bold;
             }
         }
-        & .chat-body{
+
+        & .chat-body {
             flex: 1;
             color: black;
             text-align: center;
-            & .container-right{
+            overflow-y: scroll;
+
+            & .container-right {
                 text-align: right;
             }
-            & .container-left{
+
+            & .container-left {
                 text-align: left;
             }
-            & .message-container{
+
+            & .message-container {
                 max-height: 100px;
                 display: inline-block;
                 width: auto;
@@ -82,28 +92,32 @@ c-chat-container{
                 margin: 10px;
                 margin-bottom: 0;
 
-                & p{
+                & p {
                     color: black;
                     font-size: 80%;
                 }
             }
-            & .left{
+
+            & .left {
                 background-color: rgb(213, 227, 240);
                 color: #000;
                 margin-right: 20px;
                 border-radius: 30px 30px 30px 0;
             }
-            & .right{
+
+            & .right {
                 background-color: #888;
                 margin-left: 20px;
                 border-radius: 30px 30px 0 30px;
-                & p{
+
+                & p {
                     color: white;
                 }
             }
         }
+
         & .chat-footer {
-            & form{
+            & form {
                 display: block;
                 height: 50px;
                 margin: 10px;
@@ -114,13 +128,15 @@ c-chat-container{
                 display: flex;
                 flex-direction: row;
                 align-items: center;
-                & input{
+
+                & input {
                     background-color: transparent;
                     outline: none;
                     border: none;
                     flex: 1;
                 }
-                & button{
+
+                & button {
                     width: 40px;
                     height: 40px;
                     background: transparent;
@@ -133,7 +149,8 @@ c-chat-container{
             }
         }
     }
-    & .hidden{
+
+    & .hidden {
         width: 0;
         height: 0;
     }

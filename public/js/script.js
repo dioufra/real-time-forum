@@ -9,12 +9,13 @@ let components = [
     {tagName:'c-pagination',src:"./components/pagination.js"},
     {tagName:'c-footer',src:"./components/layout/footer.js"},
     {tagName:'c-chat-container',src:"./components/chat.js"},
-     {tagName:'c-posts',src:"./components/posts.js"},
+    {tagName:'c-posts',src:"./components/posts.js"},
     {tagName:'c-comment',src:"./components/comment.js"},
     {tagName:'c-modal',src:"./components/newPost.js"},
     {tagName:'c-auth',src:"./components/auth.js"},
     {tagName:'c-filter',src:"./components/filter.js"},
     {tagName:'c-page-loader',src:"./components/pageLoader.js"},
+    {tagName:'c-notification',src:"./components/notification.js"},
 ]
 
 // Define the custom web component

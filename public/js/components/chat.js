@@ -1,23 +1,30 @@
 import { CHAT_CONTROLLER } from "../controllers/chat.js"
 import { FORM_CONTROLLER } from "../controllers/form.js"
+import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
+import { updateSingleComponent } from "../script.js"
 
 export default class Chat extends HTMLElement {
     constructor() {
         super()
+        this.isLoading = false
+        this.showLoader = true
+        this.chatId = ''
     }
 
     connectedCallback() {
         this.render()
         this.checkCloseButtonListener()
         this.checkSubmitListener()
+        this.showLoader = true
+        console.log('connected')
     }
 
     disconnectedCallback() {
     }
 
     shouldComponentRender() {
-        return !this.innerHTML
+        return USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox
     }
     checkCloseButtonListener(){
         this.addEventListener('click',e => {
@@ -27,11 +34,28 @@ export default class Chat extends HTMLElement {
             }
         })
     }
+
+    checkScrollListener(){
+        this.body.scrollTop = CHAT_CONTROLLER.scroll.top || 0
+        this.body.addEventListener('scrollend',e => {
+            if (!this.isLoading) {
+                CHAT_CONTROLLER.setScroll(e.target,this.firstMessage)
+                this.isLoading = true
+                setTimeout(() => {
+                    this.isLoading = false
+                    if (this.body.scrollTop === 0 && this.showLoader) {
+                        this.showLoader = false
+                        updateSingleComponent('c-chat-container')
+                    }
+                }, 1000);
+            }
+        })
+    }
+
     checkSubmitListener(){
         this.addEventListener('submit', (event) => {
             event.preventDefault()
             const formData = new FormData(this.messageForm)
-            
             fetch('/api/message', {
                 method: 'POST',
                 body: JSON.stringify({
@@ -39,10 +63,10 @@ export default class Chat extends HTMLElement {
                     ReceiverAdress:CHAT_CONTROLLER.ReceiverAdress,
                     SenderId:USER_CONTROLLER.Id,
                     ReceiverId:CHAT_CONTROLLER.Receiver.id,
+                    ChatId: CHAT_CONTROLLER.chatId,
                     Content:formData.get('content')
                 }),
             }).then(response => {
-                console.log(response)
                 if (!response.ok) {
                     if (response.status === 400) {
                         response.json()
@@ -58,7 +82,6 @@ export default class Chat extends HTMLElement {
                 return response.json()
             })
             .then(data => {
-                console.log("data",data)
                 if (data) {
                     // console.log('data',data)
                 }
@@ -68,9 +91,12 @@ export default class Chat extends HTMLElement {
     }
 
     render() {
+        if (this.body) {
+            this.body.scrollTop = CHAT_CONTROLLER.scroll.top || 2000
+        }
         this.innerHTML = /* HTML */ `
             ${USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox? /*HTML*/`
-                <div class="chat-modal ">
+                <div class="chat-modal">
                     <div class="chat-header" >
                         <div class="user-infos" >
                             <img class="profil-img" src="//ui-avatars.com/api/?name=${CHAT_CONTROLLER.Receiver.username}&size=60&rounded=true&color=fff&background=random" alt="">
@@ -82,10 +108,15 @@ export default class Chat extends HTMLElement {
                         <button class="close-btn">X</button>
                     </div>
                     <div class="chat-body" >
-                        ${CHAT_CONTROLLER.allMessages.map(message => {
+                        ${this.showLoader ?`
+                            <div class="chat-loader">
+                                <div class="loader"></div>
+                            </div>`:``
+                        }
+                        ${CHAT_CONTROLLER.filteredMessages.map(message => {
                             let side = message.ReceiverId === USER_CONTROLLER.Id?'left':'right'
                             return `
-                            <div class="container-${side}">
+                            <div class="container container-${side}">
                                 <div class="message-container ${side}">
                                     <p>${message.Content}</p>
                                 </div>
@@ -96,11 +127,14 @@ export default class Chat extends HTMLElement {
                         <form action="/api/message" method="post">
                             <input name="content" placeholder="Message" />
                             <button type="submit"></button>
-                        </form> 
+                        </form>
                     </div>
                 </div>
             `:``}
         `
+        if (USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox) {
+            this.checkScrollListener()
+        }
     }
 
     get modal (){
@@ -109,7 +143,16 @@ export default class Chat extends HTMLElement {
     get messageForm() {
         return this.querySelector('form')
     }
+    get body() {
+        return this.querySelector('.chat-body')
+    }
+    get firstMessage() {
+        return this.querySelector('.chat-body .container')
+    }
     get header() {
-        this.querySelector('.main-header')
+        return this.querySelector('.main-header')
+    }
+    get chat() {
+        return this.querySelector('.chat-modal')
     }
 }

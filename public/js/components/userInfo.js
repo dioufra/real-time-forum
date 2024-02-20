@@ -47,7 +47,7 @@ export default class UserInfo extends HTMLElement {
                 }else if (target.tagName === 'BUTTON') {
                     let userId = parseInt(target.getAttribute('userId'))
                     if (userId) {
-                        CHAT_CONTROLLER.startNewChat(userId)
+                        CHAT_CONTROLLER.startNewChat(USER_CONTROLLER.Id, userId)
                     }
                 }
             }
