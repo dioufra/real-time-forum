@@ -51,7 +51,7 @@ export default class PostsContainer extends HTMLElement {
             `<c-comment></c-comment>`
             :
             `
-            <c-posts><c-posts>
+            <c-posts></c-posts>
             <c-pagination class="pagination"></c-pagination>
             `
         }

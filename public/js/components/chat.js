@@ -49,7 +49,8 @@ export default class Chat extends HTMLElement {
                     SenderId:USER_CONTROLLER.Id,
                     ReceiverId:CHAT_CONTROLLER.Receiver.id,
                     ChatId: CHAT_CONTROLLER.chatId,
-                    Content:formData.get('content')
+                    Content:formData.get('content'),
+                    Date: Date.now()
                 }),
             }).then(response => {
                 if (!response.ok) {
