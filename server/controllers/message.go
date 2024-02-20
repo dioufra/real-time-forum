@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"real-time-forum/server/models"
 	"strings"
+	"time"
 )
 
 func Message(res http.ResponseWriter, req *http.Request) {
@@ -20,7 +21,10 @@ func Message(res http.ResponseWriter, req *http.Request) {
 			http.Error(res, "Invalid request payload", http.StatusBadRequest)
 			return
 		}
-		fmt.Println("new messsage: ", message)
+
+		message.Date = time.Now()
+
+		fmt.Println("New message: ", message)
 
 		message.Content = strings.Trim(message.Content, " ")
 		if message.Content == "" {
@@ -37,7 +41,14 @@ func Message(res http.ResponseWriter, req *http.Request) {
 		if err := json.NewEncoder(res).Encode(map[string]any{"message": "Message sent"}); err != nil {
 			log.Println("Error encoding JSON response:", err)
 		}
-		BroadcastChat(message.SenderId, message.ReceiverId, message.ChatId , message.SenderAdress, message.ReceiverAdress)
+
+		// var user models.User
+		// if err := models.UserRepo.GetUserById(&user, message.SenderId); err != nil {
+		// 	fmt.Println("Error retrieving user: ", err)
+		// 	return
+		// }
+		// sender := fmt.Sprintf("%s %s", user.Firstname, user.Lastname)
+		BroadcastChat(message.SenderId, message.ReceiverId, message.ChatId, message.SenderAdress, message.ReceiverAdress)
 		if err := Notify(message.ReceiverAdress, message.SenderId, message); err != nil {
 			fmt.Println("Error notifying user: ", err)
 		}
@@ -52,12 +63,12 @@ func Notify(receiverAdress string, senderId int, message models.Message) error {
 	}
 	for client, tab := range SocketClients {
 		if receiverAdress == tab[1] {
-			data := &struct{
+			data := &struct {
 				Message models.Message
-				Author string
+				Author  string
 			}{
 				Message: message,
-				Author: fmt.Sprintf("%s %s", user.Firstname, user.Lastname),
+				Author:  fmt.Sprintf("%s %s", user.Firstname, user.Lastname),
 			}
 			response := map[string]interface{}{"event": "Notify", "data": data}
 			err := client.WriteJSON(response)

@@ -15,6 +15,10 @@ c-chat-container {
         display: flex;
         flex-direction: column;
 
+        & .username {
+            color: black;
+        }
+
         & .chat-header {
             height: 60px;
             background-color: #888;
@@ -72,6 +76,7 @@ c-chat-container {
             flex: 1;
             color: black;
             text-align: center;
+            overflow-y: scroll;
 
             & .container-right {
                 text-align: right;

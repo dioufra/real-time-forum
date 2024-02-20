@@ -47,10 +47,10 @@ export default class Chat extends HTMLElement {
                     SenderAdress:CHAT_CONTROLLER.SenderAdress,
                     ReceiverAdress:CHAT_CONTROLLER.ReceiverAdress,
                     SenderId:USER_CONTROLLER.Id,
+                    // Sender: `${USER_CONTROLLER.FirstName} ${USER_CONTROLLER.LastName}`,
                     ReceiverId:CHAT_CONTROLLER.Receiver.id,
                     ChatId: CHAT_CONTROLLER.chatId,
                     Content:formData.get('content'),
-                    Date: Date.now()
                 }),
             }).then(response => {
                 if (!response.ok) {
@@ -92,13 +92,29 @@ export default class Chat extends HTMLElement {
                     </div>
                     <div class="chat-body" >
                         ${CHAT_CONTROLLER.allMessages.map(message => {
-                            let side = message.ReceiverId === USER_CONTROLLER.Id?'left':'right'
-                            return `date
-                            <div class="container-${side}">
-                                <div class="message-container ${side}">
-                                    <p>${message.Content}</p>
+                            let side = message.ReceiverId === USER_CONTROLLER.Id ? 'right' : 'left'                
+                            if (side === 'left')
+                                return `
+                                    <div class="container-${side}">
+                                        <img class="profil-img" src="//ui-avatars.com/api/?name=${USER_CONTROLLER.FirstName + USER_CONTROLLER.LastName}&size=30&rounded=true&color=fff&background=random" alt="">
+                                        <p class="username">${USER_CONTROLLER.UserName}</p>
+
+                                        <div class="message-container ${side}">
+                                            <p>${message.Content}</p>
+                                        </div>
+                                    </div>
+                                    ${new Date(message.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})}
+                                `
+                            return `
+                                <div class="container-${side}">
+                                    <div class="message-container ${side}">
+                                        <p>${message.Content}</p>
+                                    </div>
+                                    <p class="username">${CHAT_CONTROLLER.Receiver.username}</p>
+                                    <img class="profil-img" src="//ui-avatars.com/api/?name=${CHAT_CONTROLLER.Receiver.username}&size=30&rounded=true&color=fff&background=random" alt="">
                                 </div>
-                            </div>`
+                                ${new Date(message.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})   }
+                            `
                         }).join('') || ""}
                     </div>
                     <div class="chat-footer" >
