@@ -1,0 +1,33 @@
+c-notification {
+  & .notification {
+    display: flex;
+    flex-direction: row;
+    width: max-content;
+    background-color: white;
+    border-radius: 15px;
+    padding: 10px;
+    color: black;
+    gap: 10px;
+    z-index: 3;
+    position: absolute;
+    transition: 1s;
+    left: 50;
+    top: 0;
+
+    & .username {
+      color: black;
+      font-size: 20px;
+      font-weight: bolder;
+    }
+
+    & .content {
+      color: black;
+    }
+  }
+
+  & .hidden {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+}

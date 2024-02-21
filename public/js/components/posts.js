@@ -59,7 +59,7 @@ export default class PostsContainer extends HTMLElement {
                                 </div>
                                 <div class="nm-tm">
                                 <p>${post.Username}</p>
-                                <p>${post.Date} ago</p>
+                                <p>${new Date(post.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})}</p>
                                 </div>
                             </div>
                             <div class="feather">

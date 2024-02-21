@@ -376,7 +376,7 @@ func BroadcastAllCategories() {
 		fmt.Println("Error retrieving categories: ", err)
 		return
 	}
-	for client, _ := range SocketClients { //send data
+	for client, _ := range SocketClients {
 		response := map[string]interface{}{"event": "broadcastAllCategories", "data": categories}
 		err := client.WriteJSON(response)
 		if err != nil {
@@ -384,15 +384,23 @@ func BroadcastAllCategories() {
 		}
 	}
 }
-func BroadcastChat(senderId, receiverId int, senderAdress, receverAdress string) {
-	data, err := models.MessageRepo.Get(senderId, receiverId)
+func BroadcastChat(senderId, receiverId, chatId int, senderAdress, receverAdress string) {
+	messages, err := models.MessageRepo.Get(senderId, receiverId)
 	if err != nil {
 		fmt.Println("Error loading chat messages: ", err)
 		return
 	}
+
 	for client, tab := range SocketClients {
 		adress := tab[1]
 		if adress == senderAdress || adress == receverAdress {
+			data := &struct {
+				Message []models.Message
+				ChatId  int
+			}{
+				messages,
+				chatId,
+			}
 			response := map[string]interface{}{"event": "broadcastChat", "data": data}
 			err := client.WriteJSON(response)
 			if err != nil {

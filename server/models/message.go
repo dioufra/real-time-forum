@@ -13,6 +13,7 @@ type Message struct {
 	Date           time.Time
 	SenderAdress   string //ne pas enregister dans la base de donnees
 	ReceiverAdress string //ne pas enregister dans la base de donnees
+	ChatId         int
 }
 
 type MessageRepository struct {

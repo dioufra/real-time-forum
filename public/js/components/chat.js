@@ -1,5 +1,6 @@
 import { CHAT_CONTROLLER } from "../controllers/chat.js"
 import { FORM_CONTROLLER } from "../controllers/form.js"
+import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 
 export default class Chat extends HTMLElement {
@@ -11,13 +12,14 @@ export default class Chat extends HTMLElement {
         this.render()
         this.checkCloseButtonListener()
         this.checkSubmitListener()
+        this.checkScrollListener()
     }
 
     disconnectedCallback() {
     }
 
     shouldComponentRender() {
-        return !this.innerHTML
+        return USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox
     }
     checkCloseButtonListener(){
         this.addEventListener('click',e => {
@@ -27,22 +29,30 @@ export default class Chat extends HTMLElement {
             }
         })
     }
+
+    checkScrollListener(){
+        this.scrollTop = SCROLL_CONTROLLER.elements.userInfo?.scrollTop || 0
+        this.chat?.addEventListener('scroll',e => {
+            SCROLL_CONTROLLER.setScroll('chat',e.target)
+        })
+    }
+
     checkSubmitListener(){
         this.addEventListener('submit', (event) => {
             event.preventDefault()
             const formData = new FormData(this.messageForm)
-            
             fetch('/api/message', {
                 method: 'POST',
                 body: JSON.stringify({
                     SenderAdress:CHAT_CONTROLLER.SenderAdress,
                     ReceiverAdress:CHAT_CONTROLLER.ReceiverAdress,
                     SenderId:USER_CONTROLLER.Id,
+                    // Sender: `${USER_CONTROLLER.FirstName} ${USER_CONTROLLER.LastName}`,
                     ReceiverId:CHAT_CONTROLLER.Receiver.id,
-                    Content:formData.get('content')
+                    ChatId: CHAT_CONTROLLER.chatId,
+                    Content:formData.get('content'),
                 }),
             }).then(response => {
-                console.log(response)
                 if (!response.ok) {
                     if (response.status === 400) {
                         response.json()
@@ -58,7 +68,6 @@ export default class Chat extends HTMLElement {
                 return response.json()
             })
             .then(data => {
-                console.log("data",data)
                 if (data) {
                     // console.log('data',data)
                 }
@@ -70,7 +79,7 @@ export default class Chat extends HTMLElement {
     render() {
         this.innerHTML = /* HTML */ `
             ${USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox? /*HTML*/`
-                <div class="chat-modal ">
+                <div class="chat-modal">
                     <div class="chat-header" >
                         <div class="user-infos" >
                             <img class="profil-img" src="//ui-avatars.com/api/?name=${CHAT_CONTROLLER.Receiver.username}&size=60&rounded=true&color=fff&background=random" alt="">
@@ -83,13 +92,29 @@ export default class Chat extends HTMLElement {
                     </div>
                     <div class="chat-body" >
                         ${CHAT_CONTROLLER.allMessages.map(message => {
-                            let side = message.ReceiverId === USER_CONTROLLER.Id?'left':'right'
+                            let side = message.ReceiverId === USER_CONTROLLER.Id ? 'right' : 'left'                
+                            if (side === 'left')
+                                return `
+                                    <div class="container-${side}">
+                                        <img class="profil-img" src="//ui-avatars.com/api/?name=${USER_CONTROLLER.FirstName + USER_CONTROLLER.LastName}&size=30&rounded=true&color=fff&background=random" alt="">
+                                        <p class="username">${USER_CONTROLLER.UserName}</p>
+
+                                        <div class="message-container ${side}">
+                                            <p>${message.Content}</p>
+                                        </div>
+                                    </div>
+                                    ${new Date(message.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})}
+                                `
                             return `
-                            <div class="container-${side}">
-                                <div class="message-container ${side}">
-                                    <p>${message.Content}</p>
+                                <div class="container-${side}">
+                                    <div class="message-container ${side}">
+                                        <p>${message.Content}</p>
+                                    </div>
+                                    <p class="username">${CHAT_CONTROLLER.Receiver.username}</p>
+                                    <img class="profil-img" src="//ui-avatars.com/api/?name=${CHAT_CONTROLLER.Receiver.username}&size=30&rounded=true&color=fff&background=random" alt="">
                                 </div>
-                            </div>`
+                                ${new Date(message.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})   }
+                            `
                         }).join('') || ""}
                     </div>
                     <div class="chat-footer" >
@@ -106,10 +131,16 @@ export default class Chat extends HTMLElement {
     get modal (){
         return this.querySelector('.chat-modal')
     }
+
     get messageForm() {
         return this.querySelector('form')
     }
+
     get header() {
-        this.querySelector('.main-header')
+        return this.querySelector('.main-header')
+    }
+
+    get chat() {
+        return this.querySelector('.chat-modal')
     }
 }
