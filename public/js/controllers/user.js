@@ -1,5 +1,6 @@
 import { navigateTo } from "../routes/routechecker.js"
 import { updateComponents, updateSingleComponent } from "../script.js"
+import { CHAT_CONTROLLER } from "./chat.js"
 
 class User {
     constructor() {
@@ -42,6 +43,7 @@ class User {
         this.Email = ''
         this.Age = ''
         this.Gender = ''
+        CHAT_CONTROLLER.displayBox = false
 
         updateComponents()
     }

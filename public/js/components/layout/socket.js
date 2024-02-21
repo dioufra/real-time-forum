@@ -1,6 +1,7 @@
 import { CATEGORY_CONTROLLER } from "../../controllers/categorie.js"
 import { CHAT_CONTROLLER } from "../../controllers/chat.js"
 import { COMMENT_CONTROLLER} from "../../controllers/comment.js"
+import { FORM_CONTROLLER } from "../../controllers/form.js"
 import { NOTIFICATION_CONTROLLER } from "../../controllers/notification.js"
 import { PAGE_CONTROLLER } from "../../controllers/pagiantion.js"
 import { POST_CONTROLLER } from "../../controllers/post.js"
@@ -78,6 +79,7 @@ export default class Socket extends HTMLElement {
                     method:'POST'
                 }).then(response => {
                     this.socket?.close()
+                    FORM_CONTROLLER.resetForms()
                     USER_CONTROLLER.disconnect()
                 })
                 .catch(console.log)
