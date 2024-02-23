@@ -49,7 +49,7 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	BroadcastOnlineUsers()
 	// BroadcastAllUsers(email)
 	BroadcastContactedUsers()
-	BroadcastAllUsers()
+	BroadcastAllUsers(email)
 	BroadcastAllPosts()
 	BroadcastAllCategories()
 
@@ -62,7 +62,7 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 
 		// Broadcast the disconnection event to other clients
 		BroadcastOnlineUsers()
-		BroadcastAllUsers()
+		BroadcastAllUsers(email)
 		// BroadcastAllUsers()
 	}()
 
@@ -255,43 +255,8 @@ func BroadcastContactedUsers() {
 		}
 	}
 }
-func BroadcastAllUsers() {
-	// Iterate through all connected clients and send the message
-	clientsMutex.Lock()
-	defer clientsMutex.Unlock()
 
-	users, err := models.UserRepo.GetAll()
-	if err != nil {
-		fmt.Println("Error getting users")
-		return
-	}
-	for client, tab := range SocketClients { //send data
-		data, email := []models.User{}, tab[0]
-		receiver, err := GetUserByField(DB, "email", email)
-		if err != nil {
-			fmt.Println("Error getting user by email field")
-			return
-		}
-		for _, user := range users {
-			if user.Email != email {
-				nb, err := models.MessageRepo.GetUnReadMessages(user.Id, receiver.Id)
-				if err != nil {
-					fmt.Println("Error counting unread messages")
-					return
-				}
-				user.UnReadMessages = nb
-				data = append(data, user)
-			}
-		}
-		response := map[string]interface{}{"event": "broadcastAllUsers", "data": data}
-		err = client.WriteJSON(response)
-		if err != nil {
-			log.Println(err)
-		}
-	}
-}
-
-// func BroadcastAllUsers(email string) {
+// func BroadcastAllUsers() {
 // 	// Iterate through all connected clients and send the message
 // 	clientsMutex.Lock()
 // 	defer clientsMutex.Unlock()
@@ -303,18 +268,61 @@ func BroadcastAllUsers() {
 // 	}
 // 	for client, tab := range SocketClients { //send data
 // 		data, email := []models.User{}, tab[0]
+// 		receiver, err := GetUserByField(DB, "email", email)
+// 		if err != nil {
+// 			fmt.Println("Error getting user by email field")
+// 			return
+// 		}
 // 		for _, user := range users {
 // 			if user.Email != email {
+// 				nb, err := models.MessageRepo.GetUnReadMessages(user.Id, receiver.Id)
+// 				if err != nil {
+// 					fmt.Println("Error counting unread messages")
+// 					return
+// 				}
+// 				user.UnReadMessages = nb
 // 				data = append(data, user)
 // 			}
 // 		}
 // 		response := map[string]interface{}{"event": "broadcastAllUsers", "data": data}
-// 		err := client.WriteJSON(response)
+// 		err = client.WriteJSON(response)
 // 		if err != nil {
 // 			log.Println(err)
 // 		}
 // 	}
 // }
+
+func BroadcastAllUsers(email string) {
+	clientsMutex.Lock()
+	defer clientsMutex.Unlock()
+
+	var user models.User
+	for client, tab := range SocketClients {
+		_, email := []models.User{}, tab[0]
+		if err := models.UserRepo.GetUser(&user, email); err != nil {
+			fmt.Println("Error getting user: ", err)
+			return
+		}
+		users, err := models.UserRepo.GetUsersList(user.Id)
+		if err != nil {
+			fmt.Println("Error getting users", err)
+			return
+		}
+		for _, _user := range users {
+			nb, err := models.MessageRepo.GetUnReadMessages(_user.Id, user.Id)
+			if err != nil {
+				fmt.Println("Error counting unread messages")
+				return
+			}
+			user.UnReadMessages = nb
+		}
+		response := map[string]interface{}{"event": "broadcastAllUsers", "data": users}
+		err = client.WriteJSON(response)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+}
 
 // func BroadcastAllUsers(email string) {
 // 	// Iterate through all connected clients and send the message
