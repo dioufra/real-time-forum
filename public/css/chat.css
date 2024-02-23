@@ -79,10 +79,16 @@ c-chat-container {
             overflow-y: scroll;
 
             & .container-right {
+                /* display: flex;
+                flex-direction: row;
+                align-items: center; */
                 text-align: right;
             }
 
             & .container-left {
+                /* display: flex;
+                flex-direction: row;
+                align-items: center; */
                 text-align: left;
             }
 

@@ -95,7 +95,7 @@ export default class Chat extends HTMLElement {
                             let side = message.ReceiverId === USER_CONTROLLER.Id ? 'right' : 'left'                
                             if (side === 'left')
                                 return `
-                                    <div class="container-${side}">
+                                    <div class="container-${side} message">
                                         <img class="profil-img" src="//ui-avatars.com/api/?name=${USER_CONTROLLER.FirstName + USER_CONTROLLER.LastName}&size=30&rounded=true&color=fff&background=random" alt="">
                                         <p class="username">${USER_CONTROLLER.UserName}</p>
 
@@ -106,7 +106,7 @@ export default class Chat extends HTMLElement {
                                     ${new Date(message.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})}
                                 `
                             return `
-                                <div class="container-${side}">
+                                <div class="container-${side} message">
                                     <div class="message-container ${side}">
                                         <p>${message.Content}</p>
                                     </div>
