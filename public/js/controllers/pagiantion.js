@@ -3,7 +3,7 @@ import { POST_CONTROLLER } from "./post.js";
 
 class PaginationController {
     constructor() {
-        this.PageSize = 32
+        this.PageSize = 5
         this.CurrentPage = 1
         this.isLoading = true
     }

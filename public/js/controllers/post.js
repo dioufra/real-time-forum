@@ -23,13 +23,6 @@ class PostController {
         updateSingleComponent('c-posts')
     }
 
-    // filterByUser(id) {
-    //     this.posts = this.allPosts.filter(post => {
-    //         return post.User_id = USER_CONTROLLER.Id
-    //     })
-    //     updateSingleComponent('c-posts')
-    // }
-
     addNewPost(user_id) {
         this.displayBox = true
         this.postcreatorId = user_id || this.postcreatorId

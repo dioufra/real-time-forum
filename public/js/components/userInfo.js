@@ -51,18 +51,6 @@ export default class UserInfo extends HTMLElement {
                         CHAT_CONTROLLER.startNewChat(USER_CONTROLLER.Id, userId)
                     }
                 }
-                //  else {
-                //     console.log(target.getAttribute('id'));
-                //     switch (target.getAttribute('id')) {
-                //         case 'my-post':
-                //             POST_CONTROLLER.filteredPosts = POST_CONTROLLER.filteredPosts.filter(post => {
-                //                 return post.User_id === USER_CONTROLLER.Id
-                //             })
-                //             updateSingleComponent('c-posts')
-                //         case 'my-appreciation':
-                //             console.log('liked post');
-                //     }
-                // }
             }
         });
     }
