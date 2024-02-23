@@ -33,7 +33,7 @@ export default class Filter extends HTMLElement {
                     CATEGORY_CONTROLLER.setCurrentCategoryId(id)
                     if (id) {
                         navigateTo('/page=1?categorie='+id)
-                    }else{
+                    }else {
                         navigateTo('/page=1')
                     }
                 }

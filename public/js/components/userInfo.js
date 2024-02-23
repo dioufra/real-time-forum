@@ -1,9 +1,10 @@
+import { CATEGORY_CONTROLLER } from "../controllers/categorie.js"
 import { CHAT_CONTROLLER } from "../controllers/chat.js"
 import { POST_CONTROLLER } from "../controllers/post.js"
 import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 import { navigateTo } from "../routes/routechecker.js"
-import { updateComponents, updateSingleComponent } from "../script.js"
+import { updateSingleComponent } from "../script.js"
 
 export default class UserInfo extends HTMLElement {
     constructor() {
@@ -50,6 +51,18 @@ export default class UserInfo extends HTMLElement {
                         CHAT_CONTROLLER.startNewChat(USER_CONTROLLER.Id, userId)
                     }
                 }
+                //  else {
+                //     console.log(target.getAttribute('id'));
+                //     switch (target.getAttribute('id')) {
+                //         case 'my-post':
+                //             POST_CONTROLLER.filteredPosts = POST_CONTROLLER.filteredPosts.filter(post => {
+                //                 return post.User_id === USER_CONTROLLER.Id
+                //             })
+                //             updateSingleComponent('c-posts')
+                //         case 'my-appreciation':
+                //             console.log('liked post');
+                //     }
+                // }
             }
         });
     }
@@ -68,11 +81,7 @@ export default class UserInfo extends HTMLElement {
                 </div>
             </div>
             <div class="user-ac">
-                <div id="show-modal" style="cursor:pointer;">New Post</div>
-                <div class="user-ac">
-                    <div><a href="/created">Created posts</a></div>
-                    <div><a href="/liked">Liked posts</a></div>
-                </div>
+                <div id="show-modal" style="cursor:pointer;">New Post</div> 
             </div>
             <div class="users-list">
                 <label>Recent discussions</label>

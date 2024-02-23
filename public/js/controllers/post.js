@@ -1,5 +1,6 @@
 import { updateComponents, updateSingleComponent } from "../script.js";
 import { CATEGORY_CONTROLLER } from "./categorie.js";
+import { USER_CONTROLLER } from "./user.js";
 
 class PostController {
     constructor() {
@@ -11,10 +12,9 @@ class PostController {
     }
     setPosts(data){
         this.allPosts = data;
-        // this.posts = data
-        // updateComponents()
         updateSingleComponent('c-posts-container')
     }
+
     filterByCategory(id){
         let category = CATEGORY_CONTROLLER.categories.find(c => c.Id===id)
         this.posts = this.allPosts.filter((p)=> {
@@ -22,6 +22,14 @@ class PostController {
         })
         updateSingleComponent('c-posts')
     }
+
+    // filterByUser(id) {
+    //     this.posts = this.allPosts.filter(post => {
+    //         return post.User_id = USER_CONTROLLER.Id
+    //     })
+    //     updateSingleComponent('c-posts')
+    // }
+
     addNewPost(user_id) {
         this.displayBox = true
         this.postcreatorId = user_id || this.postcreatorId

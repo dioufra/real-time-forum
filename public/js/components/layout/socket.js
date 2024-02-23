@@ -6,6 +6,7 @@ import { NOTIFICATION_CONTROLLER } from "../../controllers/notification.js"
 import { PAGE_CONTROLLER } from "../../controllers/pagiantion.js"
 import { POST_CONTROLLER } from "../../controllers/post.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
+import { verifyLocationHref } from "../../routes/routechecker.js"
 import { updateSingleComponent } from "../../script.js"
 
 export default class Socket extends HTMLElement {
@@ -142,7 +143,7 @@ export default class Socket extends HTMLElement {
             POST_CONTROLLER.setPosts(e.detail.data)
             // updateSingleComponent('c-posts-container')
             verifyLocationHref()
-        })
+        }) 
     }
     checkAllCategoriesListener(){
         this.addEventListener('broadcastAllCategories',e => {
