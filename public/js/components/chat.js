@@ -8,128 +8,77 @@ export default class Chat extends HTMLElement {
     constructor() {
         super()
         this.isLoading = false
-        this.showLoader = true
         this.chatId = ''
     }
 
     connectedCallback() {
         this.render()
-        this.checkCloseButtonListener()
-        this.checkSubmitListener()
-        this.showLoader = true
+        // CHAT_CONTROLLER.showLoader = true
+        this.scrollTop = CHAT_CONTROLLER.scroll.top
         console.log('connected')
     }
 
     disconnectedCallback() {
     }
-
-    shouldComponentRender() {
-        return USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox
-    }
-    checkCloseButtonListener(){
-        this.addEventListener('click',e => {
-            if (e.target.tagName === 'BUTTON' && e.target.className === 'close-btn') {
-                this.modal?.classList.add('hidden')
-                CHAT_CONTROLLER.displayBox = false
-            }
-        })
-    }
-
     checkScrollListener(){
-        this.body.scrollTop = CHAT_CONTROLLER.scroll.top || 0
-        this.body.addEventListener('scrollend',e => {
-            if (!this.isLoading) {
-                CHAT_CONTROLLER.setScroll(e.target,this.firstMessage)
+        this.addEventListener('scrollend',e => {
+            if (!this.isLoading && e.target.scrollTop === 0) {
+                CHAT_CONTROLLER.showLoader = true
+                let firstMessage = this.firstMessage
                 this.isLoading = true
+                // CHAT_CONTROLLER.setScroll(e.target,this.firstMessage)
+                let isFltered = CHAT_CONTROLLER.filterMesages()
+                if (isFltered) {
+                }else{
+                    CHAT_CONTROLLER.showLoader = false
+                }
+                updateSingleComponent('c-chat-container')
+
                 setTimeout(() => {
                     this.isLoading = false
-                    if (this.body.scrollTop === 0 && this.showLoader) {
-                        this.showLoader = false
-                        updateSingleComponent('c-chat-container')
-                    }
+                    CHAT_CONTROLLER.showLoader = false
+                    updateSingleComponent('c-chat-container')
+
+                    firstMessage.scrollIntoView({behavior:'smooth'})
                 }, 1000);
             }
         })
     }
 
-    checkSubmitListener(){
-        this.addEventListener('submit', (event) => {
-            event.preventDefault()
-            const formData = new FormData(this.messageForm)
-            fetch('/api/message', {
-                method: 'POST',
-                body: JSON.stringify({
-                    SenderAdress:CHAT_CONTROLLER.SenderAdress,
-                    ReceiverAdress:CHAT_CONTROLLER.ReceiverAdress,
-                    SenderId:USER_CONTROLLER.Id,
-                    ReceiverId:CHAT_CONTROLLER.Receiver.id,
-                    ChatId: CHAT_CONTROLLER.chatId,
-                    Content:formData.get('content')
-                }),
-            }).then(response => {
-                if (!response.ok) {
-                    if (response.status === 400) {
-                        response.json()
-                        .then(error => {
-                            console.log(error.message)
-                            FORM_CONTROLLER.setError('message',error.message)
-                        })
-                        return
-                    } else {
-                        throw new Error('Erreur de réseau');
-                    }
-                }
-                return response.json()
-            })
-            .then(data => {
-                if (data) {
-                    // console.log('data',data)
-                }
-            })
-            .catch(console.error);
-        })
-    }
-
     render() {
-        if (this.body) {
-            this.body.scrollTop = CHAT_CONTROLLER.scroll.top || 2000
+        if (this) {
+            this.scrollTop = CHAT_CONTROLLER.scroll.top || 2000
         }
         this.innerHTML = /* HTML */ `
             ${USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox? /*HTML*/`
-                <div class="chat-modal">
-                    <div class="chat-header" >
-                        <div class="user-infos" >
-                            <img class="profil-img" src="//ui-avatars.com/api/?name=${CHAT_CONTROLLER.Receiver.username}&size=60&rounded=true&color=fff&background=random" alt="">
-                            <span class="name_container">
-                                <p class="name">${CHAT_CONTROLLER.Receiver.firstname||'firstname'} ${CHAT_CONTROLLER.Receiver.lastname||'lastname'}</p>
-                                <span class="username">@${CHAT_CONTROLLER.Receiver.username || 'username'}</span>
-                            </span>
-                        </div>
-                        <button class="close-btn">X</button>
-                    </div>
-                    <div class="chat-body" >
-                        ${this.showLoader ?`
-                            <div class="chat-loader">
-                                <div class="loader"></div>
-                            </div>`:``
-                        }
-                        ${CHAT_CONTROLLER.filteredMessages.map(message => {
-                            let side = message.ReceiverId === USER_CONTROLLER.Id?'left':'right'
-                            return `
-                            <div class="container container-${side}">
+                ${CHAT_CONTROLLER.showLoader ?`
+                    <div class="chat-loader">
+                        <div class="loader"></div>
+                    </div>`:``
+                }
+                ${CHAT_CONTROLLER.filteredMessages.map(message => {
+                    let side = message.ReceiverId === USER_CONTROLLER.Id ? 'left':'right'
+                    let username = side === 'right'? USER_CONTROLLER.UserName:CHAT_CONTROLLER.Receiver.username
+                    return `
+                        <div class="container container-${side}">
+                            <div>
                                 <div class="message-container ${side}">
+                                    <p class="username">
+                                        @${username}
+                                    </p>
                                     <p>${message.Content}</p>
                                 </div>
-                            </div>`
-                        }).join('') || ""}
-                    </div>
-                    <div class="chat-footer" >
-                        <form action="/api/message" method="post">
-                            <input name="content" placeholder="Message" />
-                            <button type="submit"></button>
-                        </form>
-                    </div>
-                </div>
+                                <div class="image-container">
+                                    <img class="profil-img" src="//ui-avatars.com/api/?name=${CHAT_CONTROLLER.Receiver.username}&size=30&rounded=true&color=fff&background=random" alt="">
+                                </div>
+                            </div>
+                            <p class="date">
+                                ${new Date(message.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})   }
+                            </p>
+                        </div>
+
+                    `
+                }).join('') || ""}
             `:``}
         `
         if (USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox) {
@@ -143,9 +92,6 @@ export default class Chat extends HTMLElement {
     get messageForm() {
         return this.querySelector('form')
     }
-    get body() {
-        return this.querySelector('.chat-body')
-    }
     get firstMessage() {
         return this.querySelector('.chat-body .container')
     }
@@ -156,3 +102,43 @@ export default class Chat extends HTMLElement {
         return this.querySelector('.chat-modal')
     }
 }
+
+// ${CHAT_CONTROLLER.filteredMessages.map(message => {
+//     let side = message.ReceiverId === USER_CONTROLLER.Id?'left':'right'
+//     return `
+//         <div class="container container-${side}">
+//             <div class="message-container ${side}">
+//                 <p>${message.Content}</p>
+//             </div>
+//             <p class="date">
+//                 ${new Date(message.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})   }
+//             </p>
+//         </div>
+//     `
+// }).join('') || ""}
+
+// ${CHAT_CONTROLLER.allMessages.map(message => {
+//     let side = message.ReceiverId === USER_CONTROLLER.Id ? 'right' : 'left'                
+//     if (side === 'left')
+//         return `
+//             <div class="container-${side}">
+//                 <img class="profil-img" src="//ui-avatars.com/api/?name=${USER_CONTROLLER.FirstName + USER_CONTROLLER.LastName}&size=30&rounded=true&color=fff&background=random" alt="">
+//                 <p class="username">${USER_CONTROLLER.UserName}</p>
+
+//                 <div class="message-container ${side}">
+//                     <p>${message.Content}</p>
+//                 </div>
+//             </div>
+//             ${new Date(message.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})}
+//         `
+//     return `
+//         <div class="container-${side}">
+//             <div class="message-container ${side}">
+//                 <p>${message.Content}</p>
+//             </div>
+//             <p class="username">${CHAT_CONTROLLER.Receiver.username}</p>
+//             <img class="profil-img" src="//ui-avatars.com/api/?name=${CHAT_CONTROLLER.Receiver.username}&size=30&rounded=true&color=fff&background=random" alt="">
+//         </div>
+//         ${new Date(message.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})   }
+//     `
+// }).join('') || ""}

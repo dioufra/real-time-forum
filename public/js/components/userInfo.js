@@ -3,7 +3,6 @@ import { POST_CONTROLLER } from "../controllers/post.js"
 import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 import { navigateTo } from "../routes/routechecker.js"
-import { updateComponents, updateSingleComponent } from "../script.js"
 
 export default class UserInfo extends HTMLElement {
     constructor() {
@@ -59,7 +58,7 @@ export default class UserInfo extends HTMLElement {
             <div class="profil">
                 <a href="/user">
                     <div class="profil-photo">
-                        <img src="//ui-avatars.com/api/?name=${USER_CONTROLLER.FirstName} ${USER_CONTROLLER.LastName}&size=100&rounded=true&color=fff&background=random"alt="">
+                        <img src="//ui-avatars.com/api/?name=${USER_CONTROLLER.UserName}&size=100&rounded=true&color=fff&background=random"alt="">
                     </div>
                 </a>
                 <p class="user-name">${USER_CONTROLLER.FirstName} ${USER_CONTROLLER.LastName}</p>

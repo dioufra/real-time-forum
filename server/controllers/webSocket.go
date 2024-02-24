@@ -390,6 +390,7 @@ func BroadcastChat(senderId, receiverId, chatId int, senderAdress, receverAdress
 		fmt.Println("Error loading chat messages: ", err)
 		return
 	}
+
 	for client, tab := range SocketClients {
 		adress := tab[1]
 		if adress == senderAdress || adress == receverAdress {
