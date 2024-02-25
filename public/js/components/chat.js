@@ -9,25 +9,29 @@ export default class Chat extends HTMLElement {
         super()
         this.isLoading = false
         this.chatId = ''
+        this.isMounted = false
     }
 
     connectedCallback() {
         this.render()
         this.scrollTop = CHAT_CONTROLLER.scroll.top
-        console.log('connected')
-        console.log(this.scrollTop,this.scrollHeight)
+        this.isMounted = false
+        setTimeout(() => {
+            this.isMounted = true
+        }, 500);
     }
 
     disconnectedCallback() {
     }
     checkScrollListener(){
         this.addEventListener('scrollend',e => {
-            if (!this.isLoading && e.target.scrollTop === 0) {
+            
+            CHAT_CONTROLLER.scroll.top = this.scrollTop
+            if (!this.isLoading && this.scrollTop === 0 && this.isMounted) {
                 CHAT_CONTROLLER.showLoader = true
                 let height = this.scrollHeight
                 this.isLoading = true
                 // CHAT_CONTROLLER.setScroll(e.target,this.firstMessage)
-                console.log('non')
                 let isFltered = CHAT_CONTROLLER.filterMesages()
                 if (isFltered) {
                 }else{
@@ -37,7 +41,6 @@ export default class Chat extends HTMLElement {
 
                 // setTimeout(() => {
                     this.isLoading = false
-                    // CHAT_CONTROLLER.showLoader = false
                     this.scrollTop =this.scrollHeight - height 
                     CHAT_CONTROLLER.scroll.top = this.scrollTop
                 // }, 10);
@@ -46,7 +49,6 @@ export default class Chat extends HTMLElement {
     }
 
     render() {
-        console.log('rendered')
         this.innerHTML = /* HTML */ `
             ${USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox? /*HTML*/`
                 ${CHAT_CONTROLLER.showLoader ?`
