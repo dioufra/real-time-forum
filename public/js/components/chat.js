@@ -13,9 +13,9 @@ export default class Chat extends HTMLElement {
 
     connectedCallback() {
         this.render()
-        // CHAT_CONTROLLER.showLoader = true
         this.scrollTop = CHAT_CONTROLLER.scroll.top
         console.log('connected')
+        console.log(this.scrollTop,this.scrollHeight)
     }
 
     disconnectedCallback() {
@@ -24,31 +24,29 @@ export default class Chat extends HTMLElement {
         this.addEventListener('scrollend',e => {
             if (!this.isLoading && e.target.scrollTop === 0) {
                 CHAT_CONTROLLER.showLoader = true
-                let firstMessage = this.firstMessage
+                let height = this.scrollHeight
                 this.isLoading = true
                 // CHAT_CONTROLLER.setScroll(e.target,this.firstMessage)
+                console.log('non')
                 let isFltered = CHAT_CONTROLLER.filterMesages()
                 if (isFltered) {
                 }else{
                     CHAT_CONTROLLER.showLoader = false
                 }
-                updateSingleComponent('c-chat-container')
+                updateSingleComponent('c-chat')
 
-                setTimeout(() => {
+                // setTimeout(() => {
                     this.isLoading = false
-                    CHAT_CONTROLLER.showLoader = false
-                    updateSingleComponent('c-chat-container')
-
-                    firstMessage.scrollIntoView({behavior:'smooth'})
-                }, 1000);
+                    // CHAT_CONTROLLER.showLoader = false
+                    this.scrollTop =this.scrollHeight - height 
+                    CHAT_CONTROLLER.scroll.top = this.scrollTop
+                // }, 10);
             }
         })
     }
 
     render() {
-        if (this) {
-            this.scrollTop = CHAT_CONTROLLER.scroll.top || 2000
-        }
+        console.log('rendered')
         this.innerHTML = /* HTML */ `
             ${USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox? /*HTML*/`
                 ${CHAT_CONTROLLER.showLoader ?`
@@ -76,7 +74,6 @@ export default class Chat extends HTMLElement {
                                 ${new Date(message.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})   }
                             </p>
                         </div>
-
                     `
                 }).join('') || ""}
             `:``}
@@ -92,9 +89,6 @@ export default class Chat extends HTMLElement {
     get messageForm() {
         return this.querySelector('form')
     }
-    get firstMessage() {
-        return this.querySelector('.chat-body .container')
-    }
     get header() {
         return this.querySelector('.main-header')
     }
@@ -102,43 +96,3 @@ export default class Chat extends HTMLElement {
         return this.querySelector('.chat-modal')
     }
 }
-
-// ${CHAT_CONTROLLER.filteredMessages.map(message => {
-//     let side = message.ReceiverId === USER_CONTROLLER.Id?'left':'right'
-//     return `
-//         <div class="container container-${side}">
-//             <div class="message-container ${side}">
-//                 <p>${message.Content}</p>
-//             </div>
-//             <p class="date">
-//                 ${new Date(message.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})   }
-//             </p>
-//         </div>
-//     `
-// }).join('') || ""}
-
-// ${CHAT_CONTROLLER.allMessages.map(message => {
-//     let side = message.ReceiverId === USER_CONTROLLER.Id ? 'right' : 'left'                
-//     if (side === 'left')
-//         return `
-//             <div class="container-${side}">
-//                 <img class="profil-img" src="//ui-avatars.com/api/?name=${USER_CONTROLLER.FirstName + USER_CONTROLLER.LastName}&size=30&rounded=true&color=fff&background=random" alt="">
-//                 <p class="username">${USER_CONTROLLER.UserName}</p>
-
-//                 <div class="message-container ${side}">
-//                     <p>${message.Content}</p>
-//                 </div>
-//             </div>
-//             ${new Date(message.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})}
-//         `
-//     return `
-//         <div class="container-${side}">
-//             <div class="message-container ${side}">
-//                 <p>${message.Content}</p>
-//             </div>
-//             <p class="username">${CHAT_CONTROLLER.Receiver.username}</p>
-//             <img class="profil-img" src="//ui-avatars.com/api/?name=${CHAT_CONTROLLER.Receiver.username}&size=30&rounded=true&color=fff&background=random" alt="">
-//         </div>
-//         ${new Date(message.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})   }
-//     `
-// }).join('') || ""}

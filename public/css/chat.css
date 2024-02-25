@@ -70,7 +70,7 @@ c-chat-container {
             flex: 1;
             color: black;
             text-align: center;
-            overflow-y: scroll;
+            overflow-y: scroll; 
 
             & .container {
                 margin-top: 5px;
