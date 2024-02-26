@@ -106,7 +106,7 @@ c-chat-container {
                         padding: 10px;
                         margin-bottom: 0;
                         background-color: #888;
-                        margin-left: 20px;
+                        /* margin-left: 20px; */
                         margin-right: 0;
                         padding-top: 5px;
 
@@ -138,6 +138,7 @@ c-chat-container {
                             }
                         }
                         & .message-container {
+                            margin-right: 20px;
                             order: 2;
 
                             &.left {
@@ -160,6 +161,8 @@ c-chat-container {
                             }
                         }
                         & .message-container {
+                            margin-left: 20px;
+
                             &.right {
                                 border-radius: 10px 0px 10px 10px;
                             }

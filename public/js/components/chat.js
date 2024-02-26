@@ -1,6 +1,4 @@
 import { CHAT_CONTROLLER } from "../controllers/chat.js"
-import { FORM_CONTROLLER } from "../controllers/form.js"
-import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 import { updateSingleComponent } from "../script.js"
 
@@ -82,6 +80,12 @@ export default class Chat extends HTMLElement {
         `
         if (USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox) {
             this.checkScrollListener()
+            document.dispatchEvent(new CustomEvent('readMessages',{
+                detail:{
+                    senderId:CHAT_CONTROLLER.Receiver.id,
+                    receiverId: USER_CONTROLLER.Id
+                }
+            }))
         }
     }
 

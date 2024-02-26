@@ -24,7 +24,7 @@ func Message(res http.ResponseWriter, req *http.Request) {
 
 		message.Date = time.Now()
 
-		fmt.Println("New message: ", message)
+		// fmt.Println("New message: ", message)
 
 		message.Content = strings.Trim(message.Content, " ")
 		if message.Content == "" {

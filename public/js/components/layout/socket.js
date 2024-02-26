@@ -1,6 +1,7 @@
 import { CATEGORY_CONTROLLER } from "../../controllers/categorie.js"
 import { CHAT_CONTROLLER } from "../../controllers/chat.js"
 import { COMMENT_CONTROLLER} from "../../controllers/comment.js"
+import { FORM_CONTROLLER } from "../../controllers/form.js"
 import { NOTIFICATION_CONTROLLER } from "../../controllers/notification.js"
 import { PAGE_CONTROLLER } from "../../controllers/pagiantion.js"
 import { POST_CONTROLLER } from "../../controllers/post.js"
@@ -29,6 +30,7 @@ export default class Socket extends HTMLElement {
         this.checkChatListener()
         this.checkPostDetailsListener()
         this.checkAppreciation()
+        this.checkMessagesReader()
         this.checkNotificationListener()
         document.dispatchEvent(new Event('connectWebSocket'))
 
@@ -80,20 +82,27 @@ export default class Socket extends HTMLElement {
                     method:'POST'
                 }).then(response => {
                     this.socket?.close()
+                    FORM_CONTROLLER.resetForms()
                     USER_CONTROLLER.disconnect()
                 })
                 .catch(console.log)
         })
     }
 
+    checkMessagesReader() {
+        document.addEventListener('readMessages', (event) => {
+            // console.log(event.detail);
+            this.sendData(JSON.stringify({event: "readMessages", data:event.detail}))
+
+        })
+    }
     checkAppreciation() {
         document.addEventListener('appreciation', (event) => {
-            console.log(event.detail);
+            // console.log(event.detail);
             this.sendData(JSON.stringify({event: "appreciation", type: event.detail.type, component: event.detail.component,data: event.detail.data}))
 
         })
     }
-
     checkPostDetailsListener(){
         document.addEventListener('postDetails', (event) => {
             this.sendData(JSON.stringify({event: 'postDetails', type: 'postDetails', data: {postId: event.detail.data}}))
@@ -102,9 +111,11 @@ export default class Socket extends HTMLElement {
     checkChatListener(){
         this.addEventListener('broadcastChat',e => {
             // console.log("broadcastChat",e.detail)
-            const messages = e.detail.data.Message !== null ? e.detail.data.Message : []
-            CHAT_CONTROLLER.setAllMessages(messages)      
-            if (CHAT_CONTROLLER.chatId ===e.detail.data.ChatId)    updateSingleComponent('c-chat-container')
+            if (CHAT_CONTROLLER.chatId ===e.detail.data.ChatId) {
+                const messages = e.detail.data.Message !== null ? e.detail.data.Message : []
+                CHAT_CONTROLLER.setAllMessages(messages)      
+                updateSingleComponent('c-chat-container')
+            }
         })
     }
     checkUserInfosListener(){
@@ -141,7 +152,7 @@ export default class Socket extends HTMLElement {
             POST_CONTROLLER.setPosts(e.detail.data)
             // updateSingleComponent('c-posts-container')
             verifyLocationHref()
-        })
+        }) 
     }
     checkAllCategoriesListener(){
         this.addEventListener('broadcastAllCategories',e => {

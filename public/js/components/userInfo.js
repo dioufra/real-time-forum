@@ -1,3 +1,4 @@
+import { CATEGORY_CONTROLLER } from "../controllers/categorie.js"
 import { CHAT_CONTROLLER } from "../controllers/chat.js"
 import { POST_CONTROLLER } from "../controllers/post.js"
 import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
@@ -67,11 +68,7 @@ export default class UserInfo extends HTMLElement {
                 </div>
             </div>
             <div class="user-ac">
-                <div id="show-modal" style="cursor:pointer;">New Post</div>
-                <div class="user-ac">
-                    <div><a href="/created">Created posts</a></div>
-                    <div><a href="/liked">Liked posts</a></div>
-                </div>
+                <div id="show-modal" style="cursor:pointer;">New Post</div> 
             </div>
             <div class="users-list">
                 <label>Recent discussions</label>
@@ -86,7 +83,7 @@ export default class UserInfo extends HTMLElement {
                                     <span>@${user.username}</span>
                                 </p>
                                 <p>
-                                    <span>Just now</span>
+                                    <span>Offline</span>
                                     <br/>
                                     ${user.unread_mesages > 0?`
                                         <span class="unread-messages">${user.unread_mesages}</span>
@@ -136,7 +133,7 @@ export default class UserInfo extends HTMLElement {
                                     <span>@${user.username}</span>
                                 </p>
                                 <p>
-                                    <span>Just now</span>
+                                    <span>Offline</span>
                                     <br/>
                                     ${user.unread_mesages > 0?`
                                         <span class="unread-messages">${user.unread_mesages}</span>
