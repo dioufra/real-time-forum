@@ -45,7 +45,7 @@ export default class Socket extends HTMLElement {
 
                 // Gérer les événements de la connexion WebSocket
                 this.socket.addEventListener("open", (event) => {
-                    console.log("WebSocket connection opened:", event);
+                    // console.log("WebSocket connection opened:", event);
                     this.isSocketConnected = true
                     USER_CONTROLLER.IsAuth = true
                     PAGE_CONTROLLER.setIsLoading(false)
@@ -101,7 +101,7 @@ export default class Socket extends HTMLElement {
     }
     checkChatListener(){
         this.addEventListener('broadcastChat',e => {
-            console.log("broadcastChat",e.detail)
+            // console.log("broadcastChat",e.detail)
             const messages = e.detail.data.Message !== null ? e.detail.data.Message : []
             CHAT_CONTROLLER.setAllMessages(messages)      
             if (CHAT_CONTROLLER.chatId ===e.detail.data.ChatId)    updateSingleComponent('c-chat-container')

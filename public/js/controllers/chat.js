@@ -22,6 +22,7 @@ class ChatController {
     }
 
     startNewChat(senderId, receiverId){
+        this.reset()
         senderId = parseInt(senderId) || 0
         receiverId = parseInt(receiverId) || 0
         this.chatId = senderId + receiverId
@@ -45,10 +46,12 @@ class ChatController {
             })
             .then(data => {
                 if (data) {
+                    this.scrollLimit = 10
                     this.SenderAdress = data.SenderAdress
                     this.ReceiverAdress = data.ReceiverAdress
                     this.displayBox = true
                     this.showLoader = true
+                    this.scroll={top:2000,left:0}
                     this.setReciever(receiver)
                     updateSingleComponent('c-chat-container')
                     
@@ -93,7 +96,7 @@ class ChatController {
         this.ReceiverAdress = ""
         this.allMessages = []
         this.filteredMessages = []
-        this.scrollLimit = 10
+        this.scrollLimit = 0
         this.chatId = ''
         this.scroll={top:2000,left:0}
     }

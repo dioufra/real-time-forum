@@ -24,7 +24,7 @@ export default class ChatContainer extends HTMLElement {
         this.addEventListener('click',e => {
             if (e.target.tagName === 'BUTTON' && e.target.className === 'close-btn') {
                 this.modal?.classList.add('hidden')
-                CHAT_CONTROLLER.displayBox = false
+                CHAT_CONTROLLER.reset()
             }
         })
     }

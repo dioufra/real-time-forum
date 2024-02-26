@@ -27,7 +27,7 @@ export default class Chat extends HTMLElement {
         this.addEventListener('scrollend',e => {
             
             CHAT_CONTROLLER.scroll.top = this.scrollTop
-            if (!this.isLoading && this.scrollTop === 0 && this.isMounted) {
+            if (!this.isLoading && this.scrollTop < 70 && this.isMounted) {
                 CHAT_CONTROLLER.showLoader = true
                 let height = this.scrollHeight
                 this.isLoading = true

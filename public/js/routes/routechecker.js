@@ -46,7 +46,7 @@ export function verifyLocationHref() {
                 if (page > Math.ceil(POST_CONTROLLER.allPosts.length / PAGE_CONTROLLER.PageSize) ) {
                     alert('dd')
                 }
-
+                CATEGORY_CONTROLLER.currentCategoryId = 0
                 PAGE_CONTROLLER.setCurrentPage(parseInt(href.match(/[0-9]+$/)))
                 COMMENT_CONTROLLER.isPostSection = false
                 updateSingleComponent('c-posts-container')
