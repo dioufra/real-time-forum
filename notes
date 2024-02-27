@@ -27,8 +27,9 @@
 [] Send json response from controllers upon error
     [X] sign in
     [X] sign up
-    [] chat
-    [] comments
+    [x] chat
+    [x] message
+    [x] comments
     [] socket
 
 [X] Add creation date for messages, posts

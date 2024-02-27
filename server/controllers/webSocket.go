@@ -26,6 +26,33 @@ type IncomingMessage struct {
 	Data      map[string]int `json:"data"`
 }
 
+func HandleDisconnection(connection *websocket.Conn, email string) {
+	clientsMutex.Lock()
+	delete(SocketClients, connection)
+	clientsMutex.Unlock()
+	connection.Close()
+
+	// Broadcast the disconnection event to other clients
+	BroadcastOnlineUsers()
+	BroadcastAllUsers(email)
+}
+
+func registerClient(connection *websocket.Conn, email string) {
+	clientsMutex.Lock()
+	// Get the memory address of the variable
+	address := fmt.Sprintf("%p", &connection)
+	// Add the new client to the clients map
+	SocketClients[connection] = []string{email, address}
+
+	clientsMutex.Unlock()
+	BroadcastUserInfos(connection, email)
+	BroadcastOnlineUsers()
+	BroadcastContactedUsers()
+	BroadcastAllUsers(email)
+	BroadcastAllPosts()
+	BroadcastAllCategories()
+}
+
 func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	is, email := helper.Auth(DB, r)
 	if !is {
@@ -38,32 +65,11 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	clientsMutex.Lock()
-	// Get the memory address of the variable
-	address := fmt.Sprintf("%p", &conn)
-	// Add the new client to the clients map
-	SocketClients[conn] = []string{email, address}
 
-	clientsMutex.Unlock()
-	BroadcastUserInfos(conn, email)
-	BroadcastOnlineUsers()
-	// BroadcastAllUsers(email)
-	BroadcastContactedUsers()
-	BroadcastAllUsers(email)
-	BroadcastAllPosts()
-	BroadcastAllCategories()
+	registerClient(conn, email)
 
 	defer func() {
-		// Remove the client when the connection is closed
-		clientsMutex.Lock()
-		delete(SocketClients, conn)
-		clientsMutex.Unlock()
-		conn.Close()
-
-		// Broadcast the disconnection event to other clients
-		BroadcastOnlineUsers()
-		BroadcastAllUsers(email)
-		// BroadcastAllUsers()
+		HandleDisconnection(conn, email)
 	}()
 
 	for {
@@ -73,93 +79,68 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
+		// handleMessage(conn, p, email)
+
 		var data IncomingMessage
 		if err := json.Unmarshal(p, &data); err != nil {
 			log.Println("Error unmarshalling message", err)
-			return
+			continue
 		}
+
 		switch data.Event {
 		case "postDetails":
-			comments, err := models.CommentRepo.GetCommentsFromPostId(data.Data["postId"])
-			if err != nil {
-				log.Println("Error retrieving comments", err)
+			handlePostDetails(conn, data.Data["postId"])
+		case "appreciation":
+			handleAppreciation(conn, data)
+		}
+	}
+}
+
+func handlePostDetails(conn *websocket.Conn, postId int) {
+	comments, err := models.CommentRepo.GetCommentsFromPostId(postId)
+	if err != nil {
+		log.Println("Error retrieving comments", err)
+		return
+	}
+
+	var post models.PostInfo
+	if err := models.PostRepo.GetPostById(&post, postId); err != nil {
+		log.Println("Error retrieving post ", err)
+		return
+	}
+
+	response := struct {
+		Post     models.PostInfo
+		Comments []models.CommentInfo
+	}{
+		Post:     post,
+		Comments: comments,
+	}
+	BroadcastPostDetails(conn, response)
+}
+
+func handleAppreciation(conn *websocket.Conn, data IncomingMessage) {
+	switch data.Type {
+	case "post":
+		if data.Component == "c-comment" {
+			if err := models.AppreciationRepo.AddForPost(data.Data["userId"], data.Data["postId"], data.Data["like"], data.Data["dislike"]); err != nil {
+				log.Println("Error adding a new appreciation: ", err)
 				return
 			}
-			var post models.PostInfo
-			err = models.PostRepo.GetPostById(&post, data.Data["postId"])
-			if err != nil {
-				log.Println("Error retrieving post ")
+			handlePostDetails(conn, data.Data["postId"])
+		} else {
+			if err := models.AppreciationRepo.AddForPost(data.Data["userId"], data.Data["postId"], data.Data["like"], data.Data["dislike"]); err != nil {
+				log.Println("Error adding a new appreciation: ", err)
+				return
 			}
-			// sendback the comments here
-			response := struct {
-				Post     models.PostInfo
-				Comments []models.CommentInfo
-			}{
-				Post:     post,
-				Comments: comments,
-			}
-			BroadcastPostDetails(conn, response)
-		case "appreciation":
-			switch data.Type {
-			case "post":
-				if data.Component == "c-comment" {
-					if err := models.AppreciationRepo.AddForPost(data.Data["userId"], data.Data["postId"], data.Data["like"], data.Data["dislike"]); err != nil {
-						fmt.Println("Error adding a new appreciation: ", err)
-						return
-					}
-					comments, err := models.CommentRepo.GetCommentsFromPostId(data.Data["postId"])
-					if err != nil {
-						log.Println("Error retrieving comments", err)
-						return
-					}
-					var post models.PostInfo
-					if err := models.PostRepo.GetPostById(&post, data.Data["postId"]); err != nil {
-						log.Println("Error retrieving post ")
-						return
-
-					}
-					response := struct {
-						Post     models.PostInfo
-						Comments []models.CommentInfo
-					}{
-						Post:     post,
-						Comments: comments,
-					}
-					BroadcastPostDetails(conn, response)
-				} else {
-					if err := models.AppreciationRepo.AddForPost(data.Data["userId"], data.Data["postId"], data.Data["like"], data.Data["dislike"]); err != nil {
-						fmt.Println("Error adding a new appreciation: ", err)
-						return
-					}
-					BroadcastAllPosts()
-				}
-			case "comment":
-				if err := models.AppreciationRepo.AddForComment(data.Data["userId"], data.Data["commentId"], data.Data["like"], data.Data["dislike"]); err != nil {
-					fmt.Println("Error adding a new appreciation: ", err)
-				}
-
-				comments, err := models.CommentRepo.GetCommentsFromPostId(data.Data["postId"])
-				if err != nil {
-					log.Println("Error retrieving comments", err)
-					return
-				}
-				var post models.PostInfo
-				err = models.PostRepo.GetPostById(&post, data.Data["postId"])
-				if err != nil {
-					log.Println("Error retrieving post ")
-				}
-				// sendback the comments here
-				response := struct {
-					Post     models.PostInfo
-					Comments []models.CommentInfo
-				}{
-					Post:     post,
-					Comments: comments,
-				}
-				BroadcastPostDetails(conn, response)
-			}
+			BroadcastAllPosts()
 		}
-
+	case "comment":
+		if err := models.AppreciationRepo.AddForComment(data.Data["userId"], data.Data["commentId"], data.Data["like"], data.Data["dislike"]); err != nil {
+			log.Println("Error adding a new appreciation: ", err)
+			return
+		}
+		handlePostDetails(conn, data.Data["postId"])
 	}
 }
 

@@ -1,7 +1,9 @@
 import { CHAT_CONTROLLER } from "../controllers/chat.js"
 import { FORM_CONTROLLER } from "../controllers/form.js"
+import { NOTIFICATION_CONTROLLER } from "../controllers/notification.js"
 import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
+import { updateSingleComponent } from "../script.js"
 
 export default class Chat extends HTMLElement {
     constructor() {
@@ -52,20 +54,16 @@ export default class Chat extends HTMLElement {
                     ChatId: CHAT_CONTROLLER.chatId,
                     Content: formData.get('content'),
                 }),
-            }).then(response => {
+            }).then(async response => {
                 if (!response.ok) {
-                    if (response.status === 400) {
-                        response.json()
-                            .then(error => {
-                                console.log(error.message)
-                                FORM_CONTROLLER.setError('message', error.message)
-                            })
-                        return
-                    } else {
-                        throw new Error('Erreur de réseau');
-                    }
+                    const error = await response.json()
+                    console.log(error);
+                    NOTIFICATION_CONTROLLER.setMessage(`${response.statusText} : ${error.message}`)
+                    NOTIFICATION_CONTROLLER.display = true
+                    updateSingleComponent('c-notification')
+                    throw new Error(`${response.statusText} : ${error.message}`);
                 }
-                return response.json()
+                return await response.json()
             }).catch(console.error);
         })
     }

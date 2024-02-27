@@ -67,7 +67,6 @@ export default class Socket extends HTMLElement {
                 });
                 // Gérer les erreurs WebSocket
                 this.socket.addEventListener("error", (event) => {
-                    // console.error("WebSocket error:", event);
                     this.isSocketConnected = false
                     USER_CONTROLLER.disconnect()
                     PAGE_CONTROLLER.setIsLoading(false)

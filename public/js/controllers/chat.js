@@ -1,4 +1,5 @@
 import { updateComponents, updateSingleComponent } from "../script.js";
+import { NOTIFICATION_CONTROLLER } from "./notification.js";
 import { USER_CONTROLLER } from "./user.js";
 
 class ChatController {
@@ -30,14 +31,14 @@ class ChatController {
                     ReceiverId:receiverId,
                     ChatId: CHAT_CONTROLLER.chatId
                 }),
-            }).then(response => {
+            }).then(async response => {
                 if (!response.ok) {
-                    // return response.json()
-                    // .then(data => {
-                    //     console.log(data);
-                    // })
-                    console.log(response.status);
-                    throw new Error('Erreur de réseau');
+                    console.log(response);
+                    const error = await response.json()
+                    NOTIFICATION_CONTROLLER.setMessage(`${response.statusText} : ${error.message}`)
+                    NOTIFICATION_CONTROLLER.display = true
+                    updateSingleComponent('c-notification')
+                    throw new Error(`${response.statusText} : ${error.message}`);
                 }
                 return response.json()
             })

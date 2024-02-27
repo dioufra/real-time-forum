@@ -26,7 +26,7 @@ export default class Pagination extends HTMLElement {
             if (event.target.tagName === 'A' ) {
                 event.preventDefault();
                 let page = parseInt(event.target.href.split('=').reverse()[0])
-                if ( Boolean(page)) {
+                if (Boolean(page)) {
                     navigateTo(window.location.href.replace(new RegExp('page=[0-9]+'),'page='+page));
                     verifyLocationHref()
                 }

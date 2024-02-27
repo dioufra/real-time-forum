@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"real-time-forum/server/helper"
 	"real-time-forum/server/models"
 	"strings"
 	"time"
@@ -17,45 +18,35 @@ func Message(res http.ResponseWriter, req *http.Request) {
 
 		decoder := json.NewDecoder(req.Body)
 		if err := decoder.Decode(&message); err != nil {
-			fmt.Println(err)
-			http.Error(res, "Invalid request payload", http.StatusBadRequest)
+			log.Println("❌ Invalid request payload", err)
+			helper.HandleError(res, "Invalid request payload", http.StatusBadRequest)
 			return
 		}
 
 		message.Date = time.Now()
 
-		fmt.Println("New message: ", message)
-
 		message.Content = strings.Trim(message.Content, " ")
 		if message.Content == "" {
-			res.WriteHeader(http.StatusBadRequest)
-			if err := json.NewEncoder(res).Encode(map[string]any{"message": "Message connot be empty"}); err != nil {
-				log.Println("Error encoding JSON response:", err)
-			}
+			helper.HandleError(res, "Cannot send empty messages", http.StatusBadRequest)
 			return
 		}
+
 		if err := models.MessageRepo.Add(&message); err != nil {
-			fmt.Println("Error inserting message to database: ", err)
+			log.Println("❌ Error inserting message to database: ", err)
+			helper.HandleError(res, "Unable to send message", http.StatusInternalServerError)
+			return
 		}
 
-		if err := json.NewEncoder(res).Encode(map[string]any{"message": "Message sent"}); err != nil {
-			log.Println("Error encoding JSON response:", err)
-		}
+		helper.SendResponse(res, map[string]any{"message": "Message sent"}, http.StatusOK)
 		BroadcastContactedUsers()
 		BroadcastOnlineUsers()
-
-		// var user models.User
-		// if err := models.UserRepo.GetUserById(&user, message.SenderId); err != nil {
-		// 	fmt.Println("Error retrieving user: ", err)
-		// 	return
-		// }
-		// sender := fmt.Sprintf("%s %s", user.Firstname, user.Lastname)
 		BroadcastChat(message.SenderId, message.ReceiverId, message.ChatId, message.SenderAdress, message.ReceiverAdress)
 		if err := Notify(message.ReceiverAdress, message.SenderId, message); err != nil {
-			fmt.Println("Error notifying user: ", err)
+			log.Println("❌ Error notifying user: ", err)
 		}
+
+		defer req.Body.Close()
 	}
-	defer req.Body.Close()
 }
 
 func Notify(receiverAdress string, senderId int, message models.Message) error {
@@ -76,6 +67,7 @@ func Notify(receiverAdress string, senderId int, message models.Message) error {
 			err := client.WriteJSON(response)
 			if err != nil {
 				log.Println(err)
+				return err
 			}
 		}
 	}

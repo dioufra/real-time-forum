@@ -1,9 +1,11 @@
 import { CATEGORY_CONTROLLER } from "../controllers/categorie.js"
 import { COMMENT_CONTROLLER } from "../controllers/comment.js"
 import { FORM_CONTROLLER } from "../controllers/form.js"
+import { NOTIFICATION_CONTROLLER } from "../controllers/notification.js"
 import { POST_CONTROLLER } from "../controllers/post.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 import { navigateTo } from "../routes/routechecker.js"
+import { updateSingleComponent } from "../script.js"
 
 export default class Comment extends HTMLElement {
     constructor() {
@@ -23,19 +25,19 @@ export default class Comment extends HTMLElement {
             fetch('/api/comments/add', {
                 method: 'POST',
                 body: JSON.stringify(data)
-            }).then(response => {
+            }).then(async response => {
                 if (!response.ok) {
-                    if (response.status === 400) {
-                        response.json()
-                            .then(error => {
-                                FORM_CONTROLLER.setError('register', error.message)
-                            })
-                        return
-                    } else {
-                        throw new Error('Network error');
-                    }
+                    const error = await response.json()
+                    console.log(error);
+                    NOTIFICATION_CONTROLLER.setMessage(`${response.statusText} : ${error.message}`)
+                    NOTIFICATION_CONTROLLER.display = true
+                    updateSingleComponent('c-notification')
+                    throw new Error(`${response.statusText} : ${error.message}`);
                 }
-                console.log(response);
+                console.log(response.json());
+                return response.json()
+            }).catch(error => {
+                console.error(error)
             })
         }
 
@@ -105,7 +107,7 @@ export default class Comment extends HTMLElement {
                         </div>
                         <div class="nm-tm">
                             <p>${COMMENT_CONTROLLER.post.Username}</p>
-                            <p>${COMMENT_CONTROLLER.post.Date} ago</p>
+                            <p>${new Date(COMMENT_CONTROLLER.post.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})}</p>
                         </div>
                     </div>
                     <div class="feather">
