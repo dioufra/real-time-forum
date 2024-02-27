@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"real-time-forum/server/helper"
@@ -26,6 +27,8 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 		helper.HandleError(res, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
+
+	fmt.Println("Hello for comment section: ", comment)
 	defer req.Body.Close()
 
 	if err := models.UserRepo.GetUserById(&user, comment.UserId); err != nil {
