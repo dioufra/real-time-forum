@@ -56,7 +56,7 @@ class ChatController {
                     updateSingleComponent('c-chat-container')
                     
                     setTimeout(() => {
-                        if (this.allMessages.length === 0) {
+                        if (this.allMessages.length < 10) {
                             this.showLoader = false
                             updateSingleComponent('c-chat-container')
                         }

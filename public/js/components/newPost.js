@@ -15,6 +15,7 @@ export default class NewPost extends HTMLElement {
         this.checkCloseButtonListener()
         this.checkSubmitListener()
         this.checkOverlayclickListener()
+        this.checkInputListener()
     }
 
     disconnectedCallback() {
@@ -88,6 +89,12 @@ export default class NewPost extends HTMLElement {
         })
     }
 
+    checkInputListener(){
+        this.addEventListener('input',e => {
+            FORM_CONTROLLER.setInput('post',e.target)
+        })
+    }
+
     render() {
         this.innerHTML = /*HTML*/`
             ${POST_CONTROLLER.displayBox && USER_CONTROLLER.IsAuth ? /*HTML*/`
@@ -100,7 +107,8 @@ export default class NewPost extends HTMLElement {
                                 <p>
                                     <label for="title-form">Title</label>
                                 </p>
-                                <input type="text" name="title" placeholder="title"  id="title-form">
+                                <input type="text" name="title" placeholder="title"  id="title-form"
+                                    value="${FORM_CONTROLLER.forms?.post?.title ||''}" >
                             </div>
                             <div class="box" style="width:200px;">
                                 <details>
@@ -108,7 +116,12 @@ export default class NewPost extends HTMLElement {
                                     <ul>
                                         <li>
                                             ${CATEGORY_CONTROLLER.categories.map(category => {
-                                                return `<label><input type="checkbox" name="category" value="${category.Id}" />${category.Name}</label>`;
+                                                return `
+                                                <label>
+                                                    <input type="checkbox" name="category" value="${category.Id}" 
+                                                    ${FORM_CONTROLLER.forms?.post?.category?.find(v=> v===(""+category.Id))?"checked":""} />
+                                                    ${category.Name}
+                                                </label>`;
                                             }).join('')}
                                         </li>
                                     </ul>
@@ -118,7 +131,7 @@ export default class NewPost extends HTMLElement {
                                 <p>
                                     <label for="content-form">Content</label>
                                 </p>
-                                <textarea  name="content" id="content-form" cols="30" rows="10"></textarea>
+                                <textarea  name="content" id="content-form" placeholder="content" cols="30" rows="10">${FORM_CONTROLLER.forms?.post?.content ||''}</textarea>
                             </div>
                             <button class="post-submit" type="submit">Post</button>
                         </form>

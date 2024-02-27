@@ -25,9 +25,9 @@ func AddPost(res http.ResponseWriter, req *http.Request) {
 
 	// Verifiction de inputs
 	fieldsTab := [][]string{
-		{"title", "^..+$", post.Title},
-		{"content", "^..+$", post.Content},
-		{"categories", "^\\[.+\\]$", strings.Join(strings.Fields(fmt.Sprint(post.Categories)), ",")},
+		{"title", "^.+$", post.Title, "The title is required"},
+		{"content", "^.+$", post.Content, "The content is required"},
+		{"categories", "^\\[(10|[1-9])(,(10|[1-9]))*\\]$", strings.Join(strings.Fields(fmt.Sprint(post.Categories)), ","), "Choose at least 1 category"},
 	}
 	for _, item := range fieldsTab {
 		field, pattern, str := item[0], item[1], item[2]
