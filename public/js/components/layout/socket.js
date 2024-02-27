@@ -93,14 +93,12 @@ export default class Socket extends HTMLElement {
         document.addEventListener('readMessages', (event) => {
             // console.log(event.detail);
             this.sendData(JSON.stringify({event: "readMessages", data:event.detail}))
-
         })
     }
     checkAppreciation() {
         document.addEventListener('appreciation', (event) => {
             // console.log(event.detail);
             this.sendData(JSON.stringify({event: "appreciation", type: event.detail.type, component: event.detail.component,data: event.detail.data}))
-
         })
     }
     checkPostDetailsListener(){

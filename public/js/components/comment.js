@@ -4,6 +4,7 @@ import { FORM_CONTROLLER } from "../controllers/form.js"
 import { POST_CONTROLLER } from "../controllers/post.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 import { navigateTo } from "../routes/routechecker.js"
+import { updateSingleComponent } from "../script.js"
 
 export default class Comment extends HTMLElement {
     constructor() {
@@ -29,6 +30,7 @@ export default class Comment extends HTMLElement {
                         response.json()
                             .then(error => {
                                 FORM_CONTROLLER.setError('register', error.message)
+                                updateSingleComponent('c-main')
                             })
                         return
                     } else {

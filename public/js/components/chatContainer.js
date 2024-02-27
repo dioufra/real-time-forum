@@ -1,6 +1,7 @@
 import { CHAT_CONTROLLER } from "../controllers/chat.js"
 import { FORM_CONTROLLER } from "../controllers/form.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
+import { updateSingleComponent } from "../script.js"
 
 export default class ChatContainer extends HTMLElement {
     constructor() {
@@ -51,6 +52,7 @@ export default class ChatContainer extends HTMLElement {
                         .then(error => {
                             console.log(error.message)
                             FORM_CONTROLLER.setError('message',error.message)
+                            updateSingleComponent('c-chat-container')
                         })
                         return
                     } else {

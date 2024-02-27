@@ -1,5 +1,6 @@
 import { FORM_CONTROLLER } from "../controllers/form.js";
 import { navigateTo } from "../routes/routechecker.js";
+import { updateSingleComponent } from "../script.js";
 
 class ApiService {
     constructor() {
@@ -16,6 +17,7 @@ class ApiService {
                     response.json()
                     .then(error => {
                         FORM_CONTROLLER.setError('register',error.message)
+                        updateSingleComponent('c-main')
                     })
                     return
                 } else {
@@ -37,6 +39,7 @@ class ApiService {
                 if (response.status === 400) {
                     const error = await response.json()
                     FORM_CONTROLLER.setError('login',error.message)
+                    updateSingleComponent('c-main')
                     return
                 } else {
                     throw new Error('Network error')

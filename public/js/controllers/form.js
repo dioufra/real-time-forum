@@ -8,7 +8,6 @@ class FromController {
     setError(errName,message){
         this.errors[errName] = message
         // updateComponents()
-        updateSingleComponent('c-main')
     }
     setInput(form,target){
         this.forms[form] = this.forms[form] || {}

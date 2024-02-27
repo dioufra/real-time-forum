@@ -24,7 +24,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		defer r.Body.Close()
-		fmt.Println(newUser)
+		// fmt.Println(newUser)
 
 		// Verifiction de inputs
 		fieldsTab := [][]string{

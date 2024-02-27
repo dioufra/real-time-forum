@@ -3,6 +3,7 @@ import { CHAT_CONTROLLER } from "../controllers/chat.js"
 import { FORM_CONTROLLER } from "../controllers/form.js"
 import { POST_CONTROLLER } from "../controllers/post.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
+import { updateSingleComponent } from "../script.js"
 
 export default class NewPost extends HTMLElement {
     constructor() {
@@ -65,8 +66,9 @@ export default class NewPost extends HTMLElement {
                     if (response.status === 400) {
                         response.json()
                         .then(error => {
-                            console.log(error.message)
-                            FORM_CONTROLLER.setError('message',error.message)
+                            // console.log(error.message)
+                            FORM_CONTROLLER.setError('post',error.message)
+                            updateSingleComponent('c-modal')
                         })
                         return
                     } else {
@@ -76,7 +78,7 @@ export default class NewPost extends HTMLElement {
                 return response.json()
             })
             .then(data => {
-                console.log("data",data)
+                // console.log("data",data)
                 if (data) {
                     // console.log('data',data)
                     POST_CONTROLLER.hideBox()
@@ -93,11 +95,12 @@ export default class NewPost extends HTMLElement {
                 <div class="modal-form-container">
                     <div class="modal-form">
                         <form action="/post" method="post" class="form-modal">
+                            <p class="error-message">${FORM_CONTROLLER.errors.post || ''}</p>
                             <div class="input-form-m">
                                 <p>
                                     <label for="title-form">Title</label>
                                 </p>
-                                <input type="text" name="title" placeholder="title" required id="title-form">
+                                <input type="text" name="title" placeholder="title"  id="title-form">
                             </div>
                             <div class="box" style="width:200px;">
                                 <details>
@@ -115,7 +118,7 @@ export default class NewPost extends HTMLElement {
                                 <p>
                                     <label for="content-form">Content</label>
                                 </p>
-                                <textarea required name="content" id="content-form" cols="30" rows="10"></textarea>
+                                <textarea  name="content" id="content-form" cols="30" rows="10"></textarea>
                             </div>
                             <button class="post-submit" type="submit">Post</button>
                         </form>
