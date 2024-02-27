@@ -31,8 +31,12 @@ class ChatController {
                     ChatId: CHAT_CONTROLLER.chatId
                 }),
             }).then(response => {
-                // console.log(response)
                 if (!response.ok) {
+                    // return response.json()
+                    // .then(data => {
+                    //     console.log(data);
+                    // })
+                    console.log(response.status);
                     throw new Error('Erreur de réseau');
                 }
                 return response.json()

@@ -24,7 +24,7 @@ export default class Notification extends HTMLElement {
             ? /*HTML*/
             `
                 <div class="notification">
-                    <div><img src="//ui-avatars.com/api/?name=${NOTIFICATION_CONTROLLER.Sender}&size=50&rounded=true&color=fff&background=random" alt="" />
+                    <div><img src="//ui-avatars.com/api/?name=${NOTIFICATION_CONTROLLER.Sender}&size=30&rounded=true&color=fff&background=random" alt="" />
                     </div>
                     <div>
                     <p class="content"><span class="username">${NOTIFICATION_CONTROLLER.Sender}</span> sent you a new message</p>

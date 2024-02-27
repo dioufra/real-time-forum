@@ -25,8 +25,13 @@
 [X] Handle messaging with more than one user
 
 [] Send json response from controllers upon error
+    [X] sign in
+    [X] sign up
+    [] chat
+    [] comments
+    [] socket
 
-[X] Add creation date for messages, postsc
+[X] Add creation date for messages, posts
 
 
 

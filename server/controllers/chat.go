@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"real-time-forum/server/helper"
 	"real-time-forum/server/models"
-	"strconv"
 )
 
 func Chat(res http.ResponseWriter, req *http.Request) {
@@ -14,19 +14,24 @@ func Chat(res http.ResponseWriter, req *http.Request) {
 		var body models.Message
 		decoder := json.NewDecoder(req.Body)
 		if err := decoder.Decode(&body); err != nil {
-			fmt.Println(err)
-			http.Error(res, "Invalid request payload", http.StatusBadRequest)
+			fmt.Println("❌ Invalid request payload", err)
+			helper.HandleError(res, "Invalid request payload", http.StatusBadRequest)
 			return
 		}
-		fmt.Println("new chat: ", body)
-		sender, err := GetUserByField(DB, "id", strconv.Itoa(body.SenderId))
+		// sender, err := GetUserByField(DB, "id", strconv.Itoa(body.SenderId))
+		// if err != nil {
+		// 	fmt.Println("Sender not found")
+		// 	helper.HandleError(res, "Error starting chat", http.StatusInternalServerError)
+		// 	return
+		// }
+		// receiver, err := GetUserByField(DB, "id", strconv.Itoa(body.ReceiverId))
+		// if err != nil {
+		// 	fmt.Println("Reciever not found")
+		// 	return
+		// }
+		sender, receiver, err := helper.GetChatParticipants(body.SenderId, body.ReceiverId)
 		if err != nil {
-			fmt.Println("Sender not found")
-			return
-		}
-		receiver, err := GetUserByField(DB, "id", strconv.Itoa(body.ReceiverId))
-		if err != nil {
-			fmt.Println("Reciever not found")
+			helper.HandleError(res, "Error starting chat", http.StatusInternalServerError)
 			return
 		}
 		for _, tab := range SocketClients {
@@ -37,9 +42,9 @@ func Chat(res http.ResponseWriter, req *http.Request) {
 				body.ReceiverAdress = adress
 			}
 		}
-		err = models.MessageRepo.UpdateUnReadMessages(receiver.Id, sender.Id)
-		if err != nil {
-			fmt.Println("Error updating unread messages")
+		if err := models.MessageRepo.UpdateUnReadMessages(receiver.Id, sender.Id); err != nil {
+			fmt.Println("❌ Error updating unread messages: ", err)
+			helper.HandleError(res, "Could not get chat messages", http.StatusInternalServerError)
 			return
 		}
 		// fmt.Println(nb)
@@ -49,8 +54,9 @@ func Chat(res http.ResponseWriter, req *http.Request) {
 			"ReceiverAdress": body.ReceiverAdress,
 		}); err != nil {
 			log.Println("Error encoding JSON response:", err)
+			return
 		}
-		BroadcastChat(body.SenderId, body.ReceiverId, body.ChatId ,body.SenderAdress, body.ReceiverAdress)
+		BroadcastChat(body.SenderId, body.ReceiverId, body.ChatId, body.SenderAdress, body.ReceiverAdress)
 		BroadcastContactedUsers()
 		BroadcastOnlineUsers()
 	}

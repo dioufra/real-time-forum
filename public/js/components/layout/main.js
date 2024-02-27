@@ -17,9 +17,11 @@ export default class Main extends HTMLElement {
                     // Redirect to login page
                     FORM_CONTROLLER.resetForms()
                     FORM_CONTROLLER.resetErrors()
-                    navigateTo('login')
+                    navigateTo('/login')
                 }
-            }).catch(console.log);
+            }).catch(error => {
+                console.error(error);
+            });
         }
         this.loginUser = (event) => {
             if (!event.detail.user) return;

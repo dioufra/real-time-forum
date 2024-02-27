@@ -2,11 +2,11 @@ package helper
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"real-time-forum/server/models"
-	"strconv"
-	"strings"
+	"regexp"
 	"time"
 
 	"github.com/gofrs/uuid/v5"
@@ -44,7 +44,7 @@ func UpdateSession(db *sql.DB, sssid, useremail string) error {
 		_, errsession = db.Exec("UPDATE Session SET sessionId=?, datefin=? where sessionId=? AND email=?;", sssid, time.Now().Add(time.Hour*24*3), sssid, email)
 	} else {
 		_, errsession = db.Exec("INSERT INTO Session (sessionId,email,datefin) VALUES(?,?,?);", sssid, useremail, time.Now().Add(time.Hour*24*3))
-	}	
+	}
 	return errsession
 
 }
@@ -81,62 +81,75 @@ func Auth(Db *sql.DB, r *http.Request) (bool, string) {
 	return false, ""
 }
 
-func Getmethod(r *http.Request, method string) bool {
-	return strings.ToLower(r.Method) == method
-	// if strings.ToLower(r.Method) != method {
-	// 	return false
-	// }
-	// return true
+func GetChatParticipants(senderId, receiverId int) (models.User, models.User, error) {
+	var sender, receiver models.User
+	if err := models.UserRepo.GetUserById(&sender, senderId); err != nil {
+		fmt.Println("❌ could not get sender: ", err)
+		return sender, receiver, err
+	}
+	if err := models.UserRepo.GetUserById(&receiver, receiverId); err != nil {
+		fmt.Println("❌ could not get receiver: ", err)
+		return sender, receiver, err
+	}
+	return sender, receiver, nil
 }
 
-func CheckRequest(r *http.Request, path, method string) (bool, int) {
-	if strings.ToLower(r.Method) == method && r.URL.Path == path {
-		return true, 0
-	} else if !Getmethod(r, method) {
-		return false, 405
-	} else {
-		return false, 404
-	}
-}
-func DeleteSessio(db *sql.DB, ssid string) error {
-	req := `DELETE from Session Where sessionId=?;`
-	_, err := db.Exec(req, ssid)
-	return err
-}
+// func Getmethod(r *http.Request, method string) bool {
+// 	return strings.ToLower(r.Method) == method
+// 	// if strings.ToLower(r.Method) != method {
+// 	// 	return false
+// 	// }
+// 	// return true
+// }
 
-// ******************************* PARSE FILE IN URL *****************
-func PArseUlr(r *http.Request, match string) (bool, int) {
-	index := strings.Split(r.URL.Path[1:], "/")
-	if len(index) == 2 && index[0] == match {
-		id, err := strconv.Atoi(index[1])
-		if err == nil {
-			return true, id
-		}
-	}
-	return false, 0
-}
+//	func CheckRequest(r *http.Request, path, method string) (bool, int) {
+//		if strings.ToLower(r.Method) == method && r.URL.Path == path {
+//			return true, 0
+//		} else if !Getmethod(r, method) {
+//			return false, 405
+//		} else {
+//			return false, 404
+//		}
+//	}
+// func DeleteSessio(db *sql.DB, ssid string) error {
+// 	req := `DELETE from Session Where sessionId=?;`
+// 	_, err := db.Exec(req, ssid)
+// 	return err
+// }
 
-func FecthError(ch []error) bool {
-	for _, err := range ch {
-		if err != nil {
-			fmt.Println(err)
-			return true
-		}
-	}
-	return false
-}
+// // ******************************* PARSE FILE IN URL *****************
+// func PArseUlr(r *http.Request, match string) (bool, int) {
+// 	index := strings.Split(r.URL.Path[1:], "/")
+// 	if len(index) == 2 && index[0] == match {
+// 		id, err := strconv.Atoi(index[1])
+// 		if err == nil {
+// 			return true, id
+// 		}
+// 	}
+// 	return false, 0
+// }
 
-func ParseCatId(cat []string) ([]int, error) {
-	catid := []int{}
-	for _, v := range cat {
-		a, errt := strconv.Atoi(v)
-		if errt != nil {
-			return []int{}, errt
-		}
-		catid = append(catid, a)
-	}
-	return catid, nil
-}
+// func FecthError(ch []error) bool {
+// 	for _, err := range ch {
+// 		if err != nil {
+// 			fmt.Println(err)
+// 			return true
+// 		}
+// 	}
+// 	return false
+// }
+
+// func ParseCatId(cat []string) ([]int, error) {
+// 	catid := []int{}
+// 	for _, v := range cat {
+// 		a, errt := strconv.Atoi(v)
+// 		if errt != nil {
+// 			return []int{}, errt
+// 		}
+// 		catid = append(catid, a)
+// 	}
+// 	return catid, nil
+// }
 
 func SetCookie(res http.ResponseWriter) string {
 	sessionId := u1.String() + "-" + time.Now().GoString()
@@ -188,82 +201,65 @@ func SessionAddOrUpdate(db *sql.DB, sssid, useremail string) error {
 		_, errsession = db.Exec("INSERT INTO Session (sessionId,email,datefin) VALUES(?,?,?);", sssid, useremail, time.Now().Add(time.Hour*24*3))
 	}
 	return errsession
-
 }
 
-// func GetData(r *http.Request, db *sql.DB, f func(*sql.DB, models.Pagination, string) ([]models.AllPost, error), pagination models.Pagination, w http.ResponseWriter, isAuth bool, metadata models.Metadata, user models.User) (Data, error) {
-// 	var category models.Category
-// 	// CatPost:=models.CatPost{}
-// 	Cat, errcookie := r.Cookie("cat")
-// 	Cats := ""
-// 	if errcookie == nil {
-// 		Cats = Cat.Value
-// 	}
-// 	data, errs := f(db, pagination, Cats)
-// 	if errs != nil {
-// 		return Data{}, errs
-// 	}
+func SendResponse(res http.ResponseWriter, data interface{}, code int) {
+	res.Header().Set("Content-Type", "application/json")
+	res.WriteHeader(code)
+	if err := json.NewEncoder(res).Encode(data); err != nil {
+		fmt.Println("❌ Error encoding json response")
+	}
+}
 
-// 	categories, errc := category.GetCategory(db)
-// 	if errc != nil {
-// 		return Data{}, errc
-// 	}
-// 	Data := Data{All: data, IsAuth: isAuth, Categories: categories, Pagination: metadata, User: user}
-// 	return Data, nil
-// }
+func HandleError(res http.ResponseWriter, message string, code int) {
+	response := map[string]string{"message": message}
+	SendResponse(res, response, code)
+}
 
-// func SetPagination(db *sql.DB, r *http.Request, user models.User, query string) (models.Pagination, models.Metadata, error) {
-// 	pageParam := r.URL.Query().Get("page")
-// 	if pageParam == "" {
-// 		pageParam = "1"
-// 	}
-// 	var err error
-// 	models.ActualPage, err = strconv.Atoi(pageParam)
-// 	if err != nil || models.ActualPage <= 0 {
-// 		models.ActualPage = 1
-// 	}
-// 	pagination := models.Pagination{
-// 		PageSize: 6,
-// 		Page:     models.ActualPage,
-// 	}
-// 	totalRecords, err := models.GetTotalRecords(query, user, db)
-// 	if err != nil {
-// 		return models.Pagination{}, models.Metadata{}, err
-// 	}
-// 	metadata := models.GetMetadata(totalRecords, pagination.Page, pagination.PageSize)
-// 	if pagination.Page > metadata.LastPage {
-// 		pagination.Page = metadata.LastPage
-// 		metadata.CurrentPage = pagination.Page
-// 	}
-// 	return pagination, metadata, nil
-// }
+func ValidateRegistrationInput(newUser models.User, w http.ResponseWriter) bool {
+	fieldsTab := [][]string{
+		{"firstname", `^(\S)....*$`, newUser.Firstname},
+		{"lastname", "^[A-Za-z]+$", newUser.Lastname},
+		{"age", "^[0-9]{1,2}$", newUser.Age},
+		{"gender", "^(Male|Female)$", newUser.Gender},
+		{"username", "^[a-z][a-z0-9]+$", newUser.Username},
+		{"email", `^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`, newUser.Email},
+		{"password", "^....+$", newUser.Password},
+	}
 
-// func GetFilterCat(ListPost_id []int, posts []models.AllPost) []models.AllPost {
-// 	FilterPosts := []models.AllPost{}
-// 	if len(ListPost_id) > 0 {
-// 		for _, v := range posts {
-// 			fmt.Println(v.OnePost.ID)
-// 			for _, y := range ListPost_id {
-// 				if v.OnePost.ID == y {
-// 					FilterPosts = append(FilterPosts, v)
-// 					break
-// 				}
-// 			}
-// 		}
-// 		return FilterPosts
-// 	}
-// 	return posts
-// }
+	for _, item := range fieldsTab {
+		field, pattern, str := item[0], item[1], item[2]
+		re, err := regexp.Compile(pattern)
+		if err != nil {
+			fmt.Println("❌ Error compiling regex:", err)
+			return false
+		}
+		if !re.MatchString(str) {
+			errorMessage := map[string]string{"message": "invalid " + field, "property": field}
+			SendResponse(w, errorMessage, http.StatusBadRequest)
+			return false
+		}
+	}
 
-// func List_posts_id(db *sql.DB, cat_id string) []int {
-// 	caId, err := strconv.Atoi(cat_id)
-// 	if err != nil {
-// 		return []int{}
-// 	}
-// 	categorie := models.Category{}
-// 	ListPost_id, errPost := categorie.Post_id(db, caId)
-// 	if errPost != nil {
-// 		return []int{}
-// 	}
-// 	return ListPost_id
-// }
+	if newUser.Password != newUser.RepeatPassword {
+		SendResponse(w, map[string]string{"message": "passwords do not match"}, http.StatusBadRequest)
+		return false
+	}
+
+	return true
+}
+
+func IsUniqueLogin(e_user, u_user models.User, w http.ResponseWriter) bool {
+	if e_user.Id > 0 {
+		fmt.Println("❌ this email is already taken")
+		SendResponse(w, map[string]string{"message": "this email is already taken"}, http.StatusBadRequest)
+		return false
+	}
+
+	if u_user.Id > 0 {
+		fmt.Println("❌ this username is already taken")
+		SendResponse(w, map[string]string{"message": "this username is already taken"}, http.StatusBadRequest)
+		return false
+	}
+	return true
+}
