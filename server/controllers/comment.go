@@ -2,11 +2,12 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
+	"html"
 	"log"
 	"net/http"
 	"real-time-forum/server/helper"
 	"real-time-forum/server/models"
+	"strings"
 	"time"
 )
 
@@ -27,9 +28,12 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 		helper.HandleError(res, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
-
-	fmt.Println("Hello for comment section: ", comment)
 	defer req.Body.Close()
+
+	if strings.TrimSpace(comment.Content) == "" {
+		helper.HandleError(res, "Comments cannot add empty comments", http.StatusBadRequest)
+		return
+	}
 
 	if err := models.UserRepo.GetUserById(&user, comment.UserId); err != nil {
 		log.Println("❌ Error retrieving user:", err)
@@ -53,6 +57,7 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 	nanos := int64((comment.Date % 1000) * 1e6)
 
 	date := time.Unix(seconds, nanos)
+	comment.Content = html.EscapeString(comment.Content)
 
 	if err := models.CommentRepo.Create(comment.PostId, comment.UserId, comment.Content, date); err != nil {
 		log.Println("❌ Error adding new comment:", err)

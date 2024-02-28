@@ -27,7 +27,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	if ok := helper.ValidateRegistrationInput(newUser, w); !ok {
+	if ok := helper.ValidateRegistrationInput(&newUser, w); !ok {
 		return
 	}
 

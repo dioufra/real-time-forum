@@ -74,7 +74,7 @@ class ApiService {
             }
             return await response.json()
         } catch (error) {
-            console.error("Error login user: ", error);
+            console.error("Error login user: ", error.message);
             throw error;  // Re-throw the error so it can be caught in the calling code
         }
     }

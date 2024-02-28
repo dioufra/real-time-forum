@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"real-time-forum/server/helper"
 	"real-time-forum/server/models"
-	"regexp"
-	"strings"
 )
 
 func AddPost(res http.ResponseWriter, req *http.Request) {
@@ -24,34 +23,39 @@ func AddPost(res http.ResponseWriter, req *http.Request) {
 	}
 
 	// Verifiction de inputs
-	fieldsTab := [][]string{
-		{"title", "^.+$", post.Title, "The title is required"},
-		{"content", "^.+$", post.Content, "The content is required"},
-		{"categories", "^\\[(10|[1-9])(,(10|[1-9]))*\\]$", strings.Join(strings.Fields(fmt.Sprint(post.Categories)), ","), "Choose at least 1 category"},
-	}
-	for _, item := range fieldsTab {
-		field, pattern, str := item[0], item[1], item[2]
-		// Compile the regular expression
-		re, err := regexp.Compile(pattern)
-		if err != nil {
-			fmt.Println("Error compiling regex:", err)
-			return
-		}
-		// Test if a string matches the regular expression
-		if !re.MatchString(str) {
-			// Create an error message.
-			errorMessage := map[string]string{"message": "invalid " + field, "property": field}
+	// fieldsTab := [][]string{
+	// 	{"title", "^.+$", post.Title, "The title is required"},
+	// 	{"content", "^.+$", post.Content, "The content is required"},
+	// 	{"categories", "^\\[(10|[1-9])(,(10|[1-9]))*\\]$", strings.Join(strings.Fields(fmt.Sprint(post.Categories)), ","), "Choose at least one category"},
+	// }
+	// for _, item := range fieldsTab {
+	// 	field, pattern, str, msg := item[0], item[1], item[2], item[3]
+	// 	// Compile the regular expression
+	// 	re, err := regexp.Compile(pattern)
+	// 	if err != nil {
+	// 		fmt.Println("Error compiling regex:", err)
+	// 		return
+	// 	}
+	// 	// Test if a string matches the regular expression
+	// 	fmt.Println("post: ", str)
+	// 	if !re.MatchString(str) {
+	// 		// Create an error message.
+	// 		errorMessage := map[string]string{"message": msg, "property": field}
 
-			res.WriteHeader(http.StatusBadRequest)
-			// Encode the error message as JSON and send it in the response.
-			err := json.NewEncoder(res).Encode(errorMessage)
-			if err != nil {
-				// Handle the error, e.g., log it or send a generic error message.
-				http.Error(res, "Internal Server Error", http.StatusInternalServerError)
-				return
-			}
-			return
-		}
+	// 		res.WriteHeader(http.StatusBadRequest)
+	// 		// Encode the error message as JSON and send it in the response.
+	// 		err := json.NewEncoder(res).Encode(errorMessage)
+	// 		if err != nil {
+	// 			// Handle the error, e.g., log it or send a generic error message.
+	// 			http.Error(res, "Internal Server Error", http.StatusInternalServerError)
+	// 			return
+	// 		}
+	// 		return
+	// 	}
+	// }
+	if ok := helper.ValidatePostInput(&post, res); !ok {
+		fmt.Println("Cannot add post validation failed")
+		return
 	}
 
 	if err := models.PostRepo.CreatePost(post.Title, post.Content, post.UserId, post.Categories); err != nil {

@@ -82,6 +82,7 @@ export default class NewPost extends HTMLElement {
                 // console.log("data",data)
                 if (data) {
                     // console.log('data',data)
+                    FORM_CONTROLLER.resetForms()
                     POST_CONTROLLER.hideBox()
                 }
             })

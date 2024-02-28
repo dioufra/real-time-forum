@@ -4,9 +4,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"html"
 	"net/http"
 	"real-time-forum/server/models"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/gofrs/uuid/v5"
@@ -16,7 +18,7 @@ import (
 type Data struct {
 	All    interface{}
 	IsAuth bool
-	User models.User
+	User   models.User
 }
 
 var u1 = uuid.Must(uuid.NewV4())
@@ -156,26 +158,26 @@ func HandleError(res http.ResponseWriter, message string, code int) {
 	SendResponse(res, response, code)
 }
 
-func ValidateRegistrationInput(newUser models.User, w http.ResponseWriter) bool {
+func ValidateRegistrationInput(newUser *models.User, w http.ResponseWriter) bool {
 	fieldsTab := [][]string{
-		{"firstname", `^(\S)....*$`, newUser.Firstname},
-		{"lastname", "^[A-Za-z]+$", newUser.Lastname},
-		{"age", "^[0-9]{1,2}$", newUser.Age},
-		{"gender", "^(Male|Female)$", newUser.Gender},
-		{"username", "^[a-z][a-z0-9]+$", newUser.Username},
-		{"email", `^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`, newUser.Email},
-		{"password", "^....+$", newUser.Password},
+		{"firstname", `^(\S)....*$`, newUser.Firstname, "firstname: min. 5 chars, no leading/trailing spaces."},
+		{"lastname", "^[A-Za-z]+$", newUser.Lastname, "lastname: alphabetic chars only."},
+		{"age", "^[0-9]{1,2}$", newUser.Age, "age: numeric value, 0-99."},
+		{"gender", "^(Male|Female)$", newUser.Gender, "gender: 'Male' or 'Female'."},
+		{"username", "^[a-z][a-z0-9]+$", newUser.Username, "username: lowercase followed by letters/numbers."},
+		{"email", `^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`, newUser.Email, "email format: example@example.com."},
+		{"password", "^....+$", newUser.Password, "password: min. 4 chars."},
 	}
 
 	for _, item := range fieldsTab {
-		field, pattern, str := item[0], item[1], item[2]
+		field, pattern, str, msg := item[0], item[1], item[2], item[3]
 		re, err := regexp.Compile(pattern)
 		if err != nil {
 			fmt.Println("❌ Error compiling regex:", err)
 			return false
 		}
 		if !re.MatchString(str) {
-			errorMessage := map[string]string{"message": "invalid " + field, "property": field}
+			errorMessage := map[string]string{"message": msg, "property": field}
 			SendResponse(w, errorMessage, http.StatusBadRequest)
 			return false
 		}
@@ -186,6 +188,33 @@ func ValidateRegistrationInput(newUser models.User, w http.ResponseWriter) bool 
 		return false
 	}
 
+	newUser.Firstname = html.EscapeString(newUser.Firstname)
+	newUser.Lastname = html.EscapeString(newUser.Lastname)
+	newUser.Gender = html.EscapeString(newUser.Gender)
+	newUser.Username = html.EscapeString(newUser.Username)
+	newUser.Email = html.EscapeString(newUser.Email)
+	newUser.Password = html.EscapeString(newUser.Password)
+
+	return true
+}
+
+func ValidatePostInput(post *models.PostPlayload, res http.ResponseWriter) bool {
+	fieldsTab := [][]string{
+		{"title", post.Title, "The title is required"},
+		{"content", post.Content, "The content is required"},
+		{"categories", strings.Trim(strings.Join(strings.Fields(fmt.Sprint(post.Categories)), ","), "[]"), "Choose at least one category"},
+	}
+	for _, item := range fieldsTab {
+		field, str, msg := item[0], item[1], item[2]
+		if strings.TrimSpace(str) == "" {
+			errorMessage := map[string]string{"message": msg, "property": field}
+			SendResponse(res, errorMessage, http.StatusBadRequest)
+			return false
+		}
+	}
+
+	post.Title = html.EscapeString(post.Title)
+	post.Content = html.EscapeString(post.Content)
 	return true
 }
 

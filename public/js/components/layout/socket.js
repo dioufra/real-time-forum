@@ -1,6 +1,6 @@
 import { CATEGORY_CONTROLLER } from "../../controllers/categorie.js"
 import { CHAT_CONTROLLER } from "../../controllers/chat.js"
-import { COMMENT_CONTROLLER} from "../../controllers/comment.js"
+import { COMMENT_CONTROLLER } from "../../controllers/comment.js"
 import { FORM_CONTROLLER } from "../../controllers/form.js"
 import { NOTIFICATION_CONTROLLER } from "../../controllers/notification.js"
 import { PAGE_CONTROLLER } from "../../controllers/pagiantion.js"
@@ -14,7 +14,7 @@ export default class Socket extends HTMLElement {
         super()
         this.isSocketConnected = false
     }
-    
+
     connectedCallback() {
 
         this.checkAllCategoriesListener()
@@ -39,11 +39,11 @@ export default class Socket extends HTMLElement {
     disconnectedCallback() {
     }
 
-    checkWebSocketConnection(){
-        document.addEventListener('connectWebSocket',e => {
+    checkWebSocketConnection() {
+        document.addEventListener('connectWebSocket', e => {
             if (!this.isSocketConnected) {
                 // Créer une connexion WebSocket
-                this.socket = new WebSocket("ws://"+window.location.host+"/api/ws/",);
+                this.socket = new WebSocket("ws://" + window.location.host + "/api/ws/",);
 
                 // Gérer les événements de la connexion WebSocket
                 this.socket.addEventListener("open", (event) => {
@@ -55,7 +55,7 @@ export default class Socket extends HTMLElement {
                 this.socket.addEventListener("message", (event) => {
                     let response = JSON.parse(event.data)
                     // Faire un Dipach Event
-                    this.dispatchEvent(new CustomEvent(response.event,{detail:{data:response.data}}))
+                    this.dispatchEvent(new CustomEvent(response.event, { detail: { data: response.data } }))
                     // updateComponents()
                 });
                 this.socket.addEventListener("close", (event) => {
@@ -75,15 +75,15 @@ export default class Socket extends HTMLElement {
             }
         })
     }
-    checkDisconnectListener(){
-        document.addEventListener('disconnectWebSocket',e => {
-                fetch('/api/sign_out',{
-                    method:'POST'
-                }).then(response => {
-                    this.socket?.close()
-                    FORM_CONTROLLER.resetForms()
-                    USER_CONTROLLER.disconnect()
-                })
+    checkDisconnectListener() {
+        document.addEventListener('disconnectWebSocket', e => {
+            fetch('/api/sign_out', {
+                method: 'POST'
+            }).then(response => {
+                this.socket?.close()
+                FORM_CONTROLLER.resetForms()
+                USER_CONTROLLER.disconnect()
+            })
                 .catch(console.log)
         })
     }
@@ -91,73 +91,76 @@ export default class Socket extends HTMLElement {
     checkMessagesReader() {
         document.addEventListener('readMessages', (event) => {
             // console.log(event.detail);
-            this.sendData(JSON.stringify({event: "readMessages", data:event.detail}))
+            this.sendData(JSON.stringify({ event: "readMessages", data: event.detail }))
         })
     }
     checkAppreciation() {
         document.addEventListener('appreciation', (event) => {
             // console.log(event.detail);
-            this.sendData(JSON.stringify({event: "appreciation", type: event.detail.type, component: event.detail.component,data: event.detail.data}))
+            this.sendData(JSON.stringify({ event: "appreciation", type: event.detail.type, component: event.detail.component, data: event.detail.data }))
         })
     }
-    checkPostDetailsListener(){
+    checkPostDetailsListener() {
         document.addEventListener('postDetails', (event) => {
-            this.sendData(JSON.stringify({event: 'postDetails', type: 'postDetails', data: {postId: event.detail.data}}))
+            this.sendData(JSON.stringify({ event: 'postDetails', type: 'postDetails', data: { postId: event.detail.data } }))
         })
     }
-    checkChatListener(){
-        this.addEventListener('broadcastChat',e => {
-            console.log("broadcastChat",e.detail)
-            const messages = e.detail.data.Message !== null ? e.detail.data.Message : []
-            CHAT_CONTROLLER.setAllMessages(messages)      
-            if (CHAT_CONTROLLER.chatId ===e.detail.data.ChatId)  updateSingleComponent('c-chat-container')
+    checkChatListener() {
+        this.addEventListener('broadcastChat', e => {
+            console.log("broadcastChat", e.detail)
+            if (CHAT_CONTROLLER.chatId === e.detail.data.ChatId) {
+                const messages = e.detail.data.Message !== null ? e.detail.data.Message : []
+                CHAT_CONTROLLER.setAllMessages(messages)
+                updateSingleComponent('c-chat-container')
+            }
+
         })
     }
-    checkUserInfosListener(){
-        this.addEventListener('broadcastUserInfos',e => {
+    checkUserInfosListener() {
+        this.addEventListener('broadcastUserInfos', e => {
             // console.log("broadcastUserInfos",e.detail.data)
             USER_CONTROLLER.setUser(e.detail.data)
             updateSingleComponent('sc-user-info')
         })
     }
-    checkOnlineUsersListener(){
-        this.addEventListener('broadcastOnlineUsers',e => {
+    checkOnlineUsersListener() {
+        this.addEventListener('broadcastOnlineUsers', e => {
             // console.log("broadcastOnlineUsers",e.detail.data)
             USER_CONTROLLER.setOnlineUsers(e.detail.data)
             updateSingleComponent('sc-user-info')
         })
     }
-    checkContactedUsersListener(){
-        this.addEventListener('broadcastContactedUsers',e => {
+    checkContactedUsersListener() {
+        this.addEventListener('broadcastContactedUsers', e => {
             // console.log("broadcastAllUsers",e.detail.data)
             USER_CONTROLLER.setContactedUsers(e.detail.data)
             updateSingleComponent('sc-user-info')
         })
     }
-    checkAllUsersListener(){
-        this.addEventListener('broadcastAllUsers',e => {
+    checkAllUsersListener() {
+        this.addEventListener('broadcastAllUsers', e => {
             // console.log("broadcastAllUsers",e.detail.data)
             USER_CONTROLLER.setAllUsers(e.detail.data)
             updateSingleComponent('sc-user-info')
         })
     }
-    checkAllPostsListener(){
-        this.addEventListener('broadcastAllPosts',e => {
+    checkAllPostsListener() {
+        this.addEventListener('broadcastAllPosts', e => {
             // console.log("broadcastAllPosts",e.detail.data)
             POST_CONTROLLER.setPosts(e.detail.data)
             // updateSingleComponent('c-posts-container')
             verifyLocationHref()
-        }) 
+        })
     }
-    checkAllCategoriesListener(){
-        this.addEventListener('broadcastAllCategories',e => {
+    checkAllCategoriesListener() {
+        this.addEventListener('broadcastAllCategories', e => {
             // console.log("broadcastAl lCategories",e.detail.data)
             CATEGORY_CONTROLLER.setCategories(e.detail.data)
             updateSingleComponent('c-filter')
         })
     }
 
-    checkNotificationListener(){
+    checkNotificationListener() {
         this.addEventListener('Notify', e => {
             // this.dispatchEvent(new CustomEvent('display-notif'))
             console.log("Notifying:", e);
@@ -176,7 +179,7 @@ export default class Socket extends HTMLElement {
             COMMENT_CONTROLLER.setData(e.detail.data.Comments, e.detail.data.Post)
             updateSingleComponent('c-posts-container')
             // updateComponents()
-        } )
+        })
     }
 
 
@@ -185,11 +188,11 @@ export default class Socket extends HTMLElement {
             this.socket.send(data)
     }
 
-    render(){
-        this.innerHTML= `
-            ${PAGE_CONTROLLER.isLoading?`
+    render() {
+        this.innerHTML = `
+            ${PAGE_CONTROLLER.isLoading ? `
                 <c-page-loader></c-page-loader>
-            `:`
+            `: `
                 <c-header></c-header>
                 <c-modal></c-modal>
                 <c-notification></c-notification>

@@ -22,6 +22,7 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 		helper.HandleError(res, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
+
 	defer req.Body.Close()
 
 	ok, user, err := helper.ValidateCredential(userLogin)

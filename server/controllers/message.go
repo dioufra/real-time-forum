@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"html"
 	"log"
 	"net/http"
 	"real-time-forum/server/helper"
@@ -24,13 +25,12 @@ func Message(res http.ResponseWriter, req *http.Request) {
 		}
 
 		message.Date = time.Now()
-
 		message.Content = strings.Trim(message.Content, " ")
 		if message.Content == "" {
 			helper.HandleError(res, "Cannot send empty messages", http.StatusBadRequest)
 			return
 		}
-
+		message.Content = html.EscapeString(message.Content)
 		if err := models.MessageRepo.Add(&message); err != nil {
 			log.Println("❌ Error inserting message to database: ", err)
 			helper.HandleError(res, "Unable to send message", http.StatusInternalServerError)

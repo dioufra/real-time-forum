@@ -1,13 +1,13 @@
 c-chat-container {
     & .chat-modal {
-        width: 500px;
-        height: 600px;
+        width: 300px;
+        height: 400px;
         background-color: white;
         transition: 1s;
         position: absolute;
         right: 0;
         bottom: 0;
-        margin-bottom: 90px;
+        margin-bottom: 30px;
         margin-right: 40px;
         border-radius: 20px;
         overflow: hidden;
@@ -17,6 +17,7 @@ c-chat-container {
         & .username {
             color: black;
         }
+
         & .chat-header {
             height: 60px;
             background-color: #888;
@@ -27,6 +28,7 @@ c-chat-container {
             & .user-infos {
                 display: flex;
             }
+
             & .name_container {
                 margin-left: 10px;
 
@@ -37,6 +39,7 @@ c-chat-container {
                     text-overflow: ellipsis;
                     width: 190px;
                 }
+
                 & .username {
                     color: black;
                     font-size: 90%;
@@ -46,12 +49,14 @@ c-chat-container {
                     width: 190px;
                 }
             }
+
             & .profil-img {
                 width: 40px;
                 height: 40px;
                 border-radius: 50%;
                 margin-left: 10px;
             }
+
             & .close-btn {
                 width: 30px;
                 height: 30px;
@@ -70,14 +75,14 @@ c-chat-container {
             flex: 1;
             color: black;
             text-align: center;
-            overflow-y: scroll; 
+            overflow-y: scroll;
 
             & .container {
                 margin-top: 5px;
                 margin-bottom: 7px;
                 text-align: left;
-                
-                & > div {
+
+                &>div {
                     display: flex;
                     align-items: start;
                     margin-bottom: 3px;
@@ -85,6 +90,7 @@ c-chat-container {
                     & .username {
                         color: #000;
                     }
+
                     & .image-container {
                         display: block;
 
@@ -97,6 +103,7 @@ c-chat-container {
                             border-radius: 0px 0px 0px 10px;
                         }
                     }
+
                     & .message-container {
                         max-height: 100px;
                         display: inline-block;
@@ -114,18 +121,21 @@ c-chat-container {
                             color: black;
                             font-size: 80%;
                         }
+
                         & p+p {
                             color: white;
                         }
                     }
                 }
+
                 &.container-left {
-                    & > div {
+                    &>div {
                         justify-content: left;
 
                         & .username {
                             color: #000;
                         }
+
                         & .image-container {
                             order: 1;
 
@@ -133,10 +143,12 @@ c-chat-container {
                                 border-radius: 0px 0px 0px 10px;
                                 margin-left: 30px;
                             }
+
                             & img {
                                 margin: 0 4px 0 5px;
                             }
                         }
+
                         & .message-container {
                             margin-right: 20px;
                             order: 2;
@@ -148,18 +160,21 @@ c-chat-container {
                         }
                     }
                 }
-                &.container-right {
-                    & > div {
-                        justify-content: right;
-                        & .image-container {
 
+                &.container-right {
+                    &>div {
+                        justify-content: right;
+
+                        & .image-container {
                             &::before {
                                 border-radius: 0px 0px 10px 0px;
                             }
+
                             & img {
                                 margin: 0 5px 0 4px;
                             }
                         }
+
                         & .message-container {
                             margin-left: 20px;
 
@@ -169,6 +184,7 @@ c-chat-container {
                         }
                     }
                 }
+
                 & .date {
                     color: gray;
                     font-weight: normal;
@@ -177,6 +193,7 @@ c-chat-container {
                 }
             }
         }
+
         & .chat-footer {
             & form {
                 display: block;
@@ -195,6 +212,7 @@ c-chat-container {
                     border: none;
                     flex: 1;
                 }
+
                 & button {
                     width: 40px;
                     height: 40px;
@@ -208,6 +226,7 @@ c-chat-container {
             }
         }
     }
+
     & .hidden {
         width: 0;
         height: 0;
