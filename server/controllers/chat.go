@@ -44,6 +44,7 @@ func Chat(res http.ResponseWriter, req *http.Request) {
 		"message":        "Chat started",
 		"SenderAdress":   body.SenderAdress,
 		"ReceiverAdress": body.ReceiverAdress,
+		"ChatId": body.ChatId,
 	}); err != nil {
 		log.Println("❌ Error encoding JSON response:", err)
 		helper.HandleError(res, "Error encoding JSON response", http.StatusInternalServerError)

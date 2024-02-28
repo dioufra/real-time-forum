@@ -58,11 +58,14 @@ class ChatController {
                     this.scrollLimit = 10
                     this.scroll={top:2000,left:0}
                     this.setReciever(receiver)
-                    updateSingleComponent('c-chat-container')
+                    // if (this.allMessages.length <= 10) this.showLoader = false
+                    // if (CHAT_CONTROLLER.chatId === data.ChatId )
+                     updateSingleComponent('c-chat-container')
                     
                     setTimeout(() => {
-                        if (this.allMessages.length < 10) {
+                        if (this.allMessages.length <= 10) {
                             this.showLoader = false
+                            // if (CHAT_CONTROLLER.chatId === data.ChatId )
                             updateSingleComponent('c-chat-container')
                         }
                     }, 2000);
@@ -85,7 +88,7 @@ class ChatController {
         this.scrollLimit += 10
         let before = this.filteredMessages.length
         this.filteredMessages = this.allMessages.filter((_,i) => {
-            return i> this.allMessages.length - this.scrollLimit
+            return i>= this.allMessages.length - this.scrollLimit
         })
         let after = this.filteredMessages.length
         return before !== after
