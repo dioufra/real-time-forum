@@ -46,7 +46,6 @@ export default class PostsContainer extends HTMLElement {
     }
 
     render() {
-        console.log(POST_CONTROLLER.filteredPosts);
         this.innerHTML = /* HTML */ `
         <div class="posts">
             ${

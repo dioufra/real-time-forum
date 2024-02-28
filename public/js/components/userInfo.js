@@ -4,7 +4,6 @@ import { POST_CONTROLLER } from "../controllers/post.js"
 import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 import { navigateTo } from "../routes/routechecker.js"
-import { updateSingleComponent } from "../script.js"
 
 export default class UserInfo extends HTMLElement {
     constructor() {
@@ -84,7 +83,7 @@ export default class UserInfo extends HTMLElement {
                                     <span>@${user.username}</span>
                                 </p>
                                 <p>
-                                    <span>Just now</span>
+                                    <span>Offline</span>
                                     <br/>
                                     ${user.unread_mesages > 0?`
                                         <span class="unread-messages">${user.unread_mesages}</span>
@@ -134,7 +133,7 @@ export default class UserInfo extends HTMLElement {
                                     <span>@${user.username}</span>
                                 </p>
                                 <p>
-                                    <span>Just now</span>
+                                    <span>Offline</span>
                                     <br/>
                                     ${user.unread_mesages > 0?`
                                         <span class="unread-messages">${user.unread_mesages}</span>

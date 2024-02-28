@@ -30,6 +30,7 @@ export default class Socket extends HTMLElement {
         this.checkChatListener()
         this.checkPostDetailsListener()
         this.checkAppreciation()
+        this.checkMessagesReader()
         this.checkNotificationListener()
         document.dispatchEvent(new Event('connectWebSocket'))
 
@@ -46,7 +47,7 @@ export default class Socket extends HTMLElement {
 
                 // Gérer les événements de la connexion WebSocket
                 this.socket.addEventListener("open", (event) => {
-                    console.log("WebSocket connection opened:", event);
+                    // console.log("WebSocket connection opened:", event);
                     this.isSocketConnected = true
                     USER_CONTROLLER.IsAuth = true
                     PAGE_CONTROLLER.setIsLoading(false)
@@ -87,14 +88,18 @@ export default class Socket extends HTMLElement {
         })
     }
 
-    checkAppreciation() {
-        document.addEventListener('appreciation', (event) => {
-            console.log(event.detail);
-            this.sendData(JSON.stringify({event: "appreciation", type: event.detail.type, component: event.detail.component,data: event.detail.data}))
-
+    checkMessagesReader() {
+        document.addEventListener('readMessages', (event) => {
+            // console.log(event.detail);
+            this.sendData(JSON.stringify({event: "readMessages", data:event.detail}))
         })
     }
-
+    checkAppreciation() {
+        document.addEventListener('appreciation', (event) => {
+            // console.log(event.detail);
+            this.sendData(JSON.stringify({event: "appreciation", type: event.detail.type, component: event.detail.component,data: event.detail.data}))
+        })
+    }
     checkPostDetailsListener(){
         document.addEventListener('postDetails', (event) => {
             this.sendData(JSON.stringify({event: 'postDetails', type: 'postDetails', data: {postId: event.detail.data}}))

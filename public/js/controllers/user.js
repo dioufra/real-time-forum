@@ -55,7 +55,7 @@ class UserController {
         this.Email = ''
         this.Age = ''
         this.Gender = ''
-        CHAT_CONTROLLER.displayBox = false
+        CHAT_CONTROLLER.reset()
 
         updateComponents()
     }

@@ -34,7 +34,8 @@ func HandleDisconnection(connection *websocket.Conn, email string) {
 
 	// Broadcast the disconnection event to other clients
 	BroadcastOnlineUsers()
-	BroadcastAllUsers(email)
+	// BroadcastAllUsers(email)
+	BroadcastAllUsers()
 }
 
 func registerClient(connection *websocket.Conn, email string) {
@@ -48,7 +49,8 @@ func registerClient(connection *websocket.Conn, email string) {
 	BroadcastUserInfos(connection, email)
 	BroadcastOnlineUsers()
 	BroadcastContactedUsers()
-	BroadcastAllUsers(email)
+	// BroadcastAllUsers(email)
+	BroadcastAllUsers()
 	BroadcastAllPosts()
 	BroadcastAllCategories()
 }
@@ -88,6 +90,7 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		}
 
 		switch data.Event {
+
 		case "postDetails":
 			handlePostDetails(conn, data.Data["postId"])
 		case "appreciation":
@@ -236,8 +239,8 @@ func BroadcastContactedUsers() {
 		}
 	}
 }
-
-func BroadcastAllUsers(email string) {
+func BroadcastAllUsers() {
+	// Iterate through all connected clients and send the message
 	clientsMutex.Lock()
 	defer clientsMutex.Unlock()
 
@@ -314,21 +317,18 @@ func BroadcastChat(senderId, receiverId, chatId int, senderAdress, receverAdress
 		return
 	}
 
-	for client, tab := range SocketClients {
-		adress := tab[1]
-		if adress == senderAdress || adress == receverAdress {
-			data := &struct {
-				Message []models.Message
-				ChatId  int
-			}{
-				messages,
-				chatId,
-			}
-			response := map[string]interface{}{"event": "broadcastChat", "data": data}
-			err := client.WriteJSON(response)
-			if err != nil {
-				log.Println(err)
-			}
+	for client := range SocketClients {
+		data := &struct {
+			Message []models.Message
+			ChatId  int
+		}{
+			messages,
+			chatId,
+		}
+		response := map[string]interface{}{"event": "broadcastChat", "data": data}
+		err := client.WriteJSON(response)
+		if err != nil {
+			log.Println(err)
 		}
 	}
 }

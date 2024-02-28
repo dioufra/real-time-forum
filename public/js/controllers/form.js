@@ -8,10 +8,19 @@ class FromController {
     setError(errName,message){
         this.errors[errName] = message
         // updateComponents()
-        updateSingleComponent('c-main')
     }
     setInput(form,target){
         this.forms[form] = this.forms[form] || {}
+        if (target.name === "category") {
+            this.forms[form][target.name]= []
+            document.querySelectorAll('input[name="category"]')
+            .forEach((elem)=> {
+                if(elem.checked){
+                    this.forms[form][target.name].push(elem.value)
+                }
+            })
+            return
+        }
         this.forms[form][target.name] = target.value
     }
     resetForms(){

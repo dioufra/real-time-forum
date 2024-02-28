@@ -1,5 +1,6 @@
 import { FORM_CONTROLLER } from "../controllers/form.js";
 import { navigateTo } from "../routes/routechecker.js";
+import { updateSingleComponent } from "../script.js";
 
 class ApiService {
     constructor() {
@@ -67,6 +68,7 @@ class ApiService {
                 // }
                 const error = await response.json();
                 // Assuming FORM_CONTROLLER.setError sets an error state on the form
+                console.log(error.message);
                 FORM_CONTROLLER.setError('login', error.message || 'Something went wrong');
                 throw new Error(`Failed to login user: ${response.statusText}`);
             }
