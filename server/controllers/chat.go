@@ -22,19 +22,6 @@ func Chat(res http.ResponseWriter, req *http.Request) {
 		helper.HandleError(res, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
-
-	fmt.Println("Chat started:  ", body)
-	// sender, err := GetUserByField(DB, "id", strconv.Itoa(body.SenderId))
-	// if err != nil {
-	// 	fmt.Println("Sender not found")
-	// 	helper.HandleError(res, "Error starting chat", http.StatusInternalServerError)
-	// 	return
-	// }
-	// receiver, err := GetUserByField(DB, "id", strconv.Itoa(body.ReceiverId))
-	// if err != nil {
-	// 	fmt.Println("Reciever not found")
-	// 	return
-	// }
 	sender, receiver, err := helper.GetChatParticipants(body.SenderId, body.ReceiverId)
 	if err != nil {
 		helper.HandleError(res, "Error starting chat", http.StatusInternalServerError)
@@ -53,7 +40,6 @@ func Chat(res http.ResponseWriter, req *http.Request) {
 		helper.HandleError(res, "Could not get chat messages", http.StatusInternalServerError)
 		return
 	}
-	// fmt.Println(nb)
 	if err := json.NewEncoder(res).Encode(map[string]any{
 		"message":        "Chat started",
 		"SenderAdress":   body.SenderAdress,
