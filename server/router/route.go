@@ -11,8 +11,8 @@ func Route() {
 
 	http.HandleFunc("/api/chat", middlewares.Ispath(middlewares.Log(controllers.Chat), "/api/chat"))
 	http.HandleFunc("/api/message", middlewares.Ispath(middlewares.Log(controllers.Message), "/api/message"))
-	http.HandleFunc("/api/ws", middlewares.Ispath(middlewares.Log(controllers.HandleWebSocket), "/api/ws"))
-	http.HandleFunc("/api/login", middlewares.Ispath(middlewares.IsAuth(controllers.SignIn), "/api/login"))
+	http.HandleFunc("/api/ws/", middlewares.Ispath(middlewares.Log(controllers.HandleWebSocket), "/api/ws/"))
+	http.HandleFunc("/api/login", middlewares.Ispath(controllers.SignIn, "/api/login"))
 	http.HandleFunc("/api/register", middlewares.Ispath(middlewares.IsAuth(controllers.SignUp), "/api/register"))
 	http.HandleFunc("/api/sign_out", middlewares.Ispath(middlewares.Log(controllers.SignOut), "/api/sign_out"))
 	// http.HandleFunc("/api/getResponse", middlewares.Ispath(middlewares.Log(controllers.Response), "/api/getResponse"))

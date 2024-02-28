@@ -9,6 +9,7 @@ import (
 )
 
 func SignIn(res http.ResponseWriter, req *http.Request) {
+	fmt.Println("Hello from sign in page")
 	if req.Method != http.MethodPost {
 		http.Error(res, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -44,5 +45,6 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 		helper.HandleError(res, "Could not add session	", http.StatusInternalServerError)
 		return
 	}
+	fmt.Print("login successful")
 	helper.SendResponse(res, map[string]any{"message": "Login successful"}, http.StatusOK)
 }
