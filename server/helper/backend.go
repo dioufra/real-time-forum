@@ -16,8 +16,6 @@ import (
 type Data struct {
 	All    interface{}
 	IsAuth bool
-	// Categories models.CatPost
-	// Pagination models.Metadata
 	User models.User
 }
 
@@ -25,7 +23,6 @@ var u1 = uuid.Must(uuid.NewV4())
 
 func UpdateSession(db *sql.DB, sssid, useremail string) error {
 	req := `SELECT sessionId,email,datefin from Session Where email='` + useremail + `';`
-	// req:=fmt.Sprintf(`SELECT * from Session Where email=?;`)
 	row, err := db.Query(req)
 	var sessionid, email string
 	var datef time.Time
@@ -93,63 +90,6 @@ func GetChatParticipants(senderId, receiverId int) (models.User, models.User, er
 	}
 	return sender, receiver, nil
 }
-
-// func Getmethod(r *http.Request, method string) bool {
-// 	return strings.ToLower(r.Method) == method
-// 	// if strings.ToLower(r.Method) != method {
-// 	// 	return false
-// 	// }
-// 	// return true
-// }
-
-//	func CheckRequest(r *http.Request, path, method string) (bool, int) {
-//		if strings.ToLower(r.Method) == method && r.URL.Path == path {
-//			return true, 0
-//		} else if !Getmethod(r, method) {
-//			return false, 405
-//		} else {
-//			return false, 404
-//		}
-//	}
-// func DeleteSessio(db *sql.DB, ssid string) error {
-// 	req := `DELETE from Session Where sessionId=?;`
-// 	_, err := db.Exec(req, ssid)
-// 	return err
-// }
-
-// // ******************************* PARSE FILE IN URL *****************
-// func PArseUlr(r *http.Request, match string) (bool, int) {
-// 	index := strings.Split(r.URL.Path[1:], "/")
-// 	if len(index) == 2 && index[0] == match {
-// 		id, err := strconv.Atoi(index[1])
-// 		if err == nil {
-// 			return true, id
-// 		}
-// 	}
-// 	return false, 0
-// }
-
-// func FecthError(ch []error) bool {
-// 	for _, err := range ch {
-// 		if err != nil {
-// 			fmt.Println(err)
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
-
-// func ParseCatId(cat []string) ([]int, error) {
-// 	catid := []int{}
-// 	for _, v := range cat {
-// 		a, errt := strconv.Atoi(v)
-// 		if errt != nil {
-// 			return []int{}, errt
-// 		}
-// 		catid = append(catid, a)
-// 	}
-// 	return catid, nil
-// }
 
 func SetCookie(res http.ResponseWriter) string {
 	sessionId := u1.String() + "-" + time.Now().GoString()

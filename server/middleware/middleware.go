@@ -11,7 +11,6 @@ func Log(next http.HandlerFunc) http.HandlerFunc {
 		if is, _ := helper.Auth(controllers.DB, r); is {
 			next.ServeHTTP(w, r)
 		} else {
-			// http.Redirect(w, r, "/api/login", 302)
 			helper.HandleError(w, "please sign in first", http.StatusUnauthorized)
 		}
 	}
@@ -34,7 +33,7 @@ func Ispath(next http.HandlerFunc, path string) http.HandlerFunc {
 		if r.URL.Path == path {
 			next.ServeHTTP(w, r)
 		} else {
-			helper.ErrorPage(w, 404)
+			helper.HandleError(w, "Not found", http.StatusNotFound)
 		}
 	}
 	return http.HandlerFunc(fnt)

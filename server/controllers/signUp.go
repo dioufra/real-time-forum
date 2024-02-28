@@ -34,6 +34,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 	var userByEmail, userByName models.User
 	if err := models.UserRepo.GetUser(&userByEmail, newUser.Email); err != nil {
 		// send err user response here
+		helper.HandleError(w, "Error registering user", http.StatusInternalServerError)
 		return
 	}
 	if err := models.UserRepo.GetUser(&userByName, newUser.Username); err != nil {
