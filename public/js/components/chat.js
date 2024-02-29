@@ -23,26 +23,27 @@ export default class Chat extends HTMLElement {
     }
     checkScrollListener(){
         this.addEventListener('scrollend',e => {
-            
-            CHAT_CONTROLLER.scroll.top = this.scrollTop
-            if (!this.isLoading && this.scrollTop < 70 && this.isMounted) {
-                CHAT_CONTROLLER.showLoader = true
-                let height = this.scrollHeight
-                this.isLoading = true
-                // CHAT_CONTROLLER.setScroll(e.target,this.firstMessage)
-                let isFltered = CHAT_CONTROLLER.filterMesages()
-                if (isFltered) {
-                }else{
-                    CHAT_CONTROLLER.showLoader = false
+            // setTimeout(() => {
+                CHAT_CONTROLLER.scroll.top = this.scrollTop
+                if (!this.isLoading && this.scrollTop ===  0 && this.isMounted) {
+                    CHAT_CONTROLLER.showLoader = true
+                    let height = this.scrollHeight
+                    this.isLoading = true
+                    // CHAT_CONTROLLER.setScroll(e.target,this.firstMessage)
+                    let isFltered = CHAT_CONTROLLER.filterMesages()
+                    if (isFltered) {
+                    }else{
+                        CHAT_CONTROLLER.showLoader = false
+                    }
+                    updateSingleComponent('c-chat')
+    
+                    // setTimeout(() => {
+                        this.isLoading = false
+                        this.scrollTop =this.scrollHeight - height 
+                        CHAT_CONTROLLER.scroll.top = this.scrollTop
+                    // }, 1000);
                 }
-                updateSingleComponent('c-chat')
-
-                // setTimeout(() => {
-                    this.isLoading = false
-                    this.scrollTop =this.scrollHeight - height 
-                    CHAT_CONTROLLER.scroll.top = this.scrollTop
-                // }, 10);
-            }
+            // }, 1000);
         })
     }
 

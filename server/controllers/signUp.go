@@ -30,7 +30,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		fieldsTab := [][]string{
 			{"firstname", `^(\S)....*$`, newUser.Firstname},
 			{"lastname", "^[A-Za-z]+$", newUser.Lastname},
-			{"age", "^[0-9]{1,2}$", newUser.Age},
+			{"age", "^([1-9]\\d*){1,2}$", newUser.Age},
 			{"gender", "^(Male|Female)$", newUser.Gender},
 			{"username", "^[a-z][a-z0-9]+$", newUser.Username},
 			{"email", `^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`, newUser.Email},
@@ -74,6 +74,9 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		}
 		if user.Id > 0 {
 			fmt.Println("User already exists")
+
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(map[string]string{"message": "User email already exists", "property": ""})
 			return
 		}
 		// verify if username is used
@@ -84,6 +87,9 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("user", user)
 		if user.Id > 0 {
 			fmt.Println("User already exists")
+
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(map[string]string{"message": "Username already exists", "property": ""})
 			return
 		}
 
@@ -107,6 +113,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		userID, _ := result.LastInsertId()
 		newUser.Id = int(userID)
 		userData.User = newUser
+
 		err = json.NewEncoder(w).Encode(userData)
 		if err != nil {
 			fmt.Println("err", err)

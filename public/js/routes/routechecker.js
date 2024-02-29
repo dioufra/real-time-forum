@@ -9,7 +9,7 @@ import { ROUTER } from "./routes.js";
 // Route change listener
 document.addEventListener('DOMContentLoaded', function () {
     // Initial setup
-    // navigateTo(ROUTER.currentRoute)
+    navigateTo(window.location.href)
     
     // Handle navigation on back/forward button click
     window.addEventListener('popstate', function () {

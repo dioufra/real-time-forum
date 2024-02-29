@@ -30,7 +30,7 @@ func AddPost(res http.ResponseWriter, req *http.Request) {
 		{"categories", "^\\[(10|[1-9])(,(10|[1-9]))*\\]$", strings.Join(strings.Fields(fmt.Sprint(post.Categories)), ","), "Choose at least 1 category"},
 	}
 	for _, item := range fieldsTab {
-		field, pattern, str := item[0], item[1], item[2]
+		field, pattern, str, message := item[0], item[1], item[2], item[3]
 		// Compile the regular expression
 		re, err := regexp.Compile(pattern)
 		if err != nil {
@@ -40,7 +40,7 @@ func AddPost(res http.ResponseWriter, req *http.Request) {
 		// Test if a string matches the regular expression
 		if !re.MatchString(str) {
 			// Create an error message.
-			errorMessage := map[string]string{"message": "invalid " + field, "property": field}
+			errorMessage := map[string]string{"message": message, "property": field}
 
 			res.WriteHeader(http.StatusBadRequest)
 			// Encode the error message as JSON and send it in the response.

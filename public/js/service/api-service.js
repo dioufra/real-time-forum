@@ -8,7 +8,7 @@ class ApiService {
     }
 
     async registerUser(data) {
-        fetch('/api/register', {
+        return fetch('/api/register', {
             method: 'POST',
             body: JSON.stringify(data),
         }).then(response => {
@@ -24,7 +24,7 @@ class ApiService {
                     throw new Error('Erreur de réseau');
                 }
             }
-            return response
+            return response.json()
         })
     }
 
