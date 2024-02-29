@@ -8,8 +8,9 @@ import { updateSingleComponent } from "../script.js"
 export default class Chat extends HTMLElement {
     constructor() {
         super()
+        this.page = 1
     }
-
+    
     connectedCallback() {
         this.render()
         this.checkCloseButtonListener()
@@ -29,6 +30,10 @@ export default class Chat extends HTMLElement {
                 this.modal?.classList.add('hidden')
                 CHAT_CONTROLLER.displayBox = false
             }
+        })
+
+        this.addEventListener('scrollend', e => {
+            console.log('scroll ended');
         })
     }
 
@@ -69,6 +74,9 @@ export default class Chat extends HTMLElement {
     }
 
     render() {
+        console.log(CHAT_CONTROLLER.lastMessages);
+        console.log(CHAT_CONTROLLER.remainingMessages);
+        console.log(CHAT_CONTROLLER.allMessages.length, CHAT_CONTROLLER.lastMessages.length + CHAT_CONTROLLER.remainingMessages.length);
         this.innerHTML = /* HTML */ `
             ${USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox ? /*HTML*/`
                 <div class="chat-modal">
@@ -83,7 +91,7 @@ export default class Chat extends HTMLElement {
                         <button class="close-btn">X</button>
                     </div>
                     <div class="chat-body" >
-                        ${CHAT_CONTROLLER.allMessages.map(message => {
+                        ${CHAT_CONTROLLER.lastMessages.map(message => {
                         let side = message.ReceiverId === USER_CONTROLLER.Id ? 'right' : 'left'
                         if (side === 'left')
                             return `
@@ -125,6 +133,68 @@ export default class Chat extends HTMLElement {
                 </div>
             `: ``}
         `
+        this.chatBody = document.querySelector('.chat-body')
+        this.chatBody?.addEventListener('scrollend', e => {
+            // let content = `
+            // <div class="container-left">
+            // <span>${new Date(Date.now()).toLocaleDateString('en-us', { weekday: "long", year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "numeric", second: "numeric" })}</span>
+            // <div class="message-container left">
+            // <p>Prepended message</p>
+            // </div>
+            // <div>
+            // <img class="profil-img" src="//ui-avatars.com/api/?name=frdiouf&size=30&rounded=true&color=fff&background=random" alt="">
+            // <br>
+            // <span>mane</span>
+            // </div>
+            // </div>`
+            // let message = new DOMParser().parseFromString( content, "text/html").body.firstChild
+            // this.chatBody.prepend(message)
+            const loadgroup = CHAT_CONTROLLER.remainingMessages.slice(this.page, this.page + 10)
+            if (loadgroup.length > 0) console.log(loadgroup);
+            const lastmessage = this.chatBody.firstElementChild
+            const lastMessagePos = lastmessage.offsetTop + lastmessage.offsetHeight
+            console.log(lastMessagePos);
+            if (this.chatBody.scrollTop >= lastMessagePos + this.chatBody.offsetHeight) {
+                loadgroup.forEach(message => {
+                    let side = message.ReceiverId === USER_CONTROLLER.Id ? 'right' : 'left'
+                    let content
+                    if (side === 'left') {
+                        content = `
+                            <div class="container-${side}">
+                                <div>
+                                    <img class="profil-img" src="//ui-avatars.com/api/?name=${USER_CONTROLLER.FirstName + USER_CONTROLLER.LastName}&size=30&rounded=true&color=fff&background=random" alt="">
+                                    <br>
+                                    <span>${USER_CONTROLLER.UserName}</span>
+                                </div>
+                                    <div class="message-container ${side}">
+                                    <div class="message">
+                                        ${message.Content}
+                                    </div>
+                                </div>
+                                <span>${new Date(message.Date).toLocaleDateString('en-us', {year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "numeric", second: "numeric" })}</span>
+                            </div>
+                        `
+                    } else {
+                        content =  `
+                            <div class="container-${side}">
+                                <span>${new Date(message.Date).toLocaleDateString('en-us', { weekday: "long", year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "numeric", second: "numeric" })}</span>
+                                <div class="message-container ${side}">
+                                    <p>${message.Content}</p>
+                                </div>
+                                <div>
+                                    <img class="profil-img" src="//ui-avatars.com/api/?name=${CHAT_CONTROLLER.Receiver.username}&size=30&rounded=true&color=fff&background=random" alt="">
+                                    <br>
+                                    <span>${CHAT_CONTROLLER.Receiver.username}</span>
+                                </div>
+                            </div>
+                        `
+                    }
+                    let msg = new DOMParser().parseFromString( content, "text/html").body.firstChild
+                    this.chatBody.prepend(msg)
+                })
+                this.page += 10
+            }
+        })
     }
 
     get modal() {

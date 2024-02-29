@@ -10,6 +10,8 @@ class ChatController {
         this.ReceiverAdress = ""
         this.allMessages = []
         this.chatId = ''
+        this.lastMessages = []
+        this.remainingMessages = []
     }
     
     setReciever(receiver){
@@ -58,7 +60,11 @@ class ChatController {
     }
 
     setAllMessages(messages){
-        if (messages !== null) this.allMessages = messages
+        if (messages !== null) {
+            this.allMessages = messages.reverse()
+            this.lastMessages = this.allMessages.slice(0, 10)
+            this.remainingMessages = this.allMessages.slice(10)
+        }
         else this.messages = []
         // updateComponents()
     }
