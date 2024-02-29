@@ -95,6 +95,16 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 			handlePostDetails(conn, data.Data["postId"])
 		case "appreciation":
 			handleAppreciation(conn, data)
+		case "readMessages":
+			handleReadMessage(data.Data["senderId"], data.Data["receiverId"])
+		}
+	}
+}
+
+func handleReadMessage(senderId, receiverId int) {
+	if senderId > 0 && receiverId > 0 {
+		if err := models.MessageRepo.UpdateUnReadMessages(senderId, receiverId); err != nil {
+			log.Println("Error updationg unread messages")
 		}
 	}
 }

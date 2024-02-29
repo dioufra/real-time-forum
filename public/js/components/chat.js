@@ -86,7 +86,11 @@ export default class Chat extends HTMLElement {
     //             }),
     //         }).then(async response => {
     //             if (!response.ok) {
-    //                 const error = await response.json()
+    //                 const error = await 
+    //         const formData = new FormData(this.messageForm)
+    //         fetch('/api/message', {
+    //             method: 'POST',
+    //             body: JSON.stringify({.json()
     //                 console.log(error);
     //                 NOTIFICATION_CONTROLLER.setMessage(`${response.statusText} : ${error.message}`)
     //                 NOTIFICATION_CONTROLLER.display = true
