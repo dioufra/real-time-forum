@@ -74,20 +74,20 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 	}
 }
 
-func (r *UserRepository) GetAll() ([]User, error) {
-	var users []User
-	req := `SELECT id, firstname, lastname, username, gender, age, email FROM Users`
-	row, err := r.DB.Query(req)
-	if err != nil {
-		return nil, err
-	}
-	for row.Next() {
-		var user User
-		row.Scan(&user.Id, &user.Firstname, &user.Lastname, &user.Username, &user.Gender, &user.Age, &user.Email)
-		users = append(users, user)
-	}
-	return users, nil
-}
+// func (r *UserRepository) GetAll() ([]User, error) {
+// 	var users []User
+// 	req := `SELECT id, firstname, lastname, username, gender, age, email FROM Users`
+// 	row, err := r.DB.Query(req)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	for row.Next() {
+// 		var user User
+// 		row.Scan(&user.Id, &user.Firstname, &user.Lastname, &user.Username, &user.Gender, &user.Age, &user.Email)
+// 		users = append(users, user)
+// 	}
+// 	return users, nil
+// }
 func (r *UserRepository) GetContactedUsers(userId int) ([]User, error) {
 	var users []User
 	req := `SELECT u.id, u.firstname, u.lastname, u.username, u.gender, u.age, u.email

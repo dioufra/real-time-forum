@@ -143,19 +143,19 @@ func getByCommentAndUser(r *AppreciationRepository, com_id int, user_id int) (Ap
 // 	return err
 // }
 
-func (r *AppreciationRepository) GetByPostId(post_id int) (Appreciation, error) {
-	var apprec Appreciation
-	req := `SELECT count(*) as like  , (SELECT count(*) FROM Appreciation WHERE pos_id=? AND dislike=1) as dislike FROM Appreciation WHERE pos_id=? AND like=1;`
-	row, err := r.db.Query(req, post_id, post_id)
-	if err != nil {
-		return apprec, err
-	}
-	for row.Next() {
-		row.Scan(&apprec.Like, &apprec.Dislike)
-	}
+// func (r *AppreciationRepository) GetByPostId(post_id int) (Appreciation, error) {
+// 	var apprec Appreciation
+// 	req := `SELECT count(*) as like  , (SELECT count(*) FROM Appreciation WHERE pos_id=? AND dislike=1) as dislike FROM Appreciation WHERE pos_id=? AND like=1;`
+// 	row, err := r.db.Query(req, post_id, post_id)
+// 	if err != nil {
+// 		return apprec, err
+// 	}
+// 	for row.Next() {
+// 		row.Scan(&apprec.Like, &apprec.Dislike)
+// 	}
 
-	return apprec, row.Err()
-}
+// 	return apprec, row.Err()
+// }
 
 func Update(db *sql.DB, user_id, post_id, value int, colone string) error {
 	req := `UPDATE Appreciation SET ` + colone + `=? WHERE Use_id=? AND  Pos_id=?;`

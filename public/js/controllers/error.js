@@ -1,10 +1,14 @@
 
-class NotificationController {
+class ErrorController {
     constructor() {
         this.display = false
         this.Sender = ""
         this.Message = ""
         this.date = Date.now()
+    }
+    
+    setSender(sender){
+        this.Sender = sender
     }
 
     setMessage(message) {
@@ -21,4 +25,4 @@ class NotificationController {
         this.display = false
     }
 }
-export const NOTIFICATION_CONTROLLER = new NotificationController()
+export const ERROR_CONTROLLER = new ErrorController()

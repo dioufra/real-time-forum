@@ -706,7 +706,7 @@ span {
 .sb-tags {
     display: flex;
     justify-content: space-between;
-    gap: 10px;
+    gap: 20px;
 }
 
 .apprec {
@@ -715,19 +715,19 @@ span {
 
 .sb-tags-l {
     display: flex;
-    background-color: grey;
-    padding: 10px;
+    background-color: #1C1C1C;
+    padding: 6px;
     border-radius: 10px;
-    gap: 5px;
+    gap: 10px;
+    height: max-content;
+}
+
+.material-symbols-outlined {
+    font-size: 16px;
 }
 
 .like {
-    border-radius: 5px;
-    background: #F00;
-    display: flex;
-    padding: 5px 10px;
-    align-items: center;
-    gap: 6px;
+    background-color: #002EA3;
 }
 
 .activity {

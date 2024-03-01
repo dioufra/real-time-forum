@@ -17,6 +17,8 @@ let components = [
     {tagName:'c-filter',src:"./components/filter.js"},
     {tagName:'c-page-loader',src:"./components/pageLoader.js"},
     {tagName:'c-notification',src:"./components/notification.js"},
+    {tagName:'c-error',src:"./components/error.js"},
+
 ]
 
 // Define the custom web component

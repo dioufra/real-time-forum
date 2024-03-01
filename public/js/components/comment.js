@@ -1,5 +1,6 @@
 import { CATEGORY_CONTROLLER } from "../controllers/categorie.js"
 import { COMMENT_CONTROLLER } from "../controllers/comment.js"
+import { ERROR_CONTROLLER } from "../controllers/error.js"
 import { FORM_CONTROLLER } from "../controllers/form.js"
 import { NOTIFICATION_CONTROLLER } from "../controllers/notification.js"
 import { POST_CONTROLLER } from "../controllers/post.js"
@@ -21,20 +22,17 @@ export default class Comment extends HTMLElement {
             })
             data['Use_id'] = USER_CONTROLLER.Id
             data['date'] = date
-            console.log(data);
             fetch('/api/comments/add', {
                 method: 'POST',
                 body: JSON.stringify(data)
             }).then(async response => {
                 if (!response.ok) {
                     const error = await response.json()
-                    console.log(error);
-                    NOTIFICATION_CONTROLLER.setMessage(`${response.statusText} : ${error.message}`)
-                    NOTIFICATION_CONTROLLER.display = true
-                    updateSingleComponent('c-notification')
+                    ERROR_CONTROLLER.setMessage(`${response.statusText} : ${error.message}`)
+                    ERROR_CONTROLLER.display = true
+                    updateSingleComponent('c-error')
                     throw new Error(`${response.statusText} : ${error.message}`);
                 }
-                console.log(response.json());
                 return response.json()
             }).catch(error => {
                 console.error(error)
@@ -125,13 +123,13 @@ export default class Comment extends HTMLElement {
                 </div>
                 <div class="submenu">
                     <div class="sb-tags">
-                        <div class="sb-tags-l like">
-                            <div><img class="apprec" src="/public/img/icones/Heart.svg" alt="" data-like="1" data-dislike="0" data-appreciation-type="post" data-postId="${COMMENT_CONTROLLER.post.Id}"></div>
+                        <div class="sb-tags-l">
+                            <span class="apprec material-symbols-outlined" data-like="1" data-dislike="0" data-appreciation-type="post" data-postId="${COMMENT_CONTROLLER.post.Id}">thumb_up</span>
                             <div id="like-post-id${COMMENT_CONTROLLER.post.Id}">${COMMENT_CONTROLLER.post.NbrLike}</div>
                         </div>
                         <div class="sb-tags-l">
+                            <span class="apprec material-symbols-outlined" data-like="0" data-dislike="1" data-appreciation-type="post" data-postId="${COMMENT_CONTROLLER.post.Id}">thumb_down</span>
                             <div id="dislike-post-id${COMMENT_CONTROLLER.post.Id}">${COMMENT_CONTROLLER.post.NbrDislike}</div>
-                            <div class="apprec" data-like="0" data-dislike="1" data-appreciation-type="post" data-postId="${COMMENT_CONTROLLER.post.Id}">💔</div>
                         </div>
                     </div>
                 </div>
@@ -151,13 +149,13 @@ export default class Comment extends HTMLElement {
                                         </p>
                                     </div>
                                     <div class="sb-tags">
-                                        <div class="sb-tags-l like">
-                                            <div><img class="apprec" src="/public/img/icones/Heart.svg"  data-commentId="${comment.Id}" data-like="1" data-dislike="0" data-appreciation-type="comment" data-postId="${COMMENT_CONTROLLER.post.Id}" alt=""></div>
+                                        <div class="sb-tags-l">
+                                            <span class="apprec material-symbols-outlined" data-commentId="${comment.Id}" data-like="1" data-dislike="0" data-appreciation-type="comment" data-postId="${COMMENT_CONTROLLER.post.Id}">thumb_up</span>
                                             <div id="like-comment-id${comment.Id}">${comment.Like}</div>
                                         </div>
                                         <div class="sb-tags-l">
+                                            <span class="apprec material-symbols-outlined" data-commentId="${comment.Id}" data-like="0" data-dislike="1" data-appreciation-type="comment" data-postId="${COMMENT_CONTROLLER.post.Id}">thumb_down</span>
                                             <div id="dislike-comment-id${comment.Id}">${comment.Dislike}</div>
-                                            <div class="apprec" data-commentId="${comment.Id}" data-like="0" data-dislike="1" data-appreciation-type="comment" data-postId="${COMMENT_CONTROLLER.post.Id}">💔</div>
                                         </div>
                                     </div>
                                 </div>

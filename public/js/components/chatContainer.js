@@ -94,6 +94,9 @@ export default class ChatContainer extends HTMLElement {
                 </div>
             `:``}
         `
+        this.messageForm?.addEventListener('focus', (e) => {
+            console.log('User is typing');
+        })
     }
 
     get modal (){

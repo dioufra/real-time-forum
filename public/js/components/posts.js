@@ -16,6 +16,10 @@ export default class PostsContainer extends HTMLElement {
                 document.dispatchEvent(new CustomEvent('postDetails', {detail: {data: id}}))
                 navigateTo('/post='+id)
             } else if (event.target.classList.contains('apprec')) {
+                if (event.target.classList.contains('like'))
+                    event.target.classList.remove('like')
+                else
+                    event.target.classList.add('like')
                 document.dispatchEvent(new CustomEvent('appreciation', {
                     detail: {
                         type: event.target.getAttribute('data-appreciation-type'),
@@ -78,18 +82,16 @@ export default class PostsContainer extends HTMLElement {
                         </div>
                         <div class="submenu">
                             <div class="sb-tags">
-                            <div class="sb-tags-l like">
-                                <div><img class="apprec" src="/public/img/icones/Heart.svg"  data-like="1" data-dislike="0" data-appreciation-type="post" data-postId="${post.Id}" alt=""></div>
+                            <div class="sb-tags-l">
+                                <span class="apprec material-symbols-outlined" data-like="1" data-dislike="0" data-appreciation-type="post" data-postId="${post.Id}"> thumb_up</span>
                                 <div id="like-post-id${post.Id}">
                                     ${post.NbrLike}
-                                    <span class="material-symbols-outlined">
-                                    thumb_up
-                                    </span>
                                 </div>
                             </div>
                             <div class="sb-tags-l">
-                                <div id="dislike-comment-id${post.Id}">${post.NbrDislike}</div>
-                                <div class="apprec" data-commentId="${post.Id}" data-like="0" data-dislike="1" data-appreciation-type="post" data-postId="${post.Id}">💔</div>
+                            <span class="apprec material-symbols-outlined" data-commentId="${post.Id}" data-like="0" data-dislike="1" data-appreciation-type="post" data-postId="${post.Id}"> thumb_down</span>
+                            <div id="dislike-comment-id${post.Id}">${post.NbrDislike}</div>
+
                             </div>
                             </div>
                             <div class="activity">
