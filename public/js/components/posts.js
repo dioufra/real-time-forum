@@ -80,7 +80,12 @@ export default class PostsContainer extends HTMLElement {
                             <div class="sb-tags">
                             <div class="sb-tags-l like">
                                 <div><img class="apprec" src="/public/img/icones/Heart.svg"  data-like="1" data-dislike="0" data-appreciation-type="post" data-postId="${post.Id}" alt=""></div>
-                                <div id="like-post-id${post.Id}">${post.NbrLike}</div>
+                                <div id="like-post-id${post.Id}">
+                                    ${post.NbrLike}
+                                    <span class="material-symbols-outlined">
+                                    thumb_up
+                                    </span>
+                                </div>
                             </div>
                             <div class="sb-tags-l">
                                 <div id="dislike-comment-id${post.Id}">${post.NbrDislike}</div>
