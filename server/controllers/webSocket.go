@@ -159,7 +159,9 @@ func handleAppreciation(conn *websocket.Conn, data IncomingMessage) {
 
 func BroadcastPostDetails(client *websocket.Conn, data any) {
 	clientsMutex.Lock()
-	defer clientsMutex.Unlock()
+	defer 
+	
+	clientsMutex.Unlock()
 	response := map[string]interface{}{"event": "broadcastPostDetails", "data": data}
 	err := client.WriteJSON(response)
 	if err != nil {

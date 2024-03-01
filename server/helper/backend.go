@@ -199,16 +199,32 @@ func ValidateRegistrationInput(newUser *models.User, w http.ResponseWriter) bool
 }
 
 func ValidatePostInput(post *models.PostPlayload, res http.ResponseWriter) bool {
+	// Verifiction de inputs
 	fieldsTab := [][]string{
-		{"title", post.Title, "The title is required"},
-		{"content", post.Content, "The content is required"},
-		{"categories", strings.Trim(strings.Join(strings.Fields(fmt.Sprint(post.Categories)), ","), "[]"), "Choose at least one category"},
+		{"title", "\\S", post.Title, "The title is required"},
+		{"content", "\\S", post.Content, "The content is required"},
+		{"categories", "^\\[(10|[1-9])(,(10|[1-9]))*\\]$", strings.Join(strings.Fields(fmt.Sprint(post.Categories)), ","), "Choose at least 1 category"},
 	}
 	for _, item := range fieldsTab {
-		field, str, msg := item[0], item[1], item[2]
-		if strings.TrimSpace(str) == "" {
-			errorMessage := map[string]string{"message": msg, "property": field}
-			SendResponse(res, errorMessage, http.StatusBadRequest)
+		field, pattern, str, message := item[0], item[1], item[2], item[3]
+		// Compile the regular expression
+		re, err := regexp.Compile(pattern)
+		if err != nil {
+			fmt.Println("Error compiling regex:", err)
+			return false
+		}
+		// Test if a string matches the regular expression
+		if !re.MatchString(str) {
+			// Create an error message.
+			errorMessage := map[string]string{"message": message, "property": field}
+			res.WriteHeader(http.StatusBadRequest)
+			// Encode the error message as JSON and send it in the response.
+			err := json.NewEncoder(res).Encode(errorMessage)
+			if err != nil {
+				// Handle the error, e.g., log it or send a generic error message.
+				http.Error(res, "Internal Server Error", http.StatusInternalServerError)
+				return false
+			}
 			return false
 		}
 	}
