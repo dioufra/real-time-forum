@@ -135,26 +135,10 @@ export default class Chat extends HTMLElement {
         `
         this.chatBody = document.querySelector('.chat-body')
         this.chatBody?.addEventListener('scrollend', e => {
-            // let content = `
-            // <div class="container-left">
-            // <span>${new Date(Date.now()).toLocaleDateString('en-us', { weekday: "long", year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "numeric", second: "numeric" })}</span>
-            // <div class="message-container left">
-            // <p>Prepended message</p>
-            // </div>
-            // <div>
-            // <img class="profil-img" src="//ui-avatars.com/api/?name=frdiouf&size=30&rounded=true&color=fff&background=random" alt="">
-            // <br>
-            // <span>mane</span>
-            // </div>
-            // </div>`
-            // let message = new DOMParser().parseFromString( content, "text/html").body.firstChild
-            // this.chatBody.prepend(message)
             const loadgroup = CHAT_CONTROLLER.remainingMessages.slice(this.page, this.page + 10)
-            if (loadgroup.length > 0) console.log(loadgroup);
             const lastmessage = this.chatBody.firstElementChild
             const lastMessagePos = lastmessage.offsetTop + lastmessage.offsetHeight
             console.log(lastMessagePos);
-            if (this.chatBody.scrollTop >= lastMessagePos + this.chatBody.offsetHeight) {
                 loadgroup.forEach(message => {
                     let side = message.ReceiverId === USER_CONTROLLER.Id ? 'right' : 'left'
                     let content
@@ -193,7 +177,6 @@ export default class Chat extends HTMLElement {
                     this.chatBody.prepend(msg)
                 })
                 this.page += 10
-            }
         })
     }
 
