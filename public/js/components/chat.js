@@ -16,6 +16,9 @@ export default class Chat extends HTMLElement {
         this.checkCloseButtonListener()
         this.checkSubmitListener()
         this.checkScrollListener()
+        if (this.messageContainer) {
+            console.log("there is a chat body");
+        }
     }
 
     disconnectedCallback() {
@@ -74,9 +77,6 @@ export default class Chat extends HTMLElement {
     }
 
     render() {
-        console.log(CHAT_CONTROLLER.lastMessages);
-        console.log(CHAT_CONTROLLER.remainingMessages);
-        console.log(CHAT_CONTROLLER.allMessages.length, CHAT_CONTROLLER.lastMessages.length + CHAT_CONTROLLER.remainingMessages.length);
         this.innerHTML = /* HTML */ `
             ${USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox ? /*HTML*/`
                 <div class="chat-modal">
@@ -134,11 +134,12 @@ export default class Chat extends HTMLElement {
             `: ``}
         `
         this.chatBody = document.querySelector('.chat-body')
-        this.chatBody?.addEventListener('scrollend', e => {
+        this.chatBody?.addEventListener('scroll', e => {
             const loadgroup = CHAT_CONTROLLER.remainingMessages.slice(this.page, this.page + 10)
             const lastmessage = this.chatBody.firstElementChild
             const lastMessagePos = lastmessage.offsetTop + lastmessage.offsetHeight
-            console.log(lastMessagePos);
+            const scrollPosition = this.chatBody.scrollTop + this.chatBody.clientHeight;
+            if (scrollPosition > lastMessagePos) {
                 loadgroup.forEach(message => {
                     let side = message.ReceiverId === USER_CONTROLLER.Id ? 'right' : 'left'
                     let content
@@ -177,6 +178,8 @@ export default class Chat extends HTMLElement {
                     this.chatBody.prepend(msg)
                 })
                 this.page += 10
+
+            }
         })
     }
 
@@ -195,4 +198,9 @@ export default class Chat extends HTMLElement {
     get chat() {
         return this.querySelector('.chat-modal')
     }
+
+    get messageContainer() {
+        return this.querySelector('.chat-body')
+    }
+
 }

@@ -62,7 +62,7 @@ class ChatController {
     setAllMessages(messages){
         if (messages !== null) {
             this.allMessages = messages.reverse()
-            this.lastMessages = this.allMessages.slice(0, 10)
+            this.lastMessages = this.allMessages.slice(0, 10).reverse()
             this.remainingMessages = this.allMessages.slice(10)
         }
         else this.messages = []
