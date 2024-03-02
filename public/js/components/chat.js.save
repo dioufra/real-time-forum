@@ -1,79 +1,124 @@
 import { CHAT_CONTROLLER } from "../controllers/chat.js"
-import { FORM_CONTROLLER } from "../controllers/form.js"
-import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
+import { updateSingleComponent } from "../script.js"
 
 export default class Chat extends HTMLElement {
     constructor() {
-        super()
+        super();
+        this.page = 1;
+        this.loading = false; // Flag to prevent multiple simultaneous loading
+        this.throttleDelay = 300; // Milliseconds delay for debouncing
+        this.debouncedScrollHandler = this.debounce(this.handleScroll, this.throttleDelay);
     }
-
+    
     connectedCallback() {
-        this.render()
-        this.checkCloseButtonListener()
-        this.checkSubmitListener()
-        this.checkScrollListener()
+        this.render();
+        this.checkCloseButtonListener();
+        this.checkSubmitListener();
+        if (this.messageContainer) {
+            console.log("there is a chat body");
+        }
+        // this.chatBody?.addEventListener('scroll', this.debouncedScrollHandler); // Add debounced scroll event listener
     }
 
     disconnectedCallback() {
+        this.chatBody?.removeEventListener('scroll', this.debouncedScrollHandler); // Remove scroll event listener when component is removed
     }
 
-    shouldComponentRender() {
-        return USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox
+    debounce(func, delay) {
+        let timeoutId;
+        return function(...args) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                func.apply(this, args);
+            }, delay);
+        };
     }
+
+    handleScroll() {
+        this.loadMoreMessages();
+        // if (this.chatBody.scrollTop === 0 && !this.loading) {
+        // }
+    }
+
+    async loadMoreMessages() {
+        try {
+            this.loading = true; // Set loading flag to true to prevent multiple simultaneous loading
+            const loadgroup = CHAT_CONTROLLER.remainingMessages.slice(this.page, this.page + 10);
+            const lastMessage = this.chatBody.firstElementChild;
+            const lastMessagePos = lastMessage.offsetTop + lastMessage.offsetHeight;
+            const scrollPosition = this.chatBody.scrollTop + this.chatBody.clientHeight;
+
+            if (scrollPosition <= lastMessagePos) {
+                return; // Return if the scroll position is not at the bottom
+            }
+
+            loadgroup.forEach(message => {
+                let side = message.ReceiverId === USER_CONTROLLER.Id ? 'right' : 'left';
+                let content = `
+                    <div class="container-${side}">
+                        <span>${new Date(message.Date).toLocaleDateString('en-us', { weekday: "long", year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "numeric", second: "numeric" })}</span>
+                        <div class="message-container ${side}">
+                            <p>${message.Content}</p>
+                        </div>
+                        <div>
+                            <img class="profil-img" src="//ui-avatars.com/api/?name=${side === 'left' ? USER_CONTROLLER.FirstName + USER_CONTROLLER.LastName : CHAT_CONTROLLER.Receiver.username}&size=30&rounded=true&color=fff&background=random" alt="">
+                            <br>
+                            <span>${side === 'left' ? USER_CONTROLLER.UserName : CHAT_CONTROLLER.Receiver.username}</span>
+                        </div>
+                    </div>
+                `;
+                let msg = new DOMParser().parseFromString(content, "text/html").body.firstChild;
+                this.chatBody.prepend(msg);
+            });
+            this.page += 10;
+        } catch (error) {
+            console.error("Error loading more messages:", error);
+        } finally {
+            this.loading = false; // Reset loading flag after loading is completed
+        }
+    }
+
     checkCloseButtonListener() {
         this.addEventListener('click', e => {
             if (e.target.tagName === 'BUTTON' && e.target.className === 'close-btn') {
-                this.modal?.classList.add('hidden')
-                CHAT_CONTROLLER.displayBox = false
+                this.modal?.classList.add('hidden');
+                CHAT_CONTROLLER.displayBox = false;
             }
-        })
-    }
-
-    checkScrollListener() {
-        this.scrollTop = SCROLL_CONTROLLER.elements.userInfo?.scrollTop || 0
-        this.chat?.addEventListener('scroll', e => {
-            SCROLL_CONTROLLER.setScroll('chat', e.target)
-        })
+        });
     }
 
     checkSubmitListener() {
-        this.addEventListener('submit', (event) => {
-            event.preventDefault()
-            const formData = new FormData(this.messageForm)
-            fetch('/api/message', {
-                method: 'POST',
-                body: JSON.stringify({
-                    SenderAdress: CHAT_CONTROLLER.SenderAdress,
-                    ReceiverAdress: CHAT_CONTROLLER.ReceiverAdress,
-                    SenderId: USER_CONTROLLER.Id,
-                    // Sender: `${USER_CONTROLLER.FirstName} ${USER_CONTROLLER.LastName}`,
-                    ReceiverId: CHAT_CONTROLLER.Receiver.id,
-                    ChatId: CHAT_CONTROLLER.chatId,
-                    Content: formData.get('content'),
-                }),
-            }).then(response => {
+        this.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(this.messageForm);
+            try {
+                const response = await fetch('/api/message', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        SenderAdress: CHAT_CONTROLLER.SenderAdress,
+                        ReceiverAdress: CHAT_CONTROLLER.ReceiverAdress,
+                        SenderId: USER_CONTROLLER.Id,
+                        ReceiverId: CHAT_CONTROLLER.Receiver.id,
+                        ChatId: CHAT_CONTROLLER.chatId,
+                        Content: formData.get('content'),
+                    }),
+                });
+
                 if (!response.ok) {
-                    if (response.status === 400) {
-                        response.json()
-                            .then(error => {
-                                console.log(error.message)
-                                FORM_CONTROLLER.setError('message', error.message)
-                            })
-                        return
-                    } else {
-                        throw new Error('Erreur de réseau');
-                    }
+                    const error = await response.json();
+                    console.log(error);
+                    throw new Error(`${response.statusText} : ${error.message}`);
                 }
-                return response.json()
-            })
-                .then(data => {
-                    if (data) {
-                        // console.log('data',data)
-                    }
-                })
-                .catch(console.error);
-        })
+
+                return await response.json();
+            } catch (error) {
+                console.error("Error sending message:", error);
+                NOTIFICATION_CONTROLLER.setMessage(`${error.message}`);
+                NOTIFICATION_CONTROLLER.display = true;
+                updateSingleComponent('c-notification');
+            }
+        });
     }
 
     render() {
@@ -91,33 +136,36 @@ export default class Chat extends HTMLElement {
                         <button class="close-btn">X</button>
                     </div>
                     <div class="chat-body" >
-                        ${CHAT_CONTROLLER.allMessages.map(message => {
+                        ${CHAT_CONTROLLER.lastMessages.map(message => {
                         let side = message.ReceiverId === USER_CONTROLLER.Id ? 'right' : 'left'
                         if (side === 'left')
                             return `
-                                    <div class="container-${side} message">
-                                        <div class="sender">
-                                            <img class="profil-img" src="//ui-avatars.com/api/?name=${USER_CONTROLLER.FirstName + USER_CONTROLLER.LastName}&size=10&rounded=true&color=fff&background=random" alt="">
-                                            <p class="username">${USER_CONTROLLER.UserName}</p>
+                                    <div class="container-${side}">
+                                        <div>
+                                            <img class="profil-img" src="//ui-avatars.com/api/?name=${USER_CONTROLLER.FirstName + USER_CONTROLLER.LastName}&size=30&rounded=true&color=fff&background=random" alt="">
+                                            <br>
+                                            <span>${USER_CONTROLLER.UserName}</span>
                                         </div>
-                                        <div class="message-container ${side}">
-                                            <p>${message.Content}</p>
+                                            <div class="message-container ${side}">
+                                            <div class="message">
+                                                ${message.Content}
+                                            </div>
                                         </div>
                                         <span>${new Date(message.Date).toLocaleDateString('en-us', {year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "numeric", second: "numeric" })}</span>
                                     </div>
-                                    ${new Date(message.Date).toLocaleDateString('en-us', {year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "numeric", second: "numeric" })}
                                 `
                         return `
-                                <div class="container-${side} message">
+                                <div class="container-${side}">
+                                    <span>${new Date(message.Date).toLocaleDateString('en-us', { weekday: "long", year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "numeric", second: "numeric" })}</span>
                                     <div class="message-container ${side}">
                                         <p>${message.Content}</p>
                                     </div>
-                                    <div class="sender">
+                                    <div>
                                         <img class="profil-img" src="//ui-avatars.com/api/?name=${CHAT_CONTROLLER.Receiver.username}&size=30&rounded=true&color=fff&background=random" alt="">
-                                        <p class="username">${CHAT_CONTROLLER.Receiver.username}</p>
+                                        <br>
+                                        <span>${CHAT_CONTROLLER.Receiver.username}</span>
                                     </div>
                                 </div>
-                                ${new Date(message.Date).toLocaleDateString('en-us', { weekday: "long", year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "numeric", second: "numeric" })}
                             `
                         }).join('') || ""}
                     </div>
@@ -130,6 +178,56 @@ export default class Chat extends HTMLElement {
                 </div>
             `: ``}
         `
+        this.chatBody = document.querySelector('.chat-body')
+        this.chatBody?.addEventListener('scroll', this.debouncedScrollHandler); // Add debounced scroll event listener
+        // this.chatBody?.addEventListener('scrollend', e => {
+        //     console.log("scroll has ended");
+        //     const loadgroup = CHAT_CONTROLLER.remainingMessages.slice(this.page, this.page + 10)
+        //     const lastmessage = this.chatBody.firstElementChild
+        //     const lastMessagePos = lastmessage.offsetTop + lastmessage.offsetHeight
+        //     const scrollPosition = this.chatBody.scrollTop + this.chatBody.clientHeight;
+        //     if (scrollPosition > lastMessagePos) {
+        //         loadgroup.forEach(message => {
+        //             let side = message.ReceiverId === USER_CONTROLLER.Id ? 'right' : 'left'
+        //             let content
+        //             if (side === 'left') {
+        //                 content = `
+        //                     <div class="container-${side}">
+        //                         <div>
+        //                             <img class="profil-img" src="//ui-avatars.com/api/?name=${USER_CONTROLLER.FirstName + USER_CONTROLLER.LastName}&size=30&rounded=true&color=fff&background=random" alt="">
+        //                             <br>
+        //                             <span>${USER_CONTROLLER.UserName}</span>
+        //                         </div>
+        //                             <div class="message-container ${side}">
+        //                             <div class="message">
+        //                                 ${message.Content}
+        //                             </div>
+        //                         </div>
+        //                         <span>${new Date(message.Date).toLocaleDateString('en-us', {year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "numeric", second: "numeric" })}</span>
+        //                     </div>
+        //                 `
+        //             } else {
+        //                 content =  `
+        //                     <div class="container-${side}">
+        //                         <span>${new Date(message.Date).toLocaleDateString('en-us', { weekday: "long", year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "numeric", second: "numeric" })}</span>
+        //                         <div class="message-container ${side}">
+        //                             <p>${message.Content}</p>
+        //                         </div>
+        //                         <div>
+        //                             <img class="profil-img" src="//ui-avatars.com/api/?name=${CHAT_CONTROLLER.Receiver.username}&size=30&rounded=true&color=fff&background=random" alt="">
+        //                             <br>
+        //                             <span>${CHAT_CONTROLLER.Receiver.username}</span>
+        //                         </div>
+        //                     </div>
+        //                 `
+        //             }
+        //             let msg = new DOMParser().parseFromString( content, "text/html").body.firstChild
+        //             this.chatBody.prepend(msg)
+        //         })
+        //         this.page += 10
+
+        //     }
+        // })
     }
 
     get modal() {
@@ -147,4 +245,9 @@ export default class Chat extends HTMLElement {
     get chat() {
         return this.querySelector('.chat-modal')
     }
+
+    get messageContainer() {
+        return this.querySelector('.chat-body')
+    }
+
 }
