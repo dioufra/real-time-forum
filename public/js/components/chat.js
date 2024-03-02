@@ -29,20 +29,23 @@ export default class Chat extends HTMLElement {
     }
 
     handleScroll() {
-        this.loadMoreMessages();
-        // if (this.scrollTop === 0 && !this.loading) {
-        // }
+        if (this.scrollTop === 0 && !this.loading) {
+            this.loadMoreMessages();
+        }
     }
 
     async loadMoreMessages() {
         try {
-            this.loading = true; // Set loading flag to true to prevent multiple simultaneous loading
+            // this.loading = true
             const loadgroup = CHAT_CONTROLLER.remainingMessages.slice(this.page, this.page + 10);
             const lastMessage = this.firstElementChild;
             const lastMessagePos = lastMessage.offsetTop + lastMessage.offsetHeight;
             const scrollPosition = this.scrollTop + this.clientHeight;
+            const prevScrollHeight = this.scrollHeight; 
+            // this.loading = false
 
             if (scrollPosition <= lastMessagePos) {
+                console.log('TEST');
                 return; // Return if the scroll position is not at the bottom
             }
 
@@ -72,6 +75,9 @@ export default class Chat extends HTMLElement {
                 this.prepend(msg);
             });
             this.page += 10;
+            const newMessagesHeight = this.scrollHeight - prevScrollHeight;
+            this.scrollTop += newMessagesHeight;
+
         } catch (error) {
             console.error("Error loading more messages:", error);
         } finally {
@@ -81,12 +87,12 @@ export default class Chat extends HTMLElement {
 
     connectedCallback() {
         this.render()
-        this.addEventListener('scrollend', this.debouncedScrollHandler)
+        this.addEventListener('scroll', this.debouncedScrollHandler)
     }
 
 
     disconnectedCallback() {
-        this.removeEventListener('scrollend ', this.debouncedScrollHandler)
+        this.removeEventListener('scroll ', this.debouncedScrollHandler)
     }
     
 
@@ -94,12 +100,11 @@ export default class Chat extends HTMLElement {
         return USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox
     }
     render() {
-        this.scrollTop = this.scrollHeight
         this.innerHTML = /* HTML */ `
-            ${USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox ? /*HTML*/`
+        ${USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox ? /*HTML*/`
                 ${CHAT_CONTROLLER.showLoader ? `
                     <div class="chat-loader">
-                        <div class="loader"></div>
+                    <div class="loader"></div>
                     </div>`: ``
                 }
                 ${CHAT_CONTROLLER.lastMessages.map(message => {
@@ -109,22 +114,22 @@ export default class Chat extends HTMLElement {
                         <div class="container container-${side}">
                             <div>
                                 <div class="message-container ${side}">
-                                    <p class="username">
+                                <p class="username">
                                         @${username}
-                                    </p>
-                                    <p>${message.Content}</p>
-                                </div>
+                                        </p>
+                                        <p>${message.Content}</p>
+                                        </div>
                                 <div class="image-container">
-                                    <img class="profil-img" src="//ui-avatars.com/api/?name=${username}&size=30&rounded=true&color=fff&background=random" alt="">
+                                <img class="profil-img" src="//ui-avatars.com/api/?name=${username}&size=30&rounded=true&color=fff&background=random" alt="">
                                 </div>
-                            </div>
-                            <p class="date">
+                                </div>
+                                <p class="date">
                                 ${new Date(message.Date).toLocaleDateString('en-us', { weekday: "long", year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "numeric", second: "numeric" })}
-                            </p>
-                        </div>
-                    `
-                }).join('') || ""}
-            `: ``}
+                                </p>
+                                </div>
+                                `
+                            }).join('') || ""}
+                            `: ``}
         `
         if (USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox) {
             // this.checkScrollListener()
@@ -135,6 +140,7 @@ export default class Chat extends HTMLElement {
                 }
             }))
         }
+        this.scrollTop = this.scrollHeight
     }
 
     get modal() {
