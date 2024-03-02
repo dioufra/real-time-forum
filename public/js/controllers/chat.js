@@ -13,6 +13,8 @@ class ChatController {
         this.scrollLimit = 0
         this.chatId = ''
         this.scroll = { top: 2000, left: 0 }
+        this.lastMessages = []
+        this.remainingMessages
 
         this.showLoader = true
     }
@@ -78,12 +80,16 @@ class ChatController {
     }
     setAllMessages(messages) {
         if (messages !== null) {
-            this.allMessages = messages
+            this.allMessages = messages.reverse()
+            this.lastMessages = this.allMessages.slice(0, 10).reverse()
+            this.remainingMessages = this.allMessages.slice(10)
             this.filterMesages()
         }
         else this.messages = []
         // updateComponents()
     }
+
+
     filterMesages() {
         this.scrollLimit += 10
         let before = this.filteredMessages.length
