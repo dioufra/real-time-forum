@@ -91,6 +91,7 @@ export default class Socket extends HTMLElement {
     checkMessagesReader() {
         document.addEventListener('readMessages', (event) => {
             // console.log(event.detail);
+            console.log('Updating un read messages: ', event);
             this.sendData(JSON.stringify({ event: "readMessages", data: event.detail }))
         })
     }

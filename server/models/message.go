@@ -68,6 +68,7 @@ func (r *MessageRepository) GetUnReadMessages(senderId int, receiverId int) (res
 	return result, row.Err()
 }
 func (r *MessageRepository) UpdateUnReadMessages(senderId int, receiverId int) (err error) {
+	// OR sender_id = ? AND receiver_id = ?
 	req := `UPDATE "Message"
 			SET is_read = ?
 			WHERE (sender_id = ? AND receiver_id = ?)

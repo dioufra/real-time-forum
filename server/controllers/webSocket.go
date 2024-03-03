@@ -104,7 +104,7 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 func handleReadMessage(senderId, receiverId int) {
 	if senderId > 0 && receiverId > 0 {
 		if err := models.MessageRepo.UpdateUnReadMessages(senderId, receiverId); err != nil {
-			log.Println("Error updationg unread messages")
+			log.Println("Error updationg unread messages", err)
 		}
 	}
 }

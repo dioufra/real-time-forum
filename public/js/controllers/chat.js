@@ -78,31 +78,54 @@ class ChatController {
                 });
         }
     }
+
+    parseMessage(username, message, side) {
+        const content = `
+            <div class="container container-${side}">
+                <div>
+                    <div class="message-container ${side}">
+                        <p class="username">
+                            @${username}
+                        </p>
+                        <p>${message.Content}</p>
+                    </div>
+                    <div class="image-container">
+                        <img class="profil-img" src="//ui-avatars.com/api/?name=${username}&size=30&rounded=true&color=fff&background=random" alt="">
+                    </div>
+                </div>
+                <p class="date">
+                    ${new Date(message.Date).toLocaleDateString('en-us', { weekday: "long", year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "numeric", second: "numeric" })}
+                </p>
+            </div>
+        `;
+        return new DOMParser().parseFromString(content, "text/html").body.firstChild;
+    }
+
     setAllMessages(messages) {
         if (messages !== null) {
             this.allMessages = messages.reverse()
             this.lastMessages = this.allMessages.slice(0, 10).reverse()
             this.remainingMessages = this.allMessages.slice(10)
-            this.filterMesages()
+            // this.filterMesages()
         }
         else this.messages = []
         // updateComponents()
     }
 
 
-    filterMesages() {
-        this.scrollLimit += 10
-        let before = this.filteredMessages.length
-        this.filteredMessages = this.allMessages.filter((_, i) => {
-            return i > this.allMessages.length - this.scrollLimit
-        })
-        let after = this.filteredMessages.length
-        return before !== after
-    }
-    setScroll(target, firstMessage) {
-        let { scrollTop: top, scrollLeft: left } = target
-        this.scroll = { top, left }
-    }
+    // filterMesages() {
+    //     this.scrollLimit += 10
+    //     let before = this.filteredMessages.length
+    //     this.filteredMessages = this.allMessages.filter((_, i) => {
+    //         return i > this.allMessages.length - this.scrollLimit
+    //     })
+    //     let after = this.filteredMessages.length
+    //     return before !== after
+    // }
+    // setScroll(target, firstMessage) {
+    //     let { scrollTop: top, scrollLeft: left } = target
+    //     this.scroll = { top, left }
+    // }
     reset() {
         this.Receiver = {}
         this.displayBox = false
