@@ -7,6 +7,10 @@ class NotificationController {
         this.date = Date.now()
     }
 
+    setSender(sender) {
+        this.Sender = sender
+    }
+
     setMessage(message) {
         this.Message = message
     }

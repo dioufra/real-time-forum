@@ -1,4 +1,5 @@
 import { updateComponents, updateSingleComponent } from "../script.js";
+import { ERROR_CONTROLLER } from "./error.js";
 import { NOTIFICATION_CONTROLLER } from "./notification.js";
 import { USER_CONTROLLER } from "./user.js";
 
@@ -40,11 +41,10 @@ class ChatController {
                 }),
             }).then(async response => {
                 if (!response.ok) {
-                    console.log(response);
                     const error = await response.json()
-                    NOTIFICATION_CONTROLLER.setMessage(`${response.statusText} : ${error.message}`)
-                    NOTIFICATION_CONTROLLER.display = true
-                    updateSingleComponent('c-notification')
+                    ERROR_CONTROLLER.setMessage(`${response.statusText} : ${error.message}`)
+                    ERROR_CONTROLLER.display = true
+                    updateSingleComponent('c-error')
                     throw new Error(`${response.statusText} : ${error.message}`);
                 }
                 return response.json()

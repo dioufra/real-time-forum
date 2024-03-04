@@ -1,4 +1,5 @@
 import { CHAT_CONTROLLER } from "../controllers/chat.js"
+import { ERROR_CONTROLLER } from "../controllers/error.js"
 import { FORM_CONTROLLER } from "../controllers/form.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 import { updateSingleComponent } from "../script.js"
@@ -45,19 +46,13 @@ export default class ChatContainer extends HTMLElement {
                     ChatId: CHAT_CONTROLLER.chatId,
                     Content:formData.get('content'),
                 }),
-            }).then(response => {
+            }).then(async response => {
                 if (!response.ok) {
-                    if (response.status === 400) {
-                        response.json()
-                        .then(error => {
-                            console.log(error.message)
-                            FORM_CONTROLLER.setError('message',error.message)
-                            updateSingleComponent('c-chat-container')
-                        })
-                        return
-                    } else {
-                        throw new Error('Erreur de réseau');
-                    }
+                    const error =  await response.json()
+                    ERROR_CONTROLLER.setMessage(`${response.statusText} : ${error.message}`)
+                    ERROR_CONTROLLER.display = true
+                    updateSingleComponent('c-error')
+                    throw new Error(`${response.statusText} : ${error.message}`);
                 }
                 return response.json()
             })
