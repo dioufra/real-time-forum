@@ -102,11 +102,13 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleReadMessage(senderId, receiverId int) {
+	clientsMutex.Lock()
 	if senderId > 0 && receiverId > 0 {
 		if err := models.MessageRepo.UpdateUnReadMessages(senderId, receiverId); err != nil {
 			log.Println("Error updationg unread messages", err)
 		}
 	}
+	clientsMutex.Unlock()
 }
 
 func handlePostDetails(conn *websocket.Conn, postId int) {
