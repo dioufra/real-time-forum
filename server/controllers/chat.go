@@ -40,17 +40,34 @@ func Chat(res http.ResponseWriter, req *http.Request) {
 		helper.HandleError(res, "Could not get chat messages", http.StatusInternalServerError)
 		return
 	}
+
+	messages, err := models.MessageRepo.Get(body.SenderId, body.ReceiverId)
+
+	if err != nil {
+		fmt.Println("Error loading chat messages: ", err)
+		return
+	}
+
+	data := &struct {
+		Messages []models.Message
+		ChatId  int
+	}{
+		messages,
+		body.ChatId,
+	}
+
 	if err := json.NewEncoder(res).Encode(map[string]any{
 		"message":        "Chat started",
 		"SenderAdress":   body.SenderAdress,
 		"ReceiverAdress": body.ReceiverAdress,
-		"ChatId": body.ChatId,
+		"content":           data,
 	}); err != nil {
 		log.Println("❌ Error encoding JSON response:", err)
 		helper.HandleError(res, "Error encoding JSON response", http.StatusInternalServerError)
 		return
 	}
-	BroadcastChat(body.SenderId, body.ReceiverId, body.ChatId, body.SenderAdress, body.ReceiverAdress)
+
+	// BroadcastChat(body.SenderId, body.ReceiverId, body.ChatId, body.SenderAdress, body.ReceiverAdress)
 	BroadcastContactedUsers()
 	BroadcastOnlineUsers()
 	defer req.Body.Close()

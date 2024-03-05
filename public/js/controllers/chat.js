@@ -25,7 +25,7 @@ class ChatController {
     }
 
     startNewChat(senderId, receiverId) {
-        this.reset()
+        // this.reset()
         senderId = parseInt(senderId) || 0
         receiverId = parseInt(receiverId) || 0
         this.chatId = senderId + receiverId
@@ -53,24 +53,31 @@ class ChatController {
             })
                 .then(data => {
                     if (data) {
+                        const messages = data.content.Messages !== null ? data.content.Messages : []
+                        console.log(messages);
+                        this.setAllMessages(messages)
                         this.SenderAdress = data.SenderAdress
                         this.ReceiverAdress = data.ReceiverAdress
                         this.displayBox = true
-                        this.showLoader = true
-                        this.scrollLimit = 10
-                        this.scroll = { top: 2000, left: 0 }
+                        this.chatId = data.content.ChatId
+                        // this.showLoader = true
+                        // this.scrollLimit = 10
+                        // this.scroll = { top: 2000, left: 0 }
                         this.setReciever(receiver)
-                        // if (this.allMessages.length <= 10) this.showLoader = false
-                        // if (CHAT_CONTROLLER.chatId === data.ChatId )
-                        updateSingleComponent('c-chat-container')
 
-                        setTimeout(() => {
-                            if (this.allMessages.length < 10) {
-                                this.showLoader = false
-                                // if (CHAT_CONTROLLER.chatId === data.ChatId )
-                                updateSingleComponent('c-chat-container')
-                            }
-                        }, 1000);
+                        updateSingleComponent('c-chat-container')
+                        // // if (this.allMessages.length <= 10) this.showLoader = false
+                        // // if (CHAT_CONTROLLER.chatId === data.ChatId )
+                        // updateSingleComponent('c-chat-container')
+
+                        // setTimeout(() => {
+                        //     if (this.allMessages.length < 10) {
+                        //         this.showLoader = false
+                        //         // if (CHAT_CONTROLLER.chatId === data.ChatId )
+                        //         updateSingleComponent('c-chat-container')
+                        //     }
+                        // }, 1000);
+                        console.log(data);
                     }
                 })
                 .catch(error => {

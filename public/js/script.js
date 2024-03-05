@@ -41,3 +41,10 @@ export const updateSingleComponent = (tagName)=> {
         if (element?.render) element.render()
     })
 }
+
+
+export const updateComponentsList = (components) => {
+    components.forEach(component => {
+        updateSingleComponent(component)
+    })
+}

@@ -112,7 +112,7 @@ export default class Socket extends HTMLElement {
             if (CHAT_CONTROLLER.chatId === e.detail.data.ChatId) {
                 const messages = e.detail.data.Message !== null ? e.detail.data.Message : []
                 CHAT_CONTROLLER.setAllMessages(messages)
-                updateSingleComponent('c-chat-container')
+                updateSingleComponent('c-chat')
             }
 
         })
@@ -149,8 +149,8 @@ export default class Socket extends HTMLElement {
         this.addEventListener('broadcastAllPosts', e => {
             // console.log("broadcastAllPosts",e.detail.data)
             POST_CONTROLLER.setPosts(e.detail.data)
-            // updateSingleComponent('c-posts-container')
-            verifyLocationHref()
+            updateSingleComponent('c-posts-container')
+            // verifyLocationHref()
         })
     }
     checkAllCategoriesListener() {

@@ -109,7 +109,7 @@ export default class Chat extends HTMLElement {
         this.innerHTML = /* HTML */ `
             ${USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox ? /*HTML*/`
                     ${CHAT_CONTROLLER.lastMessages.map(message => {
-                        let side = message.RecieverId === USER_CONTROLLER.Id ? 'left' : 'right'
+                        let side = message.RecieverId === USER_CONTROLLER.Id ? 'right' : 'left'
                         let username = side === 'left' ? USER_CONTROLLER.UserName : CHAT_CONTROLLER.Receiver.username
                         return /* HTML */`
                             <div class="container container-${side}">

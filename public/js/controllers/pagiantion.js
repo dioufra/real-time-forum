@@ -1,4 +1,5 @@
 import { verifyLocationHref } from "../routes/routechecker.js";
+import { updateComponentsList, updateSingleComponent } from "../script.js";
 import { POST_CONTROLLER } from "./post.js";
 
 class PaginationController {
@@ -7,18 +8,19 @@ class PaginationController {
         this.CurrentPage = 1
         this.isLoading = true
     }
-    setCurrentPage(page){
-        console.log(page);
+    setCurrentPage(page) {
         this.CurrentPage = page
-        POST_CONTROLLER.filteredPosts = POST_CONTROLLER.posts.filter((post,index)=> {
-            return index >= (page - 1) * this.PageSize && index < (page *  this.PageSize)
+        POST_CONTROLLER.filteredPosts = POST_CONTROLLER.posts.filter((post, index) => {
+            return index >= (page - 1) * this.PageSize && index < (page * this.PageSize)
         })
     }
-    setIsLoading(bool){
+    setIsLoading(bool) {
         setTimeout(() => {
             this.isLoading = bool
             verifyLocationHref()
             // updateComponents()
+            // updateComponentsList(['c-'])
+            // updateSingleComponent('c-posts-container')
         }, 1000);
     }
 }

@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 export function navigateTo(url) {
     // Update the URL and push a state to the browser's history
+    console.log('Navigation to', url);
     history.pushState(null, null, url);
     ROUTER.currentRoute = window.location.pathname
     updateComponents()
@@ -66,11 +67,7 @@ export function verifyLocationHref() {
             let id = parseInt(href.match(/[(\d)(default)]+$/))||0
             let page = parseInt(href.match(/[0-9]+\?/))
             setTimeout(() => {
-                if (
-                    !CATEGORY_CONTROLLER.categories.find(c=>c.Id === id)
-                    ||
-                    page > Math.ceil(POST_CONTROLLER.posts.length / PAGE_CONTROLLER.PageSize)
-                ) {
+                if ( !CATEGORY_CONTROLLER.categories.find(c=>c.Id === id) || page > Math.ceil(POST_CONTROLLER.posts.length / PAGE_CONTROLLER.PageSize)) {
                     backToHomePage()
                     return
                 }
@@ -86,5 +83,5 @@ export function verifyLocationHref() {
     }else{
         
     }
-    updateComponents()
+    updateComponents('')
 }
