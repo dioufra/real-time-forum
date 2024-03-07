@@ -10,7 +10,7 @@ export default class ChatContainer extends HTMLElement {
     }
 
     connectedCallback() {
-        this.render()
+        // this.render()
         this.checkCloseButtonListener()
         this.checkSubmitListener()
     }
@@ -94,9 +94,11 @@ export default class ChatContainer extends HTMLElement {
                 </div>
             `:``}
         `
-        this.messageForm?.addEventListener('focus', (e) => {
-            console.log('User is typing');
-        })
+        // const inputElement = this.messageForm?.querySelector('input[name="content"]');
+        // console.log(inputElement);
+        // inputElement?.addEventListener('focus', (e) => {
+        //     console.log('User is typing');
+        // });
     }
 
     get modal (){
@@ -112,30 +114,3 @@ export default class ChatContainer extends HTMLElement {
         return this.querySelector('.chat-modal')
     }
 }
-
-
-// ${CHAT_CONTROLLER.allMessages.map(message => {
-//     let side = message.ReceiverId === USER_CONTROLLER.Id ? 'right' : 'left'                
-//     if (side === 'left')
-//         return `
-//             <div class="container-${side}">
-//                 <img class="profil-img" src="//ui-avatars.com/api/?name=${USER_CONTROLLER.FirstName + USER_CONTROLLER.LastName}&size=30&rounded=true&color=fff&background=random" alt="">
-//                 <p class="username">${USER_CONTROLLER.UserName}</p>
-
-//                 <div class="message-container ${side}">
-//                     <p>${message.Content}</p>
-//                 </div>
-//             </div>
-//             ${new Date(message.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})}
-//         `
-//     return `
-//         <div class="container-${side}">
-//             <div class="message-container ${side}">
-//                 <p>${message.Content}</p>
-//             </div>
-//             <p class="username">${CHAT_CONTROLLER.Receiver.username}</p>
-//             <img class="profil-img" src="//ui-avatars.com/api/?name=${CHAT_CONTROLLER.Receiver.username}&size=30&rounded=true&color=fff&background=random" alt="">
-//         </div>
-//         ${new Date(message.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})   }
-//     `
-// }).join('') || ""}

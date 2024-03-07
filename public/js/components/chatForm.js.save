@@ -1,0 +1,41 @@
+import { CHAT_CONTROLLER } from "../controllers/chat.js"
+import { FORM_CONTROLLER } from "../controllers/form.js"
+import { USER_CONTROLLER } from "../controllers/user.js"
+import { updateSingleComponent } from "../script.js"
+
+export default class ChatForm extends HTMLElement {
+    constructor() {
+        super()
+        this.chatId = ''
+    }
+
+    connectedCallback() {
+        this.render()
+    }
+
+    disconnectedCallback() {
+    }
+
+    shouldComponentRender() {
+        return USER_CONTROLLER.IsAuth && CHAT_CONTROLLER.displayBox
+    }
+
+    render() {
+        this.innerHTML = /* HTML */ `
+            <div class="chat-footer" >
+                <form action="/api/message" method="post">
+                    <input name="content" placeholder="Message" />
+                    <button type="submit"></button>
+                </form>
+            </div>
+        `
+        // const inputElement = this.querySelector('input[name="content"]');
+        // inputElement.addEventListener('focus', (e) => {
+        //     console.log('User is typing');
+        // });
+    }
+
+    get form() {
+        return this.querySelector('form')
+    }
+}

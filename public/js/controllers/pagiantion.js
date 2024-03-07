@@ -6,6 +6,7 @@ class PaginationController {
     constructor() {
         this.PageSize = 5
         this.CurrentPage = 1
+        this.filteredPosts = []
         this.isLoading = true
     }
     setCurrentPage(page) {

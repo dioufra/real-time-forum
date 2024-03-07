@@ -3,8 +3,9 @@ import { COMMENT_CONTROLLER } from "../controllers/comment.js"
 import { POST_CONTROLLER } from "../controllers/post.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 import { navigateTo } from "../routes/routechecker.js"
+import { updateSingleComponent } from "../script.js"
 
-export default class PostsContainer extends HTMLElement {
+export default class Posts extends HTMLElement {
     constructor() {
         super()
         this.commentPage = true
@@ -34,15 +35,29 @@ export default class PostsContainer extends HTMLElement {
                 }))
             }
         }
+
+        // this.paginationListener = (event) => {
+        //     console.log("paginating to ", event.detail.page);
+        //     let page = event.detail.page
+        //     POST_CONTROLLER.filteredPosts = POST_CONTROLLER.posts.filter((post, index) => {
+        //         return index >= (page - 1) * this.PageSize && index < (page * this.PageSize)
+        //     })
+        //     updateSingleComponent('c-posts-container')
+        // }
     }
+
+
 
 
     connectedCallback() {
         this.render()
         this.addEventListener('click', this.clickListener)
+        this.addEventListener('ok-pagination', this.paginationListener)
     }
 
     disconnectedCallback() {
+        // this.removeEventListener('click', this.clickListener)
+        // this.removeEventListener('ok-pagination', this.paginationListener)
     }
 
     shouldComponentRender() {

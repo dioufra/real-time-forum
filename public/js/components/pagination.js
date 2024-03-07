@@ -27,8 +27,13 @@ export default class Pagination extends HTMLElement {
                 event.preventDefault();
                 let page = parseInt(event.target.href.split('=').reverse()[0])
                 if (Boolean(page)) {
-                    navigateTo(window.location.href.replace(new RegExp('page=[0-9]+'),'page='+page));
-                    verifyLocationHref()
+                    const e = new CustomEvent('ok-pagination', {
+                        detail: {page: page},
+                        bubbles: true,
+                        cancalable: true,
+                        composed: true
+                    })
+                    this.dispatchEvent(e)
                 }
             }
         });

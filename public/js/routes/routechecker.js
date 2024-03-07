@@ -8,19 +8,19 @@ import { ROUTER } from "./routes.js";
 
 // Route change listener
 document.addEventListener('DOMContentLoaded', function () {
-    // Initial setup
-    navigateTo(window.location.href)
+    // navigateTo(window.location.href)
     
     // Handle navigation on back/forward button click
     window.addEventListener('popstate', function () {
-        // navigateTo(window.location.pathname)
+        console.log('popped state');
         verifyLocationHref()
     });
 });
 
 export function navigateTo(url) {
     // Update the URL and push a state to the browser's history
-    console.log('Navigation to', url);
+    console.log('Navigating to url: ', url);
+    console.trace()
     history.pushState(null, null, url);
     ROUTER.currentRoute = window.location.pathname
     updateComponents()
@@ -39,11 +39,7 @@ export function verifyLocationHref() {
     if(USER_CONTROLLER.IsAuth){
         if (paginationRegex.test(href)) {
             let page = parseInt(href.match(/[0-9]+$/))
-            if (
-                POST_CONTROLLER.posts.length === 0
-                ||
-                page >= 1 && page <= Math.ceil(POST_CONTROLLER.posts.length / PAGE_CONTROLLER.PageSize)
-            ) {
+            if (POST_CONTROLLER.posts.length === 0 || page >= 1 && page <= Math.ceil(POST_CONTROLLER.posts.length / PAGE_CONTROLLER.PageSize)) {
                 if (page > Math.ceil(POST_CONTROLLER.allPosts.length / PAGE_CONTROLLER.PageSize) ) {
                     backToHomePage()
                 }
@@ -83,5 +79,5 @@ export function verifyLocationHref() {
     }else{
         
     }
-    updateComponents('')
+    updateComponents()
 }

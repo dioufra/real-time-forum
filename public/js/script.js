@@ -18,7 +18,7 @@ let components = [
     {tagName:'c-page-loader',src:"./components/pageLoader.js"},
     {tagName:'c-notification',src:"./components/notification.js"},
     {tagName:'c-error',src:"./components/error.js"},
-
+    // {tagName:'c-chat-form',src:"./components/chatForm.js"},
 ]
 
 // Define the custom web component
@@ -38,7 +38,7 @@ export const updateComponents = ()=> {
 export const updateSingleComponent = (tagName)=> {
     let elements = document.querySelectorAll(tagName);
     elements.forEach(element => {
-        if (element?.render) element.render()
+        if (element?.render) {element.render()}
     })
 }
 

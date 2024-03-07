@@ -7,7 +7,8 @@ class FromController {
     }
     setError(errName,message){
         this.errors[errName] = message
-        updateComponents(errName)
+        // updateComponents(errName)
+        updateSingleComponent(errName)
     }
     setInput(form,target){
         this.forms[form] = this.forms[form] || {}
