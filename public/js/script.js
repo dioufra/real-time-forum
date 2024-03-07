@@ -18,7 +18,7 @@ let components = [
     {tagName:'c-page-loader',src:"./components/pageLoader.js"},
     {tagName:'c-notification',src:"./components/notification.js"},
     {tagName:'c-error',src:"./components/error.js"},
-    // {tagName:'c-chat-form',src:"./components/chatForm.js"},
+    // {tagName:'c-app',src:"./components/layout/app.js"},
 ]
 
 // Define the custom web component
