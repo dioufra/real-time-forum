@@ -54,8 +54,6 @@ export default class NewPost extends HTMLElement {
 
             data['categories'] = categories
             data['userId'] = parseInt(USER_CONTROLLER.Id) || 0
-
-            console.log(data);
                 
             fetch('/api/posts/add', {
                 method: 'POST',
@@ -67,7 +65,6 @@ export default class NewPost extends HTMLElement {
                     if (response.status === 400) {
                         response.json()
                         .then(error => {
-                            // console.log(error.message)
                             FORM_CONTROLLER.setError('post',error.message)
                             updateSingleComponent('c-modal')
                         })
@@ -79,9 +76,7 @@ export default class NewPost extends HTMLElement {
                 return response.json()
             })
             .then(data => {
-                // console.log("data",data)
                 if (data) {
-                    // console.log('data',data)
                     FORM_CONTROLLER.resetForms()
                     POST_CONTROLLER.hideBox()
                 }

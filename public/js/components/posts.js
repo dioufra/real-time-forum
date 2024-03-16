@@ -35,15 +35,6 @@ export default class Posts extends HTMLElement {
                 }))
             }
         }
-
-        // this.paginationListener = (event) => {
-        //     console.log("paginating to ", event.detail.page);
-        //     let page = event.detail.page
-        //     POST_CONTROLLER.filteredPosts = POST_CONTROLLER.posts.filter((post, index) => {
-        //         return index >= (page - 1) * this.PageSize && index < (page * this.PageSize)
-        //     })
-        //     updateSingleComponent('c-posts-container')
-        // }
     }
 
 

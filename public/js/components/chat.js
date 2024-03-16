@@ -37,41 +37,6 @@ export default class Chat extends HTMLElement {
         }
     }
 
-    // async loadMoreMessages() {
-    //     try {
-    //         console.log(this.page);
-    //         const loadgroup = CHAT_CONTROLLER.remainingMessages.slice(this.page, this.page += 10);
-    //         if (loadgroup.length === 0) return
-    //         // const lastMessage = this.firstElementChild;
-    //         // const lastMessagePos = lastMessage.offsetTop + lastMessage.offsetHeight;
-    //         // const scrollPosition = this.scrollTop + this.clientHeight;
-    //         const prevScrollHeight = this.scrollHeight; // Get the previous scroll height before adding new messages
-
-    //         // if (scrollPosition <= lastMessagePos) {
-    //         //     return
-    //         // }
-            
-
-    //         console.log('loading');
-
-    //         loadgroup.forEach(message => {
-    //             let side = message.ReceiverId === USER_CONTROLLER.Id ? 'right' : 'left';
-    //             let username = side === 'left' ? USER_CONTROLLER.UserName : CHAT_CONTROLLER.Receiver.username
-    //             this.prepend(CHAT_CONTROLLER.parseMessage(username, message, side));
-    //         });
-
-    //         // this.page += 10;
-    //         const newMessagesHeight = this.scrollHeight - prevScrollHeight;
-    //         this.scrollTop += newMessagesHeight;
-
-    //     } catch (error) {
-    //         console.error("Error loading more messages:", error);
-    //     } finally {
-    //         this.loading = false
-    //     }
-    // }
-
-
     loadMoreMessages() {
         const loadgroup = CHAT_CONTROLLER.remainingMessages.slice(this.page, this.page += 10)
 

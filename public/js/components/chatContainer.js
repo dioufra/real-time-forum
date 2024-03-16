@@ -50,7 +50,6 @@ export default class ChatContainer extends HTMLElement {
                     if (response.status === 400) {
                         response.json()
                         .then(error => {
-                            console.log(error.message)
                             FORM_CONTROLLER.setError('message',error.message)
                             updateSingleComponent('c-chat-container')
                         })
@@ -63,7 +62,6 @@ export default class ChatContainer extends HTMLElement {
             })
             .then(data => {
                 if (data) {
-                    // console.log('data',data)
                 }
             })
             .catch(console.error);
@@ -94,11 +92,6 @@ export default class ChatContainer extends HTMLElement {
                 </div>
             `:``}
         `
-        // const inputElement = this.messageForm?.querySelector('input[name="content"]');
-        // console.log(inputElement);
-        // inputElement?.addEventListener('focus', (e) => {
-        //     console.log('User is typing');
-        // });
     }
 
     get modal (){

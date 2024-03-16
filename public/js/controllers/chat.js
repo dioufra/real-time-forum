@@ -42,7 +42,6 @@ class ChatController {
                 }),
             }).then(async response => {
                 if (!response.ok) {
-                    console.log(response);
                     const error = await response.json()
                     NOTIFICATION_CONTROLLER.setMessage(`${response.statusText} : ${error.message}`)
                     NOTIFICATION_CONTROLLER.display = true
@@ -54,30 +53,14 @@ class ChatController {
                 .then(data => {
                     if (data) {
                         const messages = data.content.Messages !== null ? data.content.Messages : []
-                        console.log(messages);
                         this.setAllMessages(messages)
                         this.SenderAdress = data.SenderAdress
                         this.ReceiverAdress = data.ReceiverAdress
                         this.displayBox = true
                         this.chatId = data.content.ChatId
-                        // this.showLoader = true
-                        // this.scrollLimit = 10
-                        // this.scroll = { top: 2000, left: 0 }
                         this.setReciever(receiver)
 
                         updateSingleComponent('c-chat-container')
-                        // // if (this.allMessages.length <= 10) this.showLoader = false
-                        // // if (CHAT_CONTROLLER.chatId === data.ChatId )
-                        // updateSingleComponent('c-chat-container')
-
-                        // setTimeout(() => {
-                        //     if (this.allMessages.length < 10) {
-                        //         this.showLoader = false
-                        //         // if (CHAT_CONTROLLER.chatId === data.ChatId )
-                        //         updateSingleComponent('c-chat-container')
-                        //     }
-                        // }, 1000);
-                        console.log(data);
                     }
                 })
                 .catch(error => {

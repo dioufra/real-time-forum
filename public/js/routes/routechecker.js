@@ -12,15 +12,12 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // Handle navigation on back/forward button click
     window.addEventListener('popstate', function () {
-        console.log('popped state');
         verifyLocationHref()
     });
 });
 
 export function navigateTo(url) {
     // Update the URL and push a state to the browser's history
-    console.log('Navigating to url: ', url);
-    console.trace()
     history.pushState(null, null, url);
     ROUTER.currentRoute = window.location.pathname
     updateComponents()

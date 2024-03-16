@@ -16,14 +16,11 @@ export default class PostsContainer extends HTMLElement {
                 // navigateTo(event.target.href)
                 let id = parseInt(event.target.href.split('/').reverse()[0])
                 document.dispatchEvent(new CustomEvent('postDetails', { detail: { data: id } }))
-            } else {
-                console.log(event.target);
             }
         }
         this.paginationListener = (event) => {
             let page = event.detail.page
             POST_CONTROLLER.filteredPosts = POST_CONTROLLER.allPosts.slice((page - 1) * PAGE_CONTROLLER.PageSize, page * PAGE_CONTROLLER.PageSize)
-            console.log(PAGE_CONTROLLER.filteredPosts);
             PAGE_CONTROLLER.setCurrentPage(page)
             this.page = page
             updateSingleComponent('c-posts-container')
@@ -31,7 +28,6 @@ export default class PostsContainer extends HTMLElement {
 
         this.categoryListener = (event) => {
             let id = event.detail.categoryId
-            console.log('hello from post container');
             PAGE_CONTROLLER.setCurrentPage(1)
             CATEGORY_CONTROLLER.setCurrentCategoryId(id)
             // if (id) {
@@ -50,7 +46,6 @@ export default class PostsContainer extends HTMLElement {
         this.render()
         this.checkScrollListener()
         if (this.postSection) {
-            console.log("yessss");
             this.addEventListener('ok-category', this.categoryListener)
             this.postSection.addEventListener('click', this.clickListener)
             this.addEventListener('ok-pagination', this.paginationListener)

@@ -12,8 +12,6 @@ export default class Main extends HTMLElement {
             API_SERVICE.registerUser(event.detail.user)
             .then(data => {
                 if (data) {
-                    // console.log(data)
-                    // Redirect to login page
                     FORM_CONTROLLER.resetForms()
                     FORM_CONTROLLER.resetErrors()
                     navigateTo('/login')

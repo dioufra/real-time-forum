@@ -42,7 +42,6 @@ export default class UserInfo extends HTMLElement {
                 }
             } else {
                 if (target.getAttribute('id') === 'show-modal') {
-                    console.log('rendering post modal');
                     POST_CONTROLLER.addNewPost()
                 }else if (target.tagName === 'BUTTON') {
                     let userId = parseInt(target.getAttribute('userId'))

@@ -6,32 +6,6 @@ class ApiService {
     constructor() {
         this.baseURL = 'http://your-backend-api-url'; // Replace with your actual backend API URL
     }
-
-    // async registerUser(data) {
-    //     try {
-    //         const response = await fetch('/api/register', {
-    //             method: 'POST',
-    //             body: JSON.stringify(data),
-    //         });
-    //         if (!response.ok) {
-    //             // if (response.status >= 200 && response.status <= 299) return response.json()
-
-    //             if (response.status === 400) {
-    //                 response.json()
-    //                     .then(error => {
-    //                         FORM_CONTROLLER.setError('register', error.message)
-    //                     })
-    //                 return
-    //             } else {
-    //                 throw new Error('Erreur de réseau');
-    //             }
-    //         }
-    //         return await response.json()
-    //     } catch (error) {
-    //         console.log(error);
-    //         throw error
-    //     }
-    // }
     async registerUser(data) {
         try {
             const response = await fetch('/api/register', {
@@ -68,7 +42,6 @@ class ApiService {
                 // }
                 const error = await response.json();
                 // Assuming FORM_CONTROLLER.setError sets an error state on the form
-                console.log(error.message);
                 FORM_CONTROLLER.setError('login', error.message || 'Something went wrong');
                 throw new Error(`Failed to login user: ${response.statusText}`);
             }
