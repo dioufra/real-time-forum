@@ -49,7 +49,6 @@ func registerClient(connection *websocket.Conn, email string) {
 	BroadcastUserInfos(connection, email)
 	BroadcastOnlineUsers()
 	BroadcastContactedUsers()
-	// BroadcastAllUsers(email)
 	BroadcastAllUsers()
 	BroadcastAllPosts()
 	BroadcastAllCategories()
@@ -58,7 +57,7 @@ func registerClient(connection *websocket.Conn, email string) {
 func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	is, email := helper.Auth(DB, r)
 	if !is {
-		fmt.Println("not connected")
+		fmt.Println("❌ unauthenticated user")
 		return
 	}
 
@@ -102,11 +101,13 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleReadMessage(senderId, receiverId int) {
+	clientsMutex.Lock()
 	if senderId > 0 && receiverId > 0 {
 		if err := models.MessageRepo.UpdateUnReadMessages(senderId, receiverId); err != nil {
-			log.Println("Error updationg unread messages")
+			log.Println("Error updationg unread messages", err)
 		}
 	}
+	clientsMutex.Unlock()
 }
 
 func handlePostDetails(conn *websocket.Conn, postId int) {

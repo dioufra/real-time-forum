@@ -10,15 +10,6 @@ import (
 var DB *sql.DB
 
 func Home(res http.ResponseWriter, req *http.Request) {
-	// isAuth, email := helper.Auth(DB, req)
-	// var user models.User
-	// var err error
-	// if isAuth {
-	// 	if err := user.Get(DB, email); err != nil {
-	// 		log.Println("🚨 Error: ", err)
-	// 		return
-	// 	}
-	// }
 	files := []string{"./public/index.html"}
 	tpl, err := template.ParseFiles(files...)
 	if err != nil {

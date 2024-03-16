@@ -85,5 +85,3 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 		BroadcastPostDetails(conn, response)
 	}
 }
-
-func GetComment(res http.ResponseWriter, req *http.Request) {}

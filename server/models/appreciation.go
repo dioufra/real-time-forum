@@ -111,51 +111,6 @@ func getByCommentAndUser(r *AppreciationRepository, com_id int, user_id int) (Ap
 	return appr, row.Err()
 }
 
-// func (r *AppreciationRepository) AddCommentAprreciation(user_id, post_id, like, dislike int) error {
-// 	appr, err, shouldReturn, returnValue := newFunction(r, post_id, user_id)
-// 	if shouldReturn {
-// 		return returnValue
-// 	}
-// 	// appr, err := getAppreciationByPostAndUser(r, post_id, user_id)
-
-// 	if appr.UserId != user_id {
-// 		req := `INSERT INTO Appreciation (Use_id,Pos_id,like, dislike) VALUES(?,?,?,?);`
-// 		_, erreq := r.db.Exec(req, user_id, post_id, like, dislike)
-// 		return erreq
-// 	}
-
-// 	if like > 0 {
-// 		if like+appr.Like > 1 {
-// 			return Update(r.db, user_id, post_id, 0, "like")
-// 		} else {
-// 			Update(r.db, user_id, post_id, 1, "like")
-// 			return Update(r.db, user_id, post_id, 0, "dislike")
-// 		}
-// 	} else if dislike > 0 {
-// 		if dislike+appr.Dislike > 1 {
-// 			return Update(r.db, user_id, post_id, 0, "dislike")
-// 		} else {
-// 			Update(r.db, user_id, post_id, 0, "like")
-// 			return Update(r.db, user_id, post_id, 1, "dislike")
-// 		}
-// 	}
-
-// 	return err
-// }
-
-// func (r *AppreciationRepository) GetByPostId(post_id int) (Appreciation, error) {
-// 	var apprec Appreciation
-// 	req := `SELECT count(*) as like  , (SELECT count(*) FROM Appreciation WHERE pos_id=? AND dislike=1) as dislike FROM Appreciation WHERE pos_id=? AND like=1;`
-// 	row, err := r.db.Query(req, post_id, post_id)
-// 	if err != nil {
-// 		return apprec, err
-// 	}
-// 	for row.Next() {
-// 		row.Scan(&apprec.Like, &apprec.Dislike)
-// 	}
-
-// 	return apprec, row.Err()
-// }
 
 func Update(db *sql.DB, user_id, post_id, value int, colone string) error {
 	req := `UPDATE Appreciation SET ` + colone + `=? WHERE Use_id=? AND  Pos_id=?;`
@@ -168,9 +123,3 @@ func UpdateComment(db *sql.DB, user_id, com_id, value int, colone string) error 
 	_, err := db.Exec(req, value, user_id, com_id)
 	return err
 }
-
-// func (appreciation *Appreciation) Create() {} // or add
-
-// func (appreciation *Appreciation) Get() {}
-
-// func (appreciation *Appreciation) Update() {}

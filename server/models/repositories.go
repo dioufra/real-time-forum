@@ -9,7 +9,6 @@ var (
 	CategoryRepo     *CategoryRepository
 	AppreciationRepo *AppreciationRepository
 	MessageRepo      *MessageRepository
-	// PostCategoryRepo *PostCategoryRepository
 )
 
 func AddRepositories(db *sql.DB) {

@@ -8,14 +8,12 @@ import (
 )
 
 func SignOut(res http.ResponseWriter, req *http.Request) {
-	// Create a new cookie with the same name and set its expiration time to the past
 	clearCookie := http.Cookie{
 		Name:    "sessionid",
 		Value:   "",
-		Expires: time.Now().Add(-time.Hour), // Set expiration time to the past
+		Expires: time.Now().Add(-time.Hour),
 		Path:    "/",
 	}
-	// Add the new cookie to the response
 	http.SetCookie(res, &clearCookie)
 
 	response := map[string]any{"message": "Logout successful"}
