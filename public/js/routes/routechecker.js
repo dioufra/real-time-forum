@@ -44,7 +44,8 @@ export function verifyLocationHref() {
                 page >= 1 && page <= Math.ceil(POST_CONTROLLER.posts.length / PAGE_CONTROLLER.PageSize)
             ) {
                 if (page > Math.ceil(POST_CONTROLLER.allPosts.length / PAGE_CONTROLLER.PageSize) ) {
-                    alert('dd')
+                    backToHomePage()
+                    return
                 }
                 CATEGORY_CONTROLLER.currentCategoryId = 0
                 PAGE_CONTROLLER.setCurrentPage(parseInt(href.match(/[0-9]+$/)))

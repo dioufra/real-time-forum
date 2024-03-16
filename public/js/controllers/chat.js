@@ -46,12 +46,20 @@ class ChatController {
             })
             .then(data => {
                 if (data) {
+                    // this.SenderAdress = data.SenderAdress
+                    // this.ReceiverAdress = data.ReceiverAdress
+                    // this.displayBox = true
+                    // this.showLoader = true
+                    // this.scrollLimit = 10
+                    // this.scroll={top:2000,left:0}
+                    // this.setReciever(receiver)
+                    // updateSingleComponent('c-chat-container')
+                    const messages = data.content.Messages !== null ? data.content.Messages : []
+                    this.setAllMessages(messages)
                     this.SenderAdress = data.SenderAdress
                     this.ReceiverAdress = data.ReceiverAdress
                     this.displayBox = true
-                    this.showLoader = true
-                    this.scrollLimit = 10
-                    this.scroll={top:2000,left:0}
+                    this.chatId = data.content.ChatId
                     this.setReciever(receiver)
                     updateSingleComponent('c-chat-container')
                     
