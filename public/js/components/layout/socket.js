@@ -109,7 +109,7 @@ export default class Socket extends HTMLElement {
     checkChatListener(){
         this.addEventListener('broadcastChat',e => {
             // console.log("broadcastChat",e.detail)
-            if (CHAT_CONTROLLER.chatId ===e.detail.data.ChatId) {
+            if (CHAT_CONTROLLER.chatId === e.detail.data.ChatId) {
                 const messages = e.detail.data.Message !== null ? e.detail.data.Message : []
                 CHAT_CONTROLLER.setAllMessages(messages)      
                 updateSingleComponent('c-chat')

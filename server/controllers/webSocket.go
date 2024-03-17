@@ -18,7 +18,6 @@ var upgrader = websocket.Upgrader{
 }
 var SocketClients = make(map[*websocket.Conn][]string) // Connected clients
 var clientsMutex sync.Mutex                            // Mutex to synchronize access to the clients map
-
 type IncomingMessage struct {
 	Event     string         `json:"event"`
 	Type      string         `json:"type"`
@@ -26,152 +25,125 @@ type IncomingMessage struct {
 	Data      map[string]int `json:"data"`
 }
 
+func HandleDisconnection(connection *websocket.Conn, email string) {
+	clientsMutex.Lock()
+	delete(SocketClients, connection)
+	clientsMutex.Unlock()
+	connection.Close()
+	// Broadcast the disconnection event to other clients
+	BroadcastOnlineUsers()
+	// BroadcastAllUsers(email)
+	BroadcastAllUsers()
+}
+func registerClient(connection *websocket.Conn, email string) {
+	clientsMutex.Lock()
+	// Get the memory address of the variable
+	address := fmt.Sprintf("%p", &connection)
+	// Add the new client to the clients map
+	SocketClients[connection] = []string{email, address}
+	
+	clientsMutex.Unlock()
+
+	BroadcastUserInfos(connection, email)
+	// BroadcastOnlineUsers() //
+	// BroadcastContactedUsers()
+	models.BroadCastContactedUser(connection, email)
+	// BroadcastAllUsers(email)
+	// BroadcastAllUsers()
+	models.BroadCastAllUsers(connection, email)
+	// BroadcastAllPosts()
+	models.BroadCastAllPosts(connection, email)
+	// BroadcastAllCategories()
+	models.BroadcastAllCategories(connection, email)
+}
 func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	is, email := helper.Auth(DB, r)
 	if !is {
 		fmt.Println("not connected")
 		return
 	}
-
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	clientsMutex.Lock()
-	// Get the memory address of the variable
-	address := fmt.Sprintf("%p", &conn)
-	// Add the new client to the clients map
-	SocketClients[conn] = []string{email, address}
-
-	clientsMutex.Unlock()
-	BroadcastUserInfos(conn, email)
-	BroadcastOnlineUsers()
-	// BroadcastAllUsers(email)
-	BroadcastContactedUsers()
-	BroadcastAllUsers()
-	BroadcastAllPosts()
-	BroadcastAllCategories()
-
+	registerClient(conn, email)
 	defer func() {
-		// Remove the client when the connection is closed
-		clientsMutex.Lock()
-		delete(SocketClients, conn)
-		clientsMutex.Unlock()
-		conn.Close()
-
-		// Broadcast the disconnection event to other clients
-		BroadcastOnlineUsers()
-		BroadcastAllUsers()
-		// BroadcastAllUsers()
+		HandleDisconnection(conn, email)
 	}()
-
 	for {
 		// Read the message from the client
 		_, p, err := conn.ReadMessage()
 		if err != nil {
 			break
 		}
-
+		// handleMessage(conn, p, email)
 		var data IncomingMessage
 		if err := json.Unmarshal(p, &data); err != nil {
 			log.Println("Error unmarshalling message", err)
-			return
+			continue
 		}
 		switch data.Event {
-
 		case "postDetails":
-			comments, err := models.CommentRepo.GetCommentsFromPostId(data.Data["postId"])
-			if err != nil {
-				log.Println("Error retrieving comments", err)
-				return
-			}
-			var post models.PostInfo
-			err = models.PostRepo.GetPostById(&post, data.Data["postId"])
-			if err != nil {
-				log.Println("Error retrieving post ")
-			}
-			// sendback the comments here
-			response := struct {
-				Post     models.PostInfo
-				Comments []models.CommentInfo
-			}{
-				Post:     post,
-				Comments: comments,
-			}
-			BroadcastPostDetails(conn, response)
+			handlePostDetails(conn, data.Data["postId"])
 		case "appreciation":
-			switch data.Type {
-			case "post":
-				if data.Component == "c-comment" {
-					if err := models.AppreciationRepo.AddForPost(data.Data["userId"], data.Data["postId"], data.Data["like"], data.Data["dislike"]); err != nil {
-						fmt.Println("Error adding a new appreciation: ", err)
-						return
-					}
-					comments, err := models.CommentRepo.GetCommentsFromPostId(data.Data["postId"])
-					if err != nil {
-						log.Println("Error retrieving comments", err)
-						return
-					}
-					var post models.PostInfo
-					if err := models.PostRepo.GetPostById(&post, data.Data["postId"]); err != nil {
-						log.Println("Error retrieving post ")
-						return
-
-					}
-					response := struct {
-						Post     models.PostInfo
-						Comments []models.CommentInfo
-					}{
-						Post:     post,
-						Comments: comments,
-					}
-					BroadcastPostDetails(conn, response)
-				} else {
-					if err := models.AppreciationRepo.AddForPost(data.Data["userId"], data.Data["postId"], data.Data["like"], data.Data["dislike"]); err != nil {
-						fmt.Println("Error adding a new appreciation: ", err)
-						return
-					}
-					BroadcastAllPosts()
-				}
-			case "comment":
-				if err := models.AppreciationRepo.AddForComment(data.Data["userId"], data.Data["commentId"], data.Data["like"], data.Data["dislike"]); err != nil {
-					fmt.Println("Error adding a new appreciation: ", err)
-				}
-
-				comments, err := models.CommentRepo.GetCommentsFromPostId(data.Data["postId"])
-				if err != nil {
-					log.Println("Error retrieving comments", err)
-					return
-				}
-				var post models.PostInfo
-				err = models.PostRepo.GetPostById(&post, data.Data["postId"])
-				if err != nil {
-					log.Println("Error retrieving post ")
-				}
-				// sendback the comments here
-				response := struct {
-					Post     models.PostInfo
-					Comments []models.CommentInfo
-				}{
-					Post:     post,
-					Comments: comments,
-				}
-				BroadcastPostDetails(conn, response)
-			}
+			handleAppreciation(conn, data)
 		case "readMessages":
-			senderId, receiverId := data.Data["senderId"], data.Data["receiverId"]
-			if senderId > 0 && receiverId > 0 {
-				err := models.MessageRepo.UpdateUnReadMessages(senderId, receiverId)
-				if err != nil {
-					fmt.Println("Error updating un read meggases")
-				}
-			}
+			handleReadMessage(data.Data["senderId"], data.Data["receiverId"])
 		}
-
 	}
 }
-
+func handleReadMessage(senderId, receiverId int) {
+	if senderId > 0 && receiverId > 0 {
+		if err := models.MessageRepo.UpdateUnReadMessages(senderId, receiverId); err != nil {
+			log.Println("Error updationg unread messages")
+		}
+	}
+}
+func handlePostDetails(conn *websocket.Conn, postId int) {
+	comments, err := models.CommentRepo.GetCommentsFromPostId(postId)
+	if err != nil {
+		log.Println("Error retrieving comments", err)
+		return
+	}
+	var post models.PostInfo
+	if err := models.PostRepo.GetPostById(&post, postId); err != nil {
+		log.Println("Error retrieving post ", err)
+		return
+	}
+	response := struct {
+		Post     models.PostInfo
+		Comments []models.CommentInfo
+	}{
+		Post:     post,
+		Comments: comments,
+	}
+	BroadcastPostDetails(conn, response)
+}
+func handleAppreciation(conn *websocket.Conn, data IncomingMessage) {
+	switch data.Type {
+	case "post":
+		if data.Component == "c-comment" {
+			if err := models.AppreciationRepo.AddForPost(data.Data["userId"], data.Data["postId"], data.Data["like"], data.Data["dislike"]); err != nil {
+				log.Println("Error adding a new appreciation: ", err)
+				return
+			}
+			handlePostDetails(conn, data.Data["postId"])
+		} else {
+			if err := models.AppreciationRepo.AddForPost(data.Data["userId"], data.Data["postId"], data.Data["like"], data.Data["dislike"]); err != nil {
+				log.Println("Error adding a new appreciation: ", err)
+				return
+			}
+			BroadcastAllPosts()
+		}
+	case "comment":
+		if err := models.AppreciationRepo.AddForComment(data.Data["userId"], data.Data["commentId"], data.Data["like"], data.Data["dislike"]); err != nil {
+			log.Println("Error adding a new appreciation: ", err)
+			return
+		}
+		handlePostDetails(conn, data.Data["postId"])
+	}
+}
 func BroadcastPostDetails(client *websocket.Conn, data any) {
 	clientsMutex.Lock()
 	defer clientsMutex.Unlock()
@@ -181,21 +153,18 @@ func BroadcastPostDetails(client *websocket.Conn, data any) {
 		log.Println(err)
 	}
 }
-
 func BroadcastUserInfos(client *websocket.Conn, email string) {
 	user, err := GetUserByField(DB, "email", email)
 	if err != nil {
 		fmt.Println("user not found")
 		return
 	}
-
 	response := map[string]interface{}{"event": "broadcastUserInfos", "data": user}
 	err = client.WriteJSON(response)
 	if err != nil {
 		log.Println(err)
 	}
 }
-
 func BroadcastOnlineUsers() {
 	// Iterate through all connected clients and send the message
 	clientsMutex.Lock()
@@ -239,12 +208,10 @@ func BroadcastOnlineUsers() {
 		}
 	}
 }
-
 func BroadcastContactedUsers() {
 	// Iterate through all connected clients and send the message
 	clientsMutex.Lock()
 	defer clientsMutex.Unlock()
-
 	for client, tab := range SocketClients { //send data
 		email := tab[0]
 		user, err := GetUserByField(DB, "email", email)
@@ -268,7 +235,6 @@ func BroadcastAllUsers() {
 	// Iterate through all connected clients and send the message
 	clientsMutex.Lock()
 	defer clientsMutex.Unlock()
-
 	var user models.User
 	for client, tab := range SocketClients {
 		_, email := []models.User{}, tab[0]
@@ -296,12 +262,10 @@ func BroadcastAllUsers() {
 		}
 	}
 }
-
 func BroadcastAllPosts() {
 	// Iterate through all connected clients and send the message
 	clientsMutex.Lock()
 	defer clientsMutex.Unlock()
-
 	posts, err := models.PostRepo.GetAllPost()
 	if err != nil {
 		fmt.Println("Error getting posts", err)
@@ -316,12 +280,10 @@ func BroadcastAllPosts() {
 		}
 	}
 }
-
 func BroadcastAllCategories() {
 	// Iterate through all connected clients and send the message
 	clientsMutex.Lock()
 	defer clientsMutex.Unlock()
-
 	categories, err := models.CategoryRepo.GetCategories()
 	if err != nil {
 		fmt.Println("Error retrieving categories: ", err)
@@ -341,7 +303,6 @@ func BroadcastChat(senderId, receiverId, chatId int, senderAdress, receverAdress
 		fmt.Println("Error loading chat messages: ", err)
 		return
 	}
-
 	for client := range SocketClients {
 		data := &struct {
 			Message []models.Message

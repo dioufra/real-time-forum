@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"real-time-forum/server/helper"
 	"real-time-forum/server/models"
 	"strings"
 	"time"
@@ -17,14 +18,14 @@ func Message(res http.ResponseWriter, req *http.Request) {
 
 		decoder := json.NewDecoder(req.Body)
 		if err := decoder.Decode(&message); err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			http.Error(res, "Invalid request payload", http.StatusBadRequest)
 			return
 		}
 
 		message.Date = time.Now()
 
-		// fmt.Println("New message: ", message)
+		// log.Println("New message: ", message)
 
 		message.Content = strings.Trim(message.Content, " ")
 		if message.Content == "" {
@@ -35,17 +36,34 @@ func Message(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 		if err := models.MessageRepo.Add(&message); err != nil {
-			fmt.Println("Error inserting message to database: ", err)
+			log.Println("Error inserting message to database: ", err)
 		}
 
 		if err := json.NewEncoder(res).Encode(map[string]any{"message": "Message sent"}); err != nil {
 			log.Println("Error encoding JSON response:", err)
 		}
-		BroadcastContactedUsers()
-		BroadcastOnlineUsers()
+
+		_, receiver, err := helper.GetChatParticipants(message.SenderId, message.ReceiverId)
+		if err != nil {
+			helper.HandleError(res, "Error starting chat", http.StatusInternalServerError)
+			return
+		}
+
+		email := receiver.Email
+		client := models.GetConnectionByEmail(email, &clientsMutex, SocketClients); 
+		if client == nil {
+			log.Println("No client associated to sender email")
+			return
+		}
+
+		// send the message to the receiver only
+		// BroadcastContactedUsers()
+		// BroadcastOnlineUsers()
+		models.BroadCastContactedUser(client, email)
+		
 		BroadcastChat(message.SenderId, message.ReceiverId, message.ChatId, message.SenderAdress, message.ReceiverAdress)
 		if err := Notify(message.ReceiverAdress, message.SenderId, message); err != nil {
-			fmt.Println("Error notifying user: ", err)
+			log.Println("Error notifying user: ", err)
 		}
 	}
 	defer req.Body.Close()
