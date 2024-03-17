@@ -1,23 +1,32 @@
 package helper
+
 import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"html"
+	"log"
 	"net/http"
+	"os"
 	"real-time-forum/server/models"
 	"regexp"
 	"strings"
 	"time"
+
 	"github.com/gofrs/uuid/v5"
 	"golang.org/x/crypto/bcrypt"
 )
+
+// var ErrorLog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
 type Data struct {
 	All    interface{}
 	IsAuth bool
 	User   models.User
 }
+
 var u1 = uuid.Must(uuid.NewV4())
+
 func UpdateSession(db *sql.DB, sssid, useremail string) error {
 	req := `SELECT sessionId,email,datefin from Session Where email='` + useremail + `';`
 	row, err := db.Query(req)
@@ -32,8 +41,8 @@ func UpdateSession(db *sql.DB, sssid, useremail string) error {
 		row.Scan(&sessionid, &email, &datef)
 	}
 	if email == useremail {
-			_, errsession = db.Exec("UPDATE Session SET sessionId=?, datefin=? where sessionId=? AND email=?;", sssid, time.Now().Add(time.Hour*24*3), sssid, email)
-		} else {
+		_, errsession = db.Exec("UPDATE Session SET sessionId=?, datefin=? where sessionId=? AND email=?;", sssid, time.Now().Add(time.Hour*24*3), sssid, email)
+	} else {
 		_, errsession = db.Exec("INSERT INTO Session (sessionId,email,datefin) VALUES(?,?,?);", sssid, useremail, time.Now().Add(time.Hour*24*3))
 	}
 	return errsession
@@ -116,9 +125,9 @@ func SessionAddOrUpdate(db *sql.DB, sssid, useremail string) error {
 		row.Scan(&sessionid, &email, &datef)
 	}
 	if email == useremail {
-			fmt.Println("sssid", sssid)
-			_, errsession = db.Exec("UPDATE Session SET sessionId=?, datefin=? where email=?;", sssid, time.Now().Add(time.Hour*24*3), email)
-		} else {
+		fmt.Println("sssid", sssid)
+		_, errsession = db.Exec("UPDATE Session SET sessionId=?, datefin=? where email=?;", sssid, time.Now().Add(time.Hour*24*3), email)
+	} else {
 		_, errsession = db.Exec("INSERT INTO Session (sessionId,email,datefin) VALUES(?,?,?);", sssid, useremail, time.Now().Add(time.Hour*24*3))
 	}
 	return errsession
@@ -133,6 +142,11 @@ func SendResponse(res http.ResponseWriter, data interface{}, code int) {
 func HandleError(res http.ResponseWriter, message string, code int) {
 	response := map[string]string{"message": message}
 	SendResponse(res, response, code)
+}
+
+func LogError(err error) {
+	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	errorLog.Print("❌", err)
 }
 func ValidateRegistrationInput(newUser *models.User, w http.ResponseWriter) bool {
 	fieldsTab := [][]string{

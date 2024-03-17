@@ -17,24 +17,29 @@ export default class Comment extends HTMLElement {
             const formData = new FormData(this.commentForm)
             const data = {}
             formData.forEach((value, key) => {
+                if (key === 'post_id') value = parseInt(value)
                 data[key] = value
             })
             data['Use_id'] = USER_CONTROLLER.Id
             data['date'] = date
+            console.log(data);
             fetch('/api/comments/add', {
                 method: 'POST',
                 body: JSON.stringify(data)
             }).then(async response => {
                 if (!response.ok) {
-                    const error = await response.json()
-                    ERROR_CONTROLLER.setMessage(`${response.statusText} : ${error.message}`)
-                    ERROR_CONTROLLER.display = true
-                    updateSingleComponent('c-error')
-                    throw new Error(`${response.statusText} : ${error.message}`);
+                    if (response.status === 400) {
+                        response.json()
+                            .then(error => {
+                                FORM_CONTROLLER.setError('register', error.message)
+                                updateSingleComponent('c-main')
+                            })
+                        return
+                    } else {
+                        throw new Error('Network error');
+                    }
                 }
-                return response.json()
-            }).catch(error => {
-                console.error(error)
+                console.log(response);
             })
         }
 
@@ -173,6 +178,7 @@ export default class Comment extends HTMLElement {
                 <p class="error-message">${FORM_CONTROLLER.errors.comment || ''}</p>
                 <div class="new-comment">
                     <form id="comment-form">
+                        <input type="hidden" name="post_id" value="${COMMENT_CONTROLLER.post.Id}">
                         <input class="nc-ct" type="text" name="comment" placeholder="write your comment here..."
                             value="${FORM_CONTROLLER.forms?.comment?.comment ||''}" >
                         <div class="nc-cm-btn-p">
