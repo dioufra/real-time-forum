@@ -1,7 +1,7 @@
+import { POST_CONTROLLER } from "../controllers/post.js";
 import { CATEGORY_CONTROLLER } from "../controllers/categorie.js";
 import { COMMENT_CONTROLLER } from "../controllers/comment.js";
 import { PAGE_CONTROLLER } from "../controllers/pagiantion.js";
-import { POST_CONTROLLER } from "../controllers/post.js";
 import { USER_CONTROLLER } from "../controllers/user.js";
 import { updateComponents, updateSingleComponent } from "../script.js";
 import { ROUTER } from "./routes.js";
@@ -60,6 +60,7 @@ export function verifyLocationHref() {
             if(Boolean(POST_CONTROLLER.allPosts.find(p => p.Id === id))){
                 document.dispatchEvent(new CustomEvent('postDetails', {detail: {data: id}}))
                 updateSingleComponent('c-posts-container')
+                POST_CONTROLLER.setCurrentPostId(id)
             }else{
                 backToHomePage()
             }

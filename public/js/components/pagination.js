@@ -29,6 +29,7 @@ export default class Pagination extends HTMLElement {
                         cancalable: true,
                         composed: true
                     })
+                    POST_CONTROLLER.setCurrentPostId(page)
                     this.dispatchEvent(e)
                 }
             }

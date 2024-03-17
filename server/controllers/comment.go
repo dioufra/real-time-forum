@@ -6,11 +6,12 @@ import (
 	"log"
 	"net/http"
 	"real-time-forum/server/models"
+	"strings"
 	"time"
 )
 
 func AddComment(res http.ResponseWriter, req *http.Request) {
-	fmt.Println("Hello from new comment end")
+	// fmt.Println("Hello from new comment end")
 	if req.Method != http.MethodPost {
 		http.Error(res, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -26,7 +27,14 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	fmt.Println(comment)
+	if strings.Trim(comment.Content, " ") == `` {
+		res.WriteHeader(http.StatusBadRequest)
+		if err := json.NewEncoder(res).Encode(map[string]any{"message": "Content can't be empty"}); err != nil {
+			log.Println("Error encoding JSON response:", err)
+		}
+		return
+	}
+	// fmt.Println(comment)
 
 	var user models.User
 	if err := models.UserRepo.GetUserById(&user, comment.UserId); err != nil {
@@ -68,11 +76,16 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 		Comments: comments,
 	}
 
-	fmt.Println(response)
+	// fmt.Println(response)
 
 	for conn, tab := range SocketClients {
 		fmt.Println("sending info to clients", tab)
 		BroadcastPostDetails(conn, response)
+	}
+
+	if err := json.NewEncoder(res).Encode(response); err != nil {
+		log.Println("❌ Error encoding JSON response:", err)
+		return
 	}
 }
 

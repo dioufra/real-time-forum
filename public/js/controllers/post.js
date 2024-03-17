@@ -9,6 +9,10 @@ class PostController {
         this.filteredPosts = []
         this.postcreatorId = 0
         this.displayBox = false
+        this.currentPostId = 0
+    }
+    setCurrentPostId(id){
+        this.currentPostId = id
     }
     setPosts(data){
         this.allPosts = data;

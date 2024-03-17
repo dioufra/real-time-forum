@@ -15,11 +15,11 @@ export default class Comment extends HTMLElement {
             const formData = new FormData(this.commentForm)
             const data = {}
             formData.forEach((value, key) => {
-                if (key === 'post_id') value = parseInt(value)
                 data[key] = value
             })
             data['Use_id'] = USER_CONTROLLER.Id
             data['date'] = date
+            data['post_id'] = POST_CONTROLLER.currentPostId
             console.log(data);
             fetch('/api/comments/add', {
                 method: 'POST',
@@ -29,8 +29,9 @@ export default class Comment extends HTMLElement {
                     if (response.status === 400) {
                         response.json()
                             .then(error => {
-                                FORM_CONTROLLER.setError('register', error.message)
-                                updateSingleComponent('c-main')
+                                console.log(error.message);
+                                FORM_CONTROLLER.setError('comment', error.message)
+                                updateSingleComponent('c-comment')
                             })
                         return
                     } else {
@@ -38,6 +39,9 @@ export default class Comment extends HTMLElement {
                     }
                 }
                 console.log(response);
+                FORM_CONTROLLER.resetSingleForm('comment')
+                FORM_CONTROLLER.resetError('comment')
+                updateSingleComponent('c-comment')
             })
         }
 
@@ -80,6 +84,7 @@ export default class Comment extends HTMLElement {
                 }
             }
         }
+        this.checkInputListener()
     }
 
 
@@ -94,6 +99,12 @@ export default class Comment extends HTMLElement {
 
     shouldComponentRender() {
         return !this.innerHTML
+    }
+
+    checkInputListener(){
+        this.addEventListener('input',e => {
+            FORM_CONTROLLER.setInput('comment',e.target)
+        })
     }
 
     render() {
@@ -166,10 +177,11 @@ export default class Comment extends HTMLElement {
                         `)).join('') : ''
             }
                 </div>
+                <p class="error-message">${FORM_CONTROLLER.errors.comment || ''}</p>
                 <div class="new-comment">
                     <form id="comment-form">
-                        <input type="hidden" name="post_id" value="${COMMENT_CONTROLLER.post.Id}">
-                        <input class="nc-ct" type="text" name="comment" placeholder="write your comment here...">
+                        <input class="nc-ct" type="text" name="comment" placeholder="write your comment here..."
+                            value="${FORM_CONTROLLER.forms?.comment?.comment ||''}" >
                         <div class="nc-cm-btn-p">
                         </br>
                             <button class="submit-btn" type="submit">submit</button>
