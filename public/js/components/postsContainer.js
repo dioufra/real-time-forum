@@ -22,7 +22,8 @@ export default class PostsContainer extends HTMLElement {
             let page = event.detail.page
             POST_CONTROLLER.filteredPosts = POST_CONTROLLER.allPosts.slice((page - 1) * PAGE_CONTROLLER.PageSize, page * PAGE_CONTROLLER.PageSize)
             PAGE_CONTROLLER.setCurrentPage(page)
-            this.page = page
+            // this.page = page
+            history.pushState(null, null, window.location.href.replace(new RegExp('page=\\d'),'page='+page));
             updateSingleComponent('c-posts-container')
         }
 
