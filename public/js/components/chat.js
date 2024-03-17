@@ -64,7 +64,7 @@ export default class Chat extends HTMLElement {
                 }
                 ${CHAT_CONTROLLER.filteredMessages.map(message => {
                     let side = message.RecieverId === USER_CONTROLLER.Id ? 'left' : 'right'
-                    let username = side === 'left' ? USER_CONTROLLER.UserName : CHAT_CONTROLLER.Receiver.username
+                    let username = side === 'right' ? USER_CONTROLLER.UserName : CHAT_CONTROLLER.Receiver.username
                     return `
                         <div class="container container-${side}">
                             <div>
@@ -75,7 +75,7 @@ export default class Chat extends HTMLElement {
                                     <p>${message.Content}</p>
                                 </div>
                                 <div class="image-container">
-                                    <img class="profil-img" src="//ui-avatars.com/api/?name=${username}&size=30&rounded=true&color=fff&background=random" alt="">
+                                    <img class="profil-img" src="//ui-avatars.com/api/?name=${CHAT_CONTROLLER.Receiver.username}&size=30&rounded=true&color=fff&background=random" alt="">
                                 </div>
                             </div>
                             <p class="date">
