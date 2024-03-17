@@ -26,9 +26,9 @@ export default class Chat extends HTMLElement {
     }
     checkScrollListener() {
         this.addEventListener('scrollend', e => {
-            setTimeout(() => {
+            // setTimeout(() => {
                 CHAT_CONTROLLER.scroll.top = this.scrollTop
-                if (!this.isLoading && this.scrollTop < 70 && this.isMounted) {
+                if (!this.isLoading && this.scrollTop === 0 && this.isMounted) {
                     CHAT_CONTROLLER.showLoader = true
                     let height = this.scrollHeight
                     this.isLoading = true
@@ -46,7 +46,7 @@ export default class Chat extends HTMLElement {
                     CHAT_CONTROLLER.scroll.top = this.scrollTop
                     // }, 10);
                 }
-            }, 1000);
+            // }, 1000);
         })
     }
 
@@ -63,7 +63,8 @@ export default class Chat extends HTMLElement {
                     </div>`: ``
                 }
                 ${CHAT_CONTROLLER.filteredMessages.map(message => {
-                    let side = message.RecieverId === USER_CONTROLLER.Id ? 'left' : 'right'
+                    // console.log(message, USER_CONTROLLER.Id);
+                    let side = message.ReceiverId === USER_CONTROLLER.Id ? 'left' : 'right'
                     let username = side === 'right' ? USER_CONTROLLER.UserName : CHAT_CONTROLLER.Receiver.username
                     return `
                         <div class="container container-${side}">

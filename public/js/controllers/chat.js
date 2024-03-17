@@ -13,7 +13,7 @@ class ChatController {
         this.filteredMessages = []
         this.scrollLimit = 0
         this.chatId = ''
-        this.scroll = { top: 2000, left: 0 }
+        this.scroll = {top: 2000, left: 0}
 
         this.showLoader = true
     }
@@ -31,7 +31,6 @@ class ChatController {
         this.scroll = { top: 2000, left: 0 }
         let receiver = USER_CONTROLLER.allUsers.filter(user => user.id === receiverId)[0] || null
         if (receiver) {
-
             fetch('/api/chat', {
                 method: 'POST',
                 body: JSON.stringify({
@@ -60,6 +59,7 @@ class ChatController {
                     // this.setReciever(receiver)
                     // updateSingleComponent('c-chat-container')
                     const messages = data.content.Messages !== null ? data.content.Messages : []
+                    console.log(messages);
                     this.setAllMessages(messages)
                     this.SenderAdress = data.SenderAdress
                     this.ReceiverAdress = data.ReceiverAdress

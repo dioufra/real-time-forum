@@ -82,7 +82,7 @@ c-chat-container {
                 margin-bottom: 7px;
                 text-align: left;
 
-                &>div {
+                & > div {
                     display: flex;
                     align-items: start;
                     margin-bottom: 3px;
@@ -162,7 +162,7 @@ c-chat-container {
                 }
 
                 &.container-right {
-                    &>div {
+                    & > div {
                         justify-content: right;
 
                         & .image-container {
