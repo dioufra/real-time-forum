@@ -3,6 +3,8 @@ import { COMMENT_CONTROLLER } from "../controllers/comment.js"
 import { PAGE_CONTROLLER } from "../controllers/pagiantion.js"
 import { POST_CONTROLLER } from "../controllers/post.js"
 import { navigateTo } from "../routes/routechecker.js"
+import { ROUTER } from "../routes/routes.js"
+import { updateSingleComponent } from "../script.js"
 
 export default class Filter extends HTMLElement {
     constructor() {
@@ -32,12 +34,20 @@ export default class Filter extends HTMLElement {
                     PAGE_CONTROLLER.setCurrentPage(1)
                     CATEGORY_CONTROLLER.setCurrentCategoryId(id)
                     if (id) {
-                        navigateTo('/page=1?categorie='+id)
+                        history.pushState(null, null, `/page=1?categorie=${id}`);
+                        ROUTER.currentRoute = window.location.pathname
+                        updateSingleComponent('c-posts-container')
+                        updateSingleComponent('c-pagination')
+                        updateSingleComponent('c-filter')
                     }else {
-                        navigateTo('/page=1')
+                        history.pushState(null, null, `/page=1`);
+                        ROUTER.currentRoute = window.location.pathname
+                        updateSingleComponentonent('c-posts-container')
+                        updateSingleComponent('c-pagination')
+                        updateSingleComponent('c-filter')
                     }
                 }
-                CATEGORY_CONTROLLER.setCurrentCategoryId()
+                // CATEGORY_CONTROLLER.setCurrentCategoryId()
             }
 
         })

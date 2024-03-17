@@ -84,4 +84,9 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 		log.Println("Sending info to clients:", tab)
 		BroadcastPostDetails(conn, response)
 	}
+
+	if err := json.NewEncoder(res).Encode(response); err != nil {
+		log.Println("❌ Error encoding JSON response:", err)
+		return
+	}
 }

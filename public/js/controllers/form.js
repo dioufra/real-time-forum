@@ -26,8 +26,14 @@ class FromController {
     resetForms(){
         this.forms = {}
     }
+    resetSingleForm(form){
+        this.forms[form] = null
+    }
     resetErrors(){
         this.errors = {}
+    }
+    resetError(error){
+        this.errors[error] = null
     }
 }
 export const FORM_CONTROLLER = new FromController()

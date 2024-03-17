@@ -49,31 +49,36 @@ class ChatController {
                 }
                 return response.json()
             })
-                .then(data => {
-                    if (data) {
-                        this.SenderAdress = data.SenderAdress
-                        this.ReceiverAdress = data.ReceiverAdress
-                        this.displayBox = true
-                        this.showLoader = true
-                        this.scrollLimit = 10
-                        this.scroll = { top: 2000, left: 0 }
-                        this.setReciever(receiver)
-                        // if (this.allMessages.length <= 10) this.showLoader = false
-                        // if (CHAT_CONTROLLER.chatId === data.ChatId )
-                        updateSingleComponent('c-chat-container')
-
-                        setTimeout(() => {
-                            if (this.allMessages.length < 10) {
-                                this.showLoader = false
-                                // if (CHAT_CONTROLLER.chatId === data.ChatId )
-                                updateSingleComponent('c-chat-container')
-                            }
-                        }, 1000);
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+            .then(data => {
+                if (data) {
+                    // this.SenderAdress = data.SenderAdress
+                    // this.ReceiverAdress = data.ReceiverAdress
+                    // this.displayBox = true
+                    // this.showLoader = true
+                    // this.scrollLimit = 10
+                    // this.scroll={top:2000,left:0}
+                    // this.setReciever(receiver)
+                    // updateSingleComponent('c-chat-container')
+                    const messages = data.content.Messages !== null ? data.content.Messages : []
+                    this.setAllMessages(messages)
+                    this.SenderAdress = data.SenderAdress
+                    this.ReceiverAdress = data.ReceiverAdress
+                    this.displayBox = true
+                    this.chatId = data.content.ChatId
+                    this.setReciever(receiver)
+                    updateSingleComponent('c-chat-container')
+                    
+                    setTimeout(() => {
+                        if (this.allMessages.length < 10) {
+                            this.showLoader = false
+                            updateSingleComponent('c-chat-container')
+                        }
+                    }, 2000);
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
         }
     }
     setAllMessages(messages) {

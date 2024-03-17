@@ -17,7 +17,6 @@ export default class Comment extends HTMLElement {
             const formData = new FormData(this.commentForm)
             const data = {}
             formData.forEach((value, key) => {
-                if (key === 'post_id') value = parseInt(value)
                 data[key] = value
             })
             data['Use_id'] = USER_CONTROLLER.Id
@@ -78,6 +77,7 @@ export default class Comment extends HTMLElement {
                 }
             }
         }
+        this.checkInputListener()
     }
 
 
@@ -92,6 +92,12 @@ export default class Comment extends HTMLElement {
 
     shouldComponentRender() {
         return !this.innerHTML
+    }
+
+    checkInputListener(){
+        this.addEventListener('input',e => {
+            FORM_CONTROLLER.setInput('comment',e.target)
+        })
     }
 
     render() {
@@ -164,10 +170,11 @@ export default class Comment extends HTMLElement {
                         `)).join('') : ''
             }
                 </div>
+                <p class="error-message">${FORM_CONTROLLER.errors.comment || ''}</p>
                 <div class="new-comment">
                     <form id="comment-form">
-                        <input type="hidden" name="post_id" value="${COMMENT_CONTROLLER.post.Id}">
-                        <input class="nc-ct" type="text" name="comment" placeholder="write your comment here...">
+                        <input class="nc-ct" type="text" name="comment" placeholder="write your comment here..."
+                            value="${FORM_CONTROLLER.forms?.comment?.comment ||''}" >
                         <div class="nc-cm-btn-p">
                         </br>
                             <button class="submit-btn" type="submit">submit</button>
