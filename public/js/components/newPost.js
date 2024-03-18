@@ -1,5 +1,6 @@
 import { CATEGORY_CONTROLLER } from "../controllers/categorie.js"
 import { CHAT_CONTROLLER } from "../controllers/chat.js"
+import { ERROR_CONTROLLER } from "../controllers/error.js"
 import { FORM_CONTROLLER } from "../controllers/form.js"
 import { POST_CONTROLLER } from "../controllers/post.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
@@ -55,33 +56,31 @@ export default class NewPost extends HTMLElement {
             data['categories'] = categories
             data['userId'] = parseInt(USER_CONTROLLER.Id) || 0
 
-            console.log(data);
-                
             fetch('/api/posts/add', {
                 method: 'POST',
                 body: JSON.stringify(data, {
                     method: 'POST',
                 }),
-            }).then(response => {
+            }).then(async response => {
                 if (!response.ok) {
+                    const error = await response.json()
                     if (response.status === 400) {
-                        response.json()
-                        .then(error => {
-                            // console.log(error.message)
                             FORM_CONTROLLER.setError('post',error.message)
                             updateSingleComponent('c-modal')
-                        })
                         return
                     } else {
-                        throw new Error('Erreur de réseau');
+                        const error = await response.json()
+                        ERROR_CONTROLLER.setMessage(`${response.statusText} : ${error.message}`)
+                        ERROR_CONTROLLER.display = true
+                        updateSingleComponent('c-error')
+                        throw new Error(`${response.statusText} : ${error.message}`);
                     }
                 }
-                return response.json()
+                return await response.json()
             })
             .then(data => {
-                // console.log("data",data)
                 if (data) {
-                    // console.log('data',data)
+                    console.log(data);
                     FORM_CONTROLLER.resetForms()
                     POST_CONTROLLER.hideBox()
                 }

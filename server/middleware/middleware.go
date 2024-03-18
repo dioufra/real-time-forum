@@ -20,7 +20,7 @@ func Log(next http.HandlerFunc) http.HandlerFunc {
 func IsAuth(next http.HandlerFunc) http.HandlerFunc {
 	fnt := func(w http.ResponseWriter, r *http.Request) {
 		if is, _ := helper.Auth(controllers.DB, r); is {
-			http.Redirect(w, r, "/", 302)
+			// http.Redirect(w, r, "/", 302)
 		} else {
 			next.ServeHTTP(w, r)
 		}

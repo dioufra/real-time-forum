@@ -1,5 +1,4 @@
 import { COMMENT_CONTROLLER } from "../controllers/comment.js"
-import { ERROR_CONTROLLER } from "../controllers/error.js"
 import { FORM_CONTROLLER } from "../controllers/form.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 import { updateSingleComponent } from "../script.js"
@@ -46,46 +45,45 @@ export default class Comment extends HTMLElement {
                 let data = {}
                 switch (type) {
                     case 'post':
+                        // document.dispatchEvent(new CustomEvent('appreciation', {
+                        //     detail: {
+                        //         type: event.target.getAttribute('data-appreciation-type'),
+                        //         component: 'c-comment',
+                        //         data: {
+                        //             userId: USER_CONTROLLER.Id || 0,
+                        //             postId: COMMENT_CONTROLLER.post.Id || 0,
+                        //             like: parseInt(event.target.getAttribute('data-like')) || 0,
+                        //             dislike: parseInt(event.target.getAttribute('data-dislike')) || 0
+                        //         }
+                        //     }
+                        // }))
                         data = {
                             type: event.target.getAttribute('data-appreciation-type'),
-                            component: 'c-comment',
-                            data: {
-                                userId: USER_CONTROLLER.Id || 0,
-                                postId: COMMENT_CONTROLLER.post.Id || 0,
-                                like: parseInt(event.target.getAttribute('data-like')) || 0,
-                                dislike: parseInt(event.target.getAttribute('data-dislike')) || 0
-                            }
+                                component: 'c-comment',
+                                data: {
+                                    userId: USER_CONTROLLER.Id || 0,
+                                    postId: COMMENT_CONTROLLER.post.Id || 0,
+                                    like: parseInt(event.target.getAttribute('data-like')) || 0,
+                                    dislike: parseInt(event.target.getAttribute('data-dislike')) || 0
+                                }
                         }
                         break;
                     case 'comment':
-                        data = {
-                            type: event.target.getAttribute('data-appreciation-type'),
-                            component: 'c-comment',
-                            data: {
-                                userId: USER_CONTROLLER.Id || 0,
-                                postId: COMMENT_CONTROLLER.post.Id || 0,
-                                commentId: parseInt(event.target.getAttribute('data-commentId')) || 0,
-                                like: parseInt(event.target.getAttribute('data-like')) || 0,
-                                dislike: parseInt(event.target.getAttribute('data-dislike')) || 0
+                        document.dispatchEvent(new CustomEvent('appreciation', {
+                            detail: {
+                                type: event.target.getAttribute('data-appreciation-type'),
+                                component: 'c-comment',
+                                data: {
+                                    userId: USER_CONTROLLER.Id || 0,
+                                    postId: COMMENT_CONTROLLER.post.Id || 0,
+                                    commentId: parseInt(event.target.getAttribute('data-commentId')) || 0,
+                                    like: parseInt(event.target.getAttribute('data-like')) || 0,
+                                    dislike: parseInt(event.target.getAttribute('data-dislike')) || 0
+                                }
                             }
-                        }
+                        })
+                    )
                 }
-                fetch('/api/appreciation/add', {
-                    method: 'POST',
-                    body: JSON.stringify(data, {
-                        method: 'POST',
-                    }),
-                }).then(async response => {
-                    if (!response.ok) {
-                        const error =  await response.json()
-                        ERROR_CONTROLLER.setMessage(`${response.statusText} : ${error.message}`)
-                        ERROR_CONTROLLER.display = true
-                        updateSingleComponent('c-error')
-                        throw new Error(`${response.statusText} : ${error.message}`);
-                    }
-                    return response.json()
-                })
-                .catch(console.error);
             }
         }
         this.checkInputListener()
@@ -105,9 +103,9 @@ export default class Comment extends HTMLElement {
         return !this.innerHTML
     }
 
-    checkInputListener() {
-        this.addEventListener('input', e => {
-            FORM_CONTROLLER.setInput('comment', e.target)
+    checkInputListener(){
+        this.addEventListener('input',e => {
+            FORM_CONTROLLER.setInput('comment',e.target)
         })
     }
 
@@ -122,7 +120,7 @@ export default class Comment extends HTMLElement {
                         </div>
                         <div class="nm-tm">
                             <p>${COMMENT_CONTROLLER.post.Username}</p>
-                            <p>${new Date(COMMENT_CONTROLLER.post.Date).toLocaleDateString('en-us', { weekday: "long", year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "numeric", second: "numeric" })}</p>
+                            <p>${new Date(COMMENT_CONTROLLER.post.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})}</p>
                         </div>
                     </div>
                     <div class="feather">
@@ -186,7 +184,7 @@ export default class Comment extends HTMLElement {
                     <form id="comment-form">
                         <input type="hidden" name="post_id" value="${COMMENT_CONTROLLER.post.Id}">
                         <input class="nc-ct" type="text" name="comment" placeholder="write your comment here..."
-                            value="${FORM_CONTROLLER.forms?.comment?.comment || ''}" >
+                            value="${FORM_CONTROLLER.forms?.comment?.comment ||''}" >
                         <div class="nc-cm-btn-p">
                         </br>
                             <button class="submit-btn" type="submit">submit</button>

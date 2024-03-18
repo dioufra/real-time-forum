@@ -53,6 +53,7 @@ func registerClient(connection *websocket.Conn, email string) {
 }
 func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	is, email := helper.Auth(DB, r)
+	fmt.Println("check authentication: ", is)
 	if !is {
 		fmt.Println("❌ unauthenticated user")
 		return

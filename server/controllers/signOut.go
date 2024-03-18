@@ -8,6 +8,9 @@ import (
 )
 
 func SignOut(res http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodGet {
+		return
+	}
 	clearCookie := http.Cookie{
 		Name:    "sessionid",
 		Value:   "",

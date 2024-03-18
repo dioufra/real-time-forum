@@ -125,7 +125,6 @@ func SessionAddOrUpdate(db *sql.DB, sssid, useremail string) error {
 		row.Scan(&sessionid, &email, &datef)
 	}
 	if email == useremail {
-		fmt.Println("sssid", sssid)
 		_, errsession = db.Exec("UPDATE Session SET sessionId=?, datefin=? where email=?;", sssid, time.Now().Add(time.Hour*24*3), email)
 	} else {
 		_, errsession = db.Exec("INSERT INTO Session (sessionId,email,datefin) VALUES(?,?,?);", sssid, useremail, time.Now().Add(time.Hour*24*3))

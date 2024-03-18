@@ -52,6 +52,7 @@ func Message(res http.ResponseWriter, req *http.Request) {
 		}
 
 		BroadcastChat(message.SenderId, message.ReceiverId, message.ChatId, message.SenderAdress, message.ReceiverAdress)
+		
 		if err := Notify(message.ReceiverAdress, message.SenderId, message); err != nil {
 			log.Println("❌ Error notifying user: ", err)
 			helper.HandleError(res, "Failed to nofify user", http.StatusInternalServerError)

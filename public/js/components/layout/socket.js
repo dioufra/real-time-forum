@@ -42,23 +42,20 @@ export default class Socket extends HTMLElement {
         document.addEventListener('connectWebSocket', e => {
             if (!this.isSocketConnected) {
                 // Créer une connexion WebSocket
+                console.log(USER_CONTROLLER.Id);
                 this.socket = new WebSocket("ws://" + window.location.host + "/api/ws/",);
 
                 // Gérer les événements de la connexion WebSocket
                 this.socket.addEventListener("open", (event) => {
-                    // console.log("WebSocket connection opened:", event);
                     this.isSocketConnected = true
                     USER_CONTROLLER.IsAuth = true
                     PAGE_CONTROLLER.setIsLoading(false)
                 });
                 this.socket.addEventListener("message", (event) => {
                     let response = JSON.parse(event.data)
-                    // Faire un Dipach Event
                     this.dispatchEvent(new CustomEvent(response.event, { detail: { data: response.data } }))
-                    // updateComponents()
                 });
                 this.socket.addEventListener("close", (event) => {
-                    // console.log("WebSocket connection closed:", event);
                     if (this.isSocketConnected) {
                         this.isSocketConnected = false
                         USER_CONTROLLER.disconnect()
@@ -77,13 +74,12 @@ export default class Socket extends HTMLElement {
     checkDisconnectListener() {
         document.addEventListener('disconnectWebSocket', e => {
             fetch('/api/sign_out', {
-                method: 'POST'
+                method: 'GET'
             }).then(response => {
                 this.socket?.close()
                 FORM_CONTROLLER.resetForms()
                 USER_CONTROLLER.disconnect()
-            })
-                .catch(console.log)
+            }).catch(console.log)
         })
     }
 

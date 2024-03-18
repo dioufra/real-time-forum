@@ -5,11 +5,16 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"real-time-forum/server/helper"
 )
 
 var DB *sql.DB
 
 func Home(res http.ResponseWriter, req *http.Request) {
+	if (req.Method != http.MethodGet) {
+		helper.HandleError(res, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 	files := []string{"./public/index.html"}
 	tpl, err := template.ParseFiles(files...)
 	if err != nil {

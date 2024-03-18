@@ -15,5 +15,6 @@ func Route() {
 	http.HandleFunc("/api/sign_out", middlewares.Ispath(middlewares.Log(controllers.SignOut), "/api/sign_out"))
 	http.HandleFunc("/api/posts/add", middlewares.Ispath(middlewares.Log(controllers.AddPost), "/api/posts/add"))
 	http.HandleFunc("/api/comments/add", middlewares.Ispath(middlewares.Log(controllers.AddComment), "/api/comments/add"))
+	http.HandleFunc("/api/appreciation/add", middlewares.Ispath(middlewares.Log(controllers.AddAppreciation), "/api/appreciation/add"))
 	http.HandleFunc("/", controllers.Home)
 }

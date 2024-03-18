@@ -17,6 +17,18 @@ export default class PostsContainer extends HTMLElement {
                 document.dispatchEvent(new CustomEvent('postDetails', {detail: {data: id}}))
                 navigateTo('/post='+id)
             } else if (event.target.classList.contains('apprec')) {
+                // document.dispatchEvent(new CustomEvent('appreciation', {
+                //     detail: {
+                //         type: event.target.getAttribute('data-appreciation-type'),
+                //         component: 'c-post',
+                //         data: {
+                //             userId: USER_CONTROLLER.Id || 0,
+                //             postId: parseInt(event.target.getAttribute('data-postId'))|| 0,
+                //             like: parseInt(event.target.getAttribute('data-like')) || 0,
+                //             dislike: parseInt(event.target.getAttribute('data-dislike')) || 0,
+                //         }
+                //     }
+                // }))
                 const data = {
                     type: event.target.getAttribute('data-appreciation-type'),
                     component: 'c-post',
