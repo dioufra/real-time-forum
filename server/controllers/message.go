@@ -46,11 +46,18 @@ func Message(res http.ResponseWriter, req *http.Request) {
 		}
 
 		email := receiver.Email
-		client := models.GetConnectionByEmail(email, &clientsMutex, SocketClients); 
+		client := models.GetConnectionByEmail(email, &clientsMutex, SocketClients);
 		if client == nil {
 			log.Println("No client associated to sender email")
 			return
 		}
+
+		// clientsMutex.Lock()
+		// defer clientsMutex.Unlock()
+		// info := SocketClients[client]
+
+		//     // Print the email
+		// fmt.Println("Email for client:", info[0])
 
 		// send the message to the receiver only
 		// BroadcastContactedUsers()

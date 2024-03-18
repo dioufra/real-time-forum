@@ -46,6 +46,7 @@ export default class UserInfo extends HTMLElement {
                 }else if (target.tagName === 'BUTTON') {
                     let userId = parseInt(target.getAttribute('userId'))
                     if (userId) {
+                        console.log('Starting a new chat: ', userId);
                         CHAT_CONTROLLER.startNewChat(USER_CONTROLLER.Id, userId)
                     }
                 }
@@ -55,46 +56,10 @@ export default class UserInfo extends HTMLElement {
 
     render() {
         this.innerHTML = /* HTML */ `
-            <div class="profil">
-                <a href="/user">
-                    <div class="profil-photo">
-                        <img src="//ui-avatars.com/api/?name=${USER_CONTROLLER.UserName}&size=100&rounded=true&color=fff&background=random"alt="">
-                    </div>
-                </a>
-                <p class="user-name">${USER_CONTROLLER.FirstName} ${USER_CONTROLLER.LastName}</p>
-                <div class="dcn-btn">
-                    <a href="/logout">Logout</a href="">
-                </div>
-            </div>
-            <div class="user-ac">
-                <div id="show-modal" style="cursor:pointer;">New Post</div> 
-            </div>
+            <c-profile class="profil"></c-profile>
             <c-discussion-list class="users-list"></c-discussion-list>
             <c-online-users-list class="users-list"></c-online-users-list>
-            <div class="users-list">
-                <label >All Users</label>
-                ${USER_CONTROLLER.allUsers.map(user => `
-                    <button class="user" userId="${user.id}">
-                        <img src="//ui-avatars.com/api/?name=${user.username}&size=60&rounded=true&color=fff&background=random" alt="" />
-                        <div>
-                            <div>
-                                <p>
-                                    ${user.firstname} ${user.lastname}
-                                    <br/>
-                                    <span>@${user.username}</span>
-                                </p>
-                                <p>
-                                    <br/>
-                                    ${user.unread_mesages > 0?`
-                                        <span class="unread-messages">${user.unread_mesages}</span>
-                                    `:``
-                                    }
-                                </p>
-                            </div>
-                        </div>
-                    </button>  
-                `).join('') || '<p class="no-user">No user found</p>'}
-            </div>
+            <c-users-list class="users-list"></c-users-list>
         `
     }
 
