@@ -41,19 +41,14 @@ func registerClient(connection *websocket.Conn, email string) {
 	address := fmt.Sprintf("%p", &connection)
 	// Add the new client to the clients map
 	SocketClients[connection] = []string{email, address}
-	
+
 	clientsMutex.Unlock()
 
 	BroadcastUserInfos(connection, email)
-	// BroadcastOnlineUsers() //
-	// BroadcastContactedUsers()
+	BroadcastOnlineUsers()
 	models.BroadCastContactedUser(connection, email)
-	// BroadcastAllUsers(email)
-	// BroadcastAllUsers()
 	models.BroadCastAllUsers(connection, email)
-	// BroadcastAllPosts()
 	models.BroadCastAllPosts(connection, email)
-	// BroadcastAllCategories()
 	models.BroadcastAllCategories(connection, email)
 }
 func HandleWebSocket(w http.ResponseWriter, r *http.Request) {

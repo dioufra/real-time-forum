@@ -2,12 +2,10 @@ package controllers
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"html"
 	"log"
 	"net/http"
-	"os"
 	"real-time-forum/server/helper"
 	"real-time-forum/server/models"
 	"strings"
@@ -21,6 +19,8 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
 	var comment models.FetchComment
 	var post models.PostInfo
 	var user models.User
@@ -28,7 +28,6 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
 	if err := decoder.Decode(&comment); err != nil {
 		// log.Println("❌ Invalid request payload: ", err)
-		helper.LogError(err)
 		helper.HandleError(res, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
@@ -36,28 +35,24 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
 
 	if strings.TrimSpace(comment.Content) == "" {
-		helper.LogError(errors.New("comments cannot add empty comments"))
 		helper.HandleError(res, "Comments cannot add empty comments", http.StatusBadRequest)
 		return
 	}
 
 	if err := models.UserRepo.GetUserById(&user, comment.UserId); err != nil {
 		// log.Println("❌ Error retrieving user:", err)
-		helper.LogError(err)
 		helper.HandleError(res, "Error retrieving user", http.StatusInternalServerError)
 		return
 	}
 
 	if err := models.PostRepo.GetPostById(&post, comment.PostId); err != nil {
 		// log.Println("❌ Error retrieving post:", err)
-		helper.LogError(err)
 		helper.HandleError(res, "Error retrieving post", http.StatusInternalServerError)
 		return
 	}
 
 	if user.Id <= 0 || post.Id <= 0 {
 		// log.Println("❌ User or post not found")
-		helper.LogError(errors.New("user or post not found"))
 		helper.HandleError(res, "User or post not found", http.StatusNotFound)
 		return
 	}
@@ -70,9 +65,6 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 
 	if err := models.CommentRepo.Create(comment.PostId, comment.UserId, comment.Content, date); err != nil {
 		// log.Println("❌ Error adding new comment:", err)
-		helper.LogError(err)
-		errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
-		errorLog.Print("❌", err)
 		helper.HandleError(res, "Error adding new comment", http.StatusInternalServerError)
 		return
 	}
@@ -80,7 +72,6 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 	comments, err := models.CommentRepo.GetCommentsFromPostId(comment.PostId)
 	if err != nil {
 		// log.Println("❌ Error retrieving comments:", err)
-		helper.LogError(err)
 		helper.HandleError(res, "Error retrieving comments", http.StatusInternalServerError)
 		return
 	}
@@ -100,7 +91,6 @@ func AddComment(res http.ResponseWriter, req *http.Request) {
 
 	if err := json.NewEncoder(res).Encode(response); err != nil {
 		// log.Println("❌ Error encoding JSON response:", err)
-		helper.LogError(err)
 		return
 	}
 }

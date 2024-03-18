@@ -127,14 +127,14 @@ export default class Socket extends HTMLElement {
         this.addEventListener('broadcastOnlineUsers', e => {
             // console.log("broadcastOnlineUsers",e.detail.data)
             USER_CONTROLLER.setOnlineUsers(e.detail.data)
-            updateSingleComponent('sc-user-info')
+            updateSingleComponent('c-online-users-list')
         })
     }
     checkContactedUsersListener() {
         this.addEventListener('broadcastContactedUsers', e => {
             // console.log("broadcastAllUsers",e.detail.data)
             USER_CONTROLLER.setContactedUsers(e.detail.data)
-            updateSingleComponent('sc-user-info')
+            updateSingleComponent('c-discussion')
         })
     }
     checkAllUsersListener() {

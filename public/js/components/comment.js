@@ -22,7 +22,6 @@ export default class Comment extends HTMLElement {
             })
             data['Use_id'] = USER_CONTROLLER.Id
             data['date'] = date
-            console.log(data);
             fetch('/api/comments/add', {
                 method: 'POST',
                 body: JSON.stringify(data)

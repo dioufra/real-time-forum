@@ -44,7 +44,7 @@ class UserController {
         this.Age = user.age || this.Age
         this.Gender = user.gender || this.Gender
         // updateComponents()
-        updateSingleComponent('sc-user-info')
+        // updateSingleComponent('sc-user-info')
     }
     disconnect(){
         this.Id = 0
