@@ -90,13 +90,11 @@ export default class Socket extends HTMLElement {
 
     checkMessagesReader() {
         document.addEventListener('readMessages', (event) => {
-            // console.log(event.detail);
             this.sendData(JSON.stringify({ event: "readMessages", data: event.detail }))
         })
     }
     checkAppreciation() {
         document.addEventListener('appreciation', (event) => {
-            // console.log(event.detail);
             this.sendData(JSON.stringify({ event: "appreciation", type: event.detail.type, component: event.detail.component, data: event.detail.data }))
         })
     }
@@ -107,7 +105,6 @@ export default class Socket extends HTMLElement {
     }
     checkChatListener(){
         this.addEventListener('broadcastChat',e => {
-            // console.log("broadcastChat",e.detail)
             if (CHAT_CONTROLLER.chatId === e.detail.data.ChatId) {
                 const messages = e.detail.data.Message !== null ? e.detail.data.Message : []
                 CHAT_CONTROLLER.setAllMessages(messages)      
@@ -118,35 +115,30 @@ export default class Socket extends HTMLElement {
     }
     checkUserInfosListener() {
         this.addEventListener('broadcastUserInfos', e => {
-            // console.log("broadcastUserInfos",e.detail.data)
             USER_CONTROLLER.setUser(e.detail.data)
             updateSingleComponent('sc-user-info')
         })
     }
     checkOnlineUsersListener() {
         this.addEventListener('broadcastOnlineUsers', e => {
-            // console.log("broadcastOnlineUsers",e.detail.data)
             USER_CONTROLLER.setOnlineUsers(e.detail.data)
             updateSingleComponent('c-online-users-list')
         })
     }
     checkContactedUsersListener() {
         this.addEventListener('broadcastContactedUsers', e => {
-            // console.log("broadcastAllUsers",e.detail.data)
             USER_CONTROLLER.setContactedUsers(e.detail.data)
             updateSingleComponent('c-discussion-list')
         })
     }
     checkAllUsersListener() {
         this.addEventListener('broadcastAllUsers', e => {
-            // console.log("broadcastAllUsers",e.detail.data)
             USER_CONTROLLER.setAllUsers(e.detail.data)
             updateSingleComponent('sc-user-info')
         })
     }
     checkAllPostsListener() {
         this.addEventListener('broadcastAllPosts', e => {
-            // console.log("broadcastAllPosts",e.detail.data)
             POST_CONTROLLER.setPosts(e.detail.data)
             updateSingleComponent('c-posts-container')
             // verifyLocationHref()
@@ -154,7 +146,6 @@ export default class Socket extends HTMLElement {
     }
     checkAllCategoriesListener() {
         this.addEventListener('broadcastAllCategories', e => {
-            // console.log("broadcastAl lCategories",e.detail.data)
             CATEGORY_CONTROLLER.setCategories(e.detail.data)
             updateSingleComponent('c-filter')
         })
@@ -162,8 +153,6 @@ export default class Socket extends HTMLElement {
 
     checkNotificationListener() {
         this.addEventListener('Notify', e => {
-            // this.dispatchEvent(new CustomEvent('display-notif'))
-            console.log("Notifying:", e);
             NOTIFICATION_CONTROLLER.display = true
             NOTIFICATION_CONTROLLER.setDate(e.detail.data.Message.Date)
             NOTIFICATION_CONTROLLER.setMessage(e.detail.data.Message.Content)
@@ -178,7 +167,6 @@ export default class Socket extends HTMLElement {
             COMMENT_CONTROLLER.setIsPostSection(true)
             COMMENT_CONTROLLER.setData(e.detail.data.Comments, e.detail.data.Post)
             updateSingleComponent('c-posts-container')
-            // updateComponents()
         })
     }
 
