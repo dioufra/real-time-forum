@@ -56,7 +56,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 	result, err := models.UserRepo.Create(newUser)
 	if err != nil {
 		log.Println("❌ Error registering user: ", err)
-		http.Error(w, "Error registering use", http.StatusInternalServerError)
+		http.Error(w, "Error registering user", http.StatusInternalServerError)
 		return
 	}
 	log.Println("✅ Successfully added new user")

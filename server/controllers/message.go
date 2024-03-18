@@ -37,8 +37,6 @@ func Message(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		helper.SendResponse(res, map[string]any{"message": "Message sent"}, http.StatusOK)
-
 		_, receiver, err := helper.GetChatParticipants(message.SenderId, message.ReceiverId)
 		if err != nil {
 			helper.HandleError(res, "Error starting chat", http.StatusInternalServerError)
@@ -46,7 +44,7 @@ func Message(res http.ResponseWriter, req *http.Request) {
 		}
 
 		email := receiver.Email
-		client := models.GetConnectionByEmail(email, &clientsMutex, SocketClients);
+		client := models.GetConnectionByEmail(email, &clientsMutex, SocketClients)
 		if client == nil {
 			log.Println("No client associated to sender email")
 			return
@@ -63,11 +61,13 @@ func Message(res http.ResponseWriter, req *http.Request) {
 		// BroadcastContactedUsers()
 		// BroadcastOnlineUsers()
 		models.BroadCastContactedUser(client, email)
-		
+
 		BroadcastChat(message.SenderId, message.ReceiverId, message.ChatId, message.SenderAdress, message.ReceiverAdress)
 		if err := Notify(message.ReceiverAdress, message.SenderId, message); err != nil {
 			log.Println("❌ Error notifying user: ", err)
 		}
+
+		helper.SendResponse(res, map[string]any{"message": "Message sent"}, http.StatusOK)
 
 		defer req.Body.Close()
 	}
