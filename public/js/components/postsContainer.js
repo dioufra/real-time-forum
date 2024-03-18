@@ -12,7 +12,6 @@ export default class PostsContainer extends HTMLElement {
         this.clickListener = (event) => {
             event.preventDefault()
             if (event.target.classList.contains('cmt-title')) {
-                // navigateTo(event.target.href)
                 let id = parseInt(event.target.href.split('/').reverse()[0])
                 document.dispatchEvent(new CustomEvent('postDetails', { detail: { data: id } }))
             }
@@ -21,7 +20,6 @@ export default class PostsContainer extends HTMLElement {
             let page = event.detail.page
             POST_CONTROLLER.filteredPosts = POST_CONTROLLER.allPosts.slice((page - 1) * PAGE_CONTROLLER.PageSize, page * PAGE_CONTROLLER.PageSize)
             PAGE_CONTROLLER.setCurrentPage(page)
-            // this.page = page
             history.pushState(null, null, window.location.href.replace(new RegExp('page=\\d'),'page='+page));
             updateSingleComponent('c-posts-container')
         }
@@ -29,14 +27,6 @@ export default class PostsContainer extends HTMLElement {
             let id = event.detail.categoryId
             PAGE_CONTROLLER.setCurrentPage(1)
             CATEGORY_CONTROLLER.setCurrentCategoryId(id)
-            // if (id) {
-            //     navigateTo('/page=1?categorie=' + id)
-            // } else {
-            //     navigateTo('/page=1')
-            // }
-            // history.pushState(null, null, `/page=${this.page}?categorie=${id}`);
-            // ROUTER.currentRoute = window.location.pathname
-            // updateSingleComponent('c-posts-container')
         }
     }
     connectedCallback() {

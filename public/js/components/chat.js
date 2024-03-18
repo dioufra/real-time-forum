@@ -1,7 +1,4 @@
 import { CHAT_CONTROLLER } from "../controllers/chat.js"
-import { FORM_CONTROLLER } from "../controllers/form.js"
-import { NOTIFICATION_CONTROLLER } from "../controllers/notification.js"
-import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 import { updateSingleComponent } from "../script.js"
 

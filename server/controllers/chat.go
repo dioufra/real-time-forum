@@ -62,22 +62,11 @@ func Chat(res http.ResponseWriter, req *http.Request) {
 		helper.HandleError(res, "Error encoding JSON response", http.StatusInternalServerError)
 		return
 	}
-	// BroadcastChat(body.SenderId, body.ReceiverId, body.ChatId, body.SenderAdress, body.ReceiverAdress)
-	// BroadcastContactedUsers()
-	
-	// BroadcastOnlineUsers()
 	email := sender.Email
 	client := models.GetConnectionByEmail(email, &clientsMutex, SocketClients); 
-	if client == nil {
-		log.Println("No client associated to sender email")
+	if client != nil {
+		models.BroadCastContactedUser(client, email)
 		return
 	}
-	// clientsMutex.Lock()
-    // defer clientsMutex.Unlock()
-    // info := SocketClients[client]
-
-    //     // Print the email
-    // fmt.Println("Email for client:", info[0])
-	models.BroadCastContactedUser(client, email)
 	defer req.Body.Close()
 }

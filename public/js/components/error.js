@@ -1,5 +1,4 @@
 import { ERROR_CONTROLLER } from "../controllers/error.js";
-import { NOTIFICATION_CONTROLLER } from "../controllers/notification.js";
 import { USER_CONTROLLER } from "../controllers/user.js"
 
 export default class Error extends HTMLElement {

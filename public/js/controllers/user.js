@@ -1,5 +1,4 @@
-import { navigateTo } from "../routes/routechecker.js"
-import { updateComponents, updateSingleComponent } from "../script.js"
+import { updateComponents } from "../script.js"
 import { CHAT_CONTROLLER } from "./chat.js"
 
 class UserController {
@@ -43,8 +42,6 @@ class UserController {
         this.Email = user.email || this.Email
         this.Age = user.age || this.Age
         this.Gender = user.gender || this.Gender
-        // updateComponents()
-        // updateSingleComponent('sc-user-info')
     }
     disconnect(){
         this.Id = 0

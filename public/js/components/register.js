@@ -126,10 +126,6 @@ export default class Register extends HTMLElement {
 
     }
 
-    get header() {
-        return this.querySelector('.main-header')
-    }
-
     get registerForm() {
         return this.querySelector('form')
     }

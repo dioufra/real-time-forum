@@ -6,7 +6,6 @@ import { NOTIFICATION_CONTROLLER } from "../../controllers/notification.js"
 import { PAGE_CONTROLLER } from "../../controllers/pagiantion.js"
 import { POST_CONTROLLER } from "../../controllers/post.js"
 import { USER_CONTROLLER } from "../../controllers/user.js"
-import { verifyLocationHref } from "../../routes/routechecker.js"
 import { updateSingleComponent } from "../../script.js"
 
 export default class Socket extends HTMLElement {
@@ -134,7 +133,7 @@ export default class Socket extends HTMLElement {
     checkAllUsersListener() {
         this.addEventListener('broadcastAllUsers', e => {
             USER_CONTROLLER.setAllUsers(e.detail.data)
-            updateSingleComponent('sc-user-info')
+            updateSingleComponent('c-users-list')
         })
     }
     checkAllPostsListener() {

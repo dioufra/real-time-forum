@@ -1,11 +1,6 @@
-import { CATEGORY_CONTROLLER } from "../controllers/categorie.js"
 import { COMMENT_CONTROLLER } from "../controllers/comment.js"
-import { ERROR_CONTROLLER } from "../controllers/error.js"
 import { FORM_CONTROLLER } from "../controllers/form.js"
-import { NOTIFICATION_CONTROLLER } from "../controllers/notification.js"
-import { POST_CONTROLLER } from "../controllers/post.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
-import { navigateTo } from "../routes/routechecker.js"
 import { updateSingleComponent } from "../script.js"
 
 export default class Comment extends HTMLElement {

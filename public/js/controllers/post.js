@@ -1,6 +1,5 @@
-import { updateComponents, updateSingleComponent } from "../script.js";
+import { updateSingleComponent } from "../script.js";
 import { CATEGORY_CONTROLLER } from "./categorie.js";
-import { USER_CONTROLLER } from "./user.js";
 
 class PostController {
     constructor() {

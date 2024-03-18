@@ -1,6 +1,5 @@
 import { CHAT_CONTROLLER } from "../controllers/chat.js"
 import { ERROR_CONTROLLER } from "../controllers/error.js"
-import { FORM_CONTROLLER } from "../controllers/form.js"
 import { USER_CONTROLLER } from "../controllers/user.js"
 import { updateSingleComponent } from "../script.js"
 

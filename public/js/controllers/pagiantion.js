@@ -18,7 +18,6 @@ class PaginationController {
         setTimeout(() => {
             this.isLoading = bool
             verifyLocationHref()
-            // updateComponents()
         }, 1000);
     }
 }

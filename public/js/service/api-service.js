@@ -7,31 +7,6 @@ class ApiService {
         this.baseURL = 'http://your-backend-api-url'; // Replace with your actual backend API URL
     }
 
-    // async registerUser(data) {
-    //     try {
-    //         const response = await fetch('/api/register', {
-    //             method: 'POST',
-    //             body: JSON.stringify(data),
-    //         });
-    //         if (!response.ok) {
-    //             // if (response.status >= 200 && response.status <= 299) return response.json()
-
-    //             if (response.status === 400) {
-    //                 response.json()
-    //                     .then(error => {
-    //                         FORM_CONTROLLER.setError('register', error.message)
-    //                     })
-    //                 return
-    //             } else {
-    //                 throw new Error('Erreur de réseau');
-    //             }
-    //         }
-    //         return await response.json()
-    //     } catch (error) {
-    //         console.log(error);
-    //         throw error
-    //     }
-    // }
     async registerUser(data) {
         try {
             const response = await fetch('/api/register', {
@@ -59,13 +34,7 @@ class ApiService {
                 body: JSON.stringify(data),
             });
             if (!response.ok) {
-                // if (response.status === 401) {
-                //     const error = await response.json()
-                //     FORM_CONTROLLER.setError('login', error.message)
-                //     return
-                // } else {
-                //     throw new Error('Network error')
-                // }
+                
                 const error = await response.json();
                 // Assuming FORM_CONTROLLER.setError sets an error state on the form
                 console.log(error.message);
@@ -74,7 +43,6 @@ class ApiService {
             }
             return await response.json()
         } catch (error) {
-            console.error("Error login user: ", error.message);
             throw error;  // Re-throw the error so it can be caught in the calling code
         }
     }

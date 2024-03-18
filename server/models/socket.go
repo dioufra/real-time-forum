@@ -95,28 +95,28 @@ func GetConnectionByEmail(email string, clientsMutex *sync.Mutex, clients map[*w
 	return nil // If no connection found for the given email
 }
 
-// func UpdateUserList(client *websocket.Conn, email string) {
-// 	var user User
-// 	if err := UserRepo.GetUser(&user, email); err != nil {
-// 		fmt.Println("Error getting user: ", err)
-// 		return
-// 	}
-// 	users, err := UserRepo.GetUsersList(user.Id)
-// 	if err != nil {
-// 		fmt.Println("Error getting users", err)
-// 		return
-// 	}
-// 	for _, _user := range users {
-// 		nb, err := MessageRepo.GetUnReadMessages(_user.Id, user.Id)
-// 		if err != nil {
-// 			fmt.Println("Error counting unread messages")
-// 			return
-// 		}
-// 		user.UnReadMessages = nb
-// 	}
-// 	response := map[string]interface{}{"event": "broadcastAllUsers", "data": users}
-// 	err = client.WriteJSON(response)
-// 	if err != nil {
-// 		log.Println(err)
-// 	}
-// }
+func UpdateUserList(client *websocket.Conn, email string) {
+	var user User
+	if err := UserRepo.GetUser(&user, email); err != nil {
+		fmt.Println("Error getting user: ", err)
+		return
+	}
+	users, err := UserRepo.GetUsersList(user.Id)
+	if err != nil {
+		fmt.Println("Error getting users", err)
+		return
+	}
+	for _, _user := range users {
+		nb, err := MessageRepo.GetUnReadMessages(_user.Id, user.Id)
+		if err != nil {
+			fmt.Println("Error counting unread messages")
+			return
+		}
+		user.UnReadMessages = nb
+	}
+	response := map[string]interface{}{"event": "broadcastAllUsers", "data": users}
+	err = client.WriteJSON(response)
+	if err != nil {
+		log.Println(err)
+	}
+}

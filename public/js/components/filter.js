@@ -1,8 +1,5 @@
 import { CATEGORY_CONTROLLER } from "../controllers/categorie.js"
-import { COMMENT_CONTROLLER } from "../controllers/comment.js"
 import { PAGE_CONTROLLER } from "../controllers/pagiantion.js"
-import { POST_CONTROLLER } from "../controllers/post.js"
-import { navigateTo } from "../routes/routechecker.js"
 import { ROUTER } from "../routes/routes.js"
 import { updateSingleComponent } from "../script.js"
 

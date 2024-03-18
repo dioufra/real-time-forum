@@ -1,4 +1,3 @@
-import { CATEGORY_CONTROLLER } from "../controllers/categorie.js"
 import { CHAT_CONTROLLER } from "../controllers/chat.js"
 import { POST_CONTROLLER } from "../controllers/post.js"
 import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
@@ -46,7 +45,6 @@ export default class UserInfo extends HTMLElement {
                 }else if (target.tagName === 'BUTTON') {
                     let userId = parseInt(target.getAttribute('userId'))
                     if (userId) {
-                        console.log('Starting a new chat: ', userId);
                         CHAT_CONTROLLER.startNewChat(USER_CONTROLLER.Id, userId)
                     }
                 }
@@ -61,13 +59,5 @@ export default class UserInfo extends HTMLElement {
             <c-online-users-list class="users-list"></c-online-users-list>
             <c-users-list class="users-list"></c-users-list>
         `
-    }
-
-    get header() {
-        this.querySelector('.main-header')
-    }
-
-    get displayModalBtn() {
-        return this.querySelector('.show-modal')
     }
 }
