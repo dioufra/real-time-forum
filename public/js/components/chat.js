@@ -76,7 +76,7 @@ export default class Chat extends HTMLElement {
                                     <p>${message.Content}</p>
                                 </div>
                                 <div class="image-container">
-                                    <img class="profil-img" src="//ui-avatars.com/api/?name=${CHAT_CONTROLLER.Receiver.username}&size=30&rounded=true&color=fff&background=random" alt="">
+                                    <img class="profil-img" src="//ui-avatars.com/api/?name=${username}&size=30&rounded=true&color=fff&background=random" alt="">
                                 </div>
                             </div>
                             <p class="date">
