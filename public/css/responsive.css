@@ -1,9 +1,9 @@
 @media only screen and (width < 600px) {
     body::before{
-        content: 'screen 600';
+        /* content: 'screen 600'; */
         position: absolute;
         color: white;
-        opacity: 0.2;
+        opacity: 0.5;
     }
     c-socket {
         min-width: 350px;
@@ -60,6 +60,9 @@
                 }
                 &.main-home {
                     display: block;
+                    & sc-user-info{
+                        max-height: 100vh;
+                    }
                     & button.chat-toggle{
                         display: inline;
                         &:focus{
@@ -70,7 +73,7 @@
                     }
                     .discussions{
                         position: fixed;
-                        background-color: #000022;
+                        background-color: #1a1a1a;
                         width: 70vw;
                         height: 100vh;
                         left: -70vw;
