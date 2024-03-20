@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 )
 
 type UserLogin struct {
@@ -19,6 +20,21 @@ type User struct {
 	Email          string `json:"email"`
 	Password       string `json:"password"`
 	RepeatPassword string `json:"repeatpassword"`
+	Type           string `json:"receiver"`
+	UnReadMessages int    `json:"unread_mesages"`
+}
+
+type UserList struct {
+	Id             int    `json:"id"`
+	Firstname      string `json:"firstname"`
+	Lastname       string `json:"lastname"`
+	Username       string `json:"username"`
+	Gender         string `json:"gender"`
+	Age            string `json:"age"`
+	Email          string `json:"email"`
+	Password       string `json:"password"`
+	RepeatPassword string `json:"repeatpassword"`
+	Type           string `json:"receiver"`
 }
 
 type UserData struct {
@@ -51,22 +67,78 @@ func (r *UserRepository) GetUser(user *User, login string) error {
 	}
 	return nil
 }
+
 func NewUserRepository(db *sql.DB) *UserRepository {
 	return &UserRepository{
 		DB: db,
 	}
 }
 
-func (r *UserRepository) GetAll() ([]User, error) {
+func (r *UserRepository) GetContactedUsers(userId int) ([]User, error) {
 	var users []User
-	req := `SELECT id, firstname, lastname, username, gender, age, email FROM Users`
-	row, err := r.DB.Query(req)
+	req := `SELECT u.id, u.firstname, u.lastname, u.username, u.gender, u.age, u.email
+			FROM "Users" u,"Message" m
+			WHERE (m.sender_id = ? AND m.receiver_id = u.id) OR (m.sender_id = u.id AND m.receiver_id = ?)
+			ORDER BY m.id DESC
+			`
+	row, err := r.DB.Query(req, userId, userId)
 	if err != nil {
 		return nil, err
 	}
 	for row.Next() {
 		var user User
-		row.Scan(&user.Id, &user.Firstname, &user.Lastname, &user.Gender, &user.Age, &user.Username, &user.Email)
+		row.Scan(&user.Id, &user.Firstname, &user.Lastname, &user.Username, &user.Gender, &user.Age, &user.Email)
+		nb, err := MessageRepo.GetUnReadMessages(user.Id, userId)
+		if err != nil {
+			fmt.Println("Error counting unread messages")
+			return users, err
+		}
+		user.UnReadMessages = nb
+		users = append(users, user)
+	}
+	return users, nil
+}
+
+func (r *UserRepository) GetUsersList(id int) ([]UserList, error) {
+	var users []UserList
+	req := `
+	SELECT * FROM (
+		SELECT u.id, u.username, u.firstname, u.lastname, 'Receiver' AS user_type 
+		FROM "Users" u
+		WHERE u.id IN (
+			SELECT m.receiver_id
+			FROM message m
+			WHERE m.sender_id = ?
+			UNION
+			SELECT m.sender_id
+			FROM message m
+			WHERE m.receiver_id = ?
+		)
+		ORDER BY (
+			SELECT MAX(date)
+			FROM message m 
+			WHERE m.sender_id = u.id OR m.receiver_id = u.id
+		) DESC
+	)
+	UNION ALL
+	SELECT * FROM (
+		SELECT u.id, u.username, u.firstname, u.lastname, 'NotReceiver' AS user_type 
+		FROM "Users" u
+		WHERE  u.id NOT IN (
+			SELECT sender_id FROM message WHERE receiver_id = ?
+			UNION
+			SELECT receiver_id FROM message WHERE sender_id = ?
+		) AND u.id != ?
+		ORDER BY LOWER(u.firstname)
+	)	
+	`
+	row, err := r.DB.Query(req, id, id, id, id, id)
+	if err != nil {
+		return nil, err
+	}
+	for row.Next() {
+		var user UserList
+		row.Scan(&user.Id, &user.Username, &user.Firstname, &user.Lastname, &user.Type)
 		users = append(users, user)
 	}
 	return users, nil
@@ -75,6 +147,18 @@ func (r *UserRepository) GetAll() ([]User, error) {
 func (r *UserRepository) GetUserByEmail(user *User, email string) error {
 	req := `SELECT id, email, lastName, firstName, username from Users Where email=?`
 	row, err := r.DB.Query(req, email)
+	if err != nil {
+		return err
+	}
+	for row.Next() {
+		row.Scan(&user.Id, &user.Email, &user.Lastname, &user.Firstname, &user.Username)
+	}
+	return nil
+}
+
+func (r *UserRepository) GetUserById(user *User, id int) error {
+	req := `SELECT id, email, lastName, firstName, username from Users Where id=?`
+	row, err := r.DB.Query(req, id)
 	if err != nil {
 		return err
 	}

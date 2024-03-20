@@ -1,114 +1,72 @@
-import { CATEGORY_CONTROLLER } from "../controllers/categorie.js"
+import { COMMENT_CONTROLLER } from "../controllers/comment.js"
+import { PAGE_CONTROLLER } from "../controllers/pagiantion.js"
 import { POST_CONTROLLER } from "../controllers/post.js"
-
+import { SCROLL_CONTROLLER } from "../controllers/scroll.js"
+import { updateSingleComponent } from "../script.js"
 export default class PostsContainer extends HTMLElement {
     constructor() {
         super()
-        this.seePostListener = event => {
-            fetch('/api/post/')
-            .then(response => {
-                if (!response.ok) {
-                    if (response.status === 400) {
-                        response.json()
-                            .then(error => {
-                                console.log(error)
-                            })
-                    } else {
-                        throw new Error('Network error')
-                    }
-                }
-            }).then(data => {
-                console.log(data);
-            })
+        this.commentPage = true
+        this.Posts = []
+        this.page = 1
+        this.clickListener = (event) => {
+            event.preventDefault()
+            if (event.target.classList.contains('cmt-title')) {
+                let id = parseInt(event.target.href.split('/').reverse()[0])
+                document.dispatchEvent(new CustomEvent('postDetails', { detail: { data: id } }))
+            }
+        }
+        this.paginationListener = (event) => {
+            let page = event.detail.page
+            POST_CONTROLLER.filteredPosts = POST_CONTROLLER.allPosts.slice((page - 1) * PAGE_CONTROLLER.PageSize, page * PAGE_CONTROLLER.PageSize)
+            PAGE_CONTROLLER.setCurrentPage(page)
+            history.pushState(null, null, window.location.href.replace(new RegExp('page=\\d'),'page='+page));
+            updateSingleComponent('c-posts-container')
+        }
+        this.categoryListener = (event) => {
+            let id = event.detail.categoryId
+            PAGE_CONTROLLER.setCurrentPage(1)
+            CATEGORY_CONTROLLER.setCurrentCategoryId(id)
         }
     }
-
     connectedCallback() {
         this.render()
+        this.checkScrollListener()
+        if (this.postSection) {
+            this.addEventListener('ok-category', this.categoryListener)
+            this.postSection.addEventListener('click', this.clickListener)
+            this.addEventListener('ok-pagination', this.paginationListener)
+        }
     }
-
     disconnectedCallback() {
+        this.removeEventListener('ok-pagination', this.paginationListener)
+        this.removeEventListener('ok-category', this.categoryListener)
     }
-
     shouldComponentRender() {
         return !this.innerHTML
     }
-
+    checkScrollListener() {
+        this.scrollTop = SCROLL_CONTROLLER.elements.postsContainer?.scrollTop || 0
+        this.addEventListener('scroll', e => {
+            SCROLL_CONTROLLER.setScroll('postsContainer', e.target)
+        })
+    }
     render() {
         this.innerHTML = /* HTML */ `
-        <div class="filter">
-            <div class="sec-center"> 	
-                <input class="dropdown" type="checkbox" id="dropdown" name="dropdown"/>
-                <label class="for-dropdown" for="dropdown">Categories</label>
-                <div class="section-dropdown">
-                  <a href="api/filter-categorie?categorie=default">All</a>
-                    ${
-                        CATEGORY_CONTROLLER.categories.map((category) => 
-                              (`<a href="/filter-categorie?categorie=${category.Id}">${category.Name}</a>`)
-                        ).join('\n')
-                    }
-                </div>
-            </div>
-        </div>
-        <c-pagination class="pagination"></c-pagination>
-        <div class="posts">
-        ${
-            POST_CONTROLLER.filteredPosts.map(post => (`
-                <div class="post-teaser">
-                    <div class="head">
-                        <div class="ctn">
-                            <div class="img">
-                                <img src="//ui-avatars.com/api/?name=${post.Username}&size=90&rounded=true&color=fff&background=random"
-                                    alt="">
-                            </div>
-                            <div class="nm-tm">
-                                <p>${post.Username}</p>
-                            </div>
-                        </div>
-                        <div class="feather">
-                            ${post.Categories.split(' ').map(cat => `
-                                <span class="cm-time">${cat}</span>
-                            `).join('')} 
-                        </div>
-                    </div>
-                    <div class="text-area">
-                        <a href="/api/post/${post.Id}" class="cmt-title">
-                            ${post.Title}
-                        </a>
-                        <p class="cmt">
-                            ${post.Content}
-                        </p>
-                    </div>
-                    <div class="submenu">
-                        <div class="sb-tags">
-                        <div class="sb-tags-l like" onclick="Appreciation(${post.Id},1,0) ">
-                            <div><img src="/public/img/icones/Heart.svg" alt="img"></div>
-                            <div id="like${post.Id}">${post.NbrLike}</div>
-                        </div>
-                        <div class="sb-tags-l" onclick="Appreciation(${post.ID},0,1) ">
-                            <div id="dislike${post.Id}">${post.NbrDislike}</div>
-                            <div>💔</div>
-                        </div>
-                        </div>
-                        <div class="activity">
-                        <a href="api/post/${post.Id}" class="cmt-title">
-                            <div><img src="/public/img/icones/message-square.svg" alt=""></div>
-                            <div>${post.NbrComments}</div>
-                        </a>
-                        </div>
-                    </div>
-                </div>
-            `)).join('')
-        }
-        </div>
-        <c-pagination class="pagination"></c-pagination>
+        ${COMMENT_CONTROLLER.isPostSection
+            ?
+            `<c-comment></c-comment>`
+            :
+            `
+            <c-filter class="filter"></c-filter>
+            <c-pagination class="pagination"></c-pagination>
+            <c-posts></c-posts>
+            <c-pagination class="pagination"></c-pagination>
+            `
+            }
         `
+        this.postSection = this.querySelector('.posts')
     }
-
-    get seePostBtns() {
-        return [...this.querySelectorAll('.cmt-title')]
-    }
-
     get header() {
         this.querySelector('.main-header')
     }

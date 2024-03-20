@@ -1,0 +1,234 @@
+c-chat-container {
+    & .chat-modal {
+        width: 300px;
+        height: 400px;
+        background-color: white;
+        transition: 1s;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        margin-bottom: 30px;
+        margin-right: 40px;
+        border-radius: 20px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+
+        & .username {
+            color: black;
+        }
+
+        & .chat-header {
+            height: 60px;
+            background-color: #888;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            & .user-infos {
+                display: flex;
+            }
+
+            & .name_container {
+                margin-left: 10px;
+
+                & .name {
+                    color: white;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    width: 190px;
+                }
+
+                & .username {
+                    color: black;
+                    font-size: 90%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    width: 190px;
+                }
+            }
+
+            & .profil-img {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                margin-left: 10px;
+            }
+
+            & .close-btn {
+                width: 30px;
+                height: 30px;
+                margin-right: 10px;
+                display: inline;
+                margin-left: auto;
+                border-radius: 50%;
+                border: none;
+                color: #000;
+                background-color: white;
+                font-weight: bold;
+            }
+        }
+
+        & .chat-body {
+            flex: 1;
+            color: black;
+            text-align: center;
+            overflow-y: scroll;
+
+            & .container {
+                margin-top: 5px;
+                margin-bottom: 7px;
+                text-align: left;
+
+                & > div {
+                    display: flex;
+                    align-items: start;
+                    margin-bottom: 3px;
+
+                    & .username {
+                        color: #000;
+                    }
+
+                    & .image-container {
+                        display: block;
+
+                        &::before {
+                            content: '';
+                            width: 10px;
+                            height: 5px;
+                            display: block;
+                            background-color: #888;
+                            border-radius: 0px 0px 0px 10px;
+                        }
+                    }
+
+                    & .message-container {
+                        max-height: 100px;
+                        display: inline-block;
+                        width: auto;
+                        overflow-x: hidden;
+                        overflow-y: scroll;
+                        padding: 10px;
+                        margin-bottom: 0;
+                        background-color: #888;
+                        /* margin-left: 20px; */
+                        margin-right: 0;
+                        padding-top: 5px;
+
+                        & p {
+                            color: black;
+                            font-size: 80%;
+                        }
+
+                        & p+p {
+                            color: white;
+                        }
+                    }
+                }
+
+                &.container-left {
+                    &>div {
+                        justify-content: left;
+
+                        & .username {
+                            color: #000;
+                        }
+
+                        & .image-container {
+                            order: 1;
+
+                            &::before {
+                                border-radius: 0px 0px 0px 10px;
+                                margin-left: 30px;
+                            }
+
+                            & img {
+                                margin: 0 4px 0 5px;
+                            }
+                        }
+
+                        & .message-container {
+                            margin-right: 20px;
+                            order: 2;
+
+                            &.left {
+                                margin-left: 0px;
+                                border-radius: 0px 10px 10px 10px;
+                            }
+                        }
+                    }
+                }
+
+                &.container-right {
+                    & > div {
+                        justify-content: right;
+
+                        & .image-container {
+                            &::before {
+                                border-radius: 0px 0px 10px 0px;
+                            }
+
+                            & img {
+                                margin: 0 5px 0 4px;
+                            }
+                        }
+
+                        & .message-container {
+                            margin-left: 20px;
+
+                            &.right {
+                                border-radius: 10px 0px 10px 10px;
+                            }
+                        }
+                    }
+                }
+
+                & .date {
+                    color: gray;
+                    font-weight: normal;
+                    font-size: 80%;
+                    text-align: center;
+                }
+            }
+        }
+
+        & .chat-footer {
+            & form {
+                display: block;
+                height: 50px;
+                margin: 10px;
+                border-radius: 30px;
+                background-color: rgb(213, 227, 240);
+                padding-left: 10px;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                & input {
+                    background-color: transparent;
+                    outline: none;
+                    border: none;
+                    flex: 1;
+                }
+
+                & button {
+                    width: 40px;
+                    height: 40px;
+                    background: transparent;
+                    background-image: url('https://static.thenounproject.com/png/105496-200.png');
+                    background-size: 70%;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    border: none;
+                }
+            }
+        }
+    }
+
+    & .hidden {
+        width: 0;
+        height: 0;
+    }
+}

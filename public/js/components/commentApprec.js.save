@@ -1,0 +1,31 @@
+import { COMMENT_CONTROLLER } from "../controllers/comment.js";
+
+export default class CommentAppreciation extends HTMLElement {
+    constructor() {
+        super();
+        console.log(COMMENT_CONTROLLER.post.Id);
+
+    }
+
+    connectedCallback() {
+        this.render()
+    }
+
+    disconnectedCallback() {
+        
+    }
+
+    render() {
+        console.log(COMMENT_CONTROLLER.post.Id);
+        this.innerHTML = `
+            <div class="sb-tags-l">
+                <span class="apprec material-symbols-outlined" data-like="1" data-dislike="0" data-appreciation-type="post" data-postId="${COMMENT_CONTROLLER.post.Id}">thumb_up</span>
+                <div id="like-post-id${COMMENT_CONTROLLER.post.Id}">${COMMENT_CONTROLLER.post.NbrLike}</div>
+            </div>
+            <div class="sb-tags-l">
+                <span class="apprec material-symbols-outlined" data-like="0" data-dislike="1" data-appreciation-type="post" data-postId="${COMMENT_CONTROLLER.post.Id}">thumb_down</span>
+                <div id="dislike-post-id${COMMENT_CONTROLLER.post.Id}">${COMMENT_CONTROLLER.post.NbrDislike}</div>
+            </div>
+        `;
+    }
+}

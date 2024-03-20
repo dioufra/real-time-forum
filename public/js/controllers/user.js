@@ -1,7 +1,7 @@
-import { navigateTo } from "../routes/routechecker.js"
 import { updateComponents } from "../script.js"
+import { CHAT_CONTROLLER } from "./chat.js"
 
-class User {
+class UserController {
     constructor() {
         this.Id = 0
         this.IsAuth = false
@@ -12,14 +12,26 @@ class User {
         this.Age = ''
         this.Gender = ''
         // Data from wesocket
+        this.contactedUsers = []
         this.onlineUsers = []
         this.allUsers = []
     }
-    setOnlineUsers(data){this.onlineUsers = data}
-    setAllUsers(data){this.allUsers = data}
+    setContactedUsers(data){this.contactedUsers = this.filterUsers(data)}
+    setOnlineUsers(data){this.onlineUsers = this.filterUsers(data)}
+    setAllUsers(data){this.allUsers = this.filterUsers(data)}
     setIsAuth(bool){
         this.IsAuth = bool
-        updateComponents()
+    }
+    filterUsers(array) {
+        try {
+            return array.filter((obj, index, self) =>
+                index === self.findIndex((t) => (
+                    t.id === obj.id
+                ))
+            );
+        } catch (error) {
+            return []
+        }
     }
     setUser(user){
         this.Id = user.id || this.Id
@@ -30,9 +42,9 @@ class User {
         this.Email = user.email || this.Email
         this.Age = user.age || this.Age
         this.Gender = user.gender || this.Gender
-        updateComponents()
     }
-    disconnect() {
+    disconnect(){
+        this.Id = 0
         this.IsAuth = false
         this.FirstName = ''
         this.LastName = ''
@@ -40,8 +52,9 @@ class User {
         this.Email = ''
         this.Age = ''
         this.Gender = ''
+        CHAT_CONTROLLER.reset()
 
         updateComponents()
     }
 }
-export const USER_CONTROLLER = new User()
+export const USER_CONTROLLER = new UserController()

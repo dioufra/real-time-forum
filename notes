@@ -1,9 +1,39 @@
-[] Prevent the login handler from begin called a second time login using USER_CONTROLLER.fetchData()
+[X] Prevent the login handler from begin called a second time login using USER_CONTROLLER.fetchData()
 
-[] Prevent the home controller from being called twice on page refresh
+[X] Prevent the home controller from being called twice on page refresh
 
 [x] manage logout
 
 [x] pagination
 
-[] like dislike
+[X] Return comments
+
+[X] Add post
+
+[X] like dislike for comment section
+
+[X] like dislike for post section
+
+[X] Add username and date to message section
+
+[] Add scroll up to message section and post section (optionnal)
+
+[X] Add message table
+
+[X] Order users by last message and alphabetic order
+
+[X] Handle messaging with more than one user
+
+[] Send json response from controllers upon error
+    [X] sign in
+    [X] sign up
+    [x] chat
+    [x] message
+    [x] comments
+    [] socket
+
+[X] Add creation date for messages, posts
+
+
+
+

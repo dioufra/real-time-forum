@@ -1,0 +1,207 @@
+import { COMMENT_CONTROLLER } from "../controllers/comment.js"
+import { ERROR_CONTROLLER } from "../controllers/error.js"
+import { FORM_CONTROLLER } from "../controllers/form.js"
+import { USER_CONTROLLER } from "../controllers/user.js"
+import { updateSingleComponent } from "../script.js"
+
+export default class Comment extends HTMLElement {
+    constructor() {
+        super()
+        this.commentListerner = (event) => {
+            event.preventDefault()
+            const date = Date.now()
+            const formData = new FormData(this.commentForm)
+            const data = {}
+            formData.forEach((value, key) => {
+                if (key === 'post_id') value = parseInt(value)
+                data[key] = value
+            })
+            data['Use_id'] = USER_CONTROLLER.Id
+            data['date'] = date
+            fetch('/api/comments/add', {
+                method: 'POST',
+                body: JSON.stringify(data)
+            }).then(async response => {
+                if (!response.ok) {
+                    if (response.status === 400) {
+                        response.json()
+                            .then(error => {
+                                FORM_CONTROLLER.setError('register', error.message)
+                                updateSingleComponent('c-main')
+                            })
+                        return
+                    } else {
+                        throw new Error('Network error');
+                    }
+                }
+                console.log(response);
+            })
+        }
+
+        this.commentAppreciationListerner = event => {
+            if (event.target.type === 'submit') return
+            event.preventDefault()
+            if (event.target.classList.contains('apprec')) {
+                const type = event.target.getAttribute('data-appreciation-type')
+                let data = {}
+                switch (type) {
+                    case 'post':
+                        data = {
+                            type: event.target.getAttribute('data-appreciation-type'),
+                            component: 'c-comment',
+                            data: {
+                                userId: USER_CONTROLLER.Id || 0,
+                                postId: COMMENT_CONTROLLER.post.Id || 0,
+                                like: parseInt(event.target.getAttribute('data-like')) || 0,
+                                dislike: parseInt(event.target.getAttribute('data-dislike')) || 0
+                            }
+                        }
+                        break;
+                    case 'comment':
+                        data = {
+                            type: event.target.getAttribute('data-appreciation-type'),
+                            component: 'c-comment',
+                            data: {
+                                userId: USER_CONTROLLER.Id || 0,
+                                postId: COMMENT_CONTROLLER.post.Id || 0,
+                                commentId: parseInt(event.target.getAttribute('data-commentId')) || 0,
+                                like: parseInt(event.target.getAttribute('data-like')) || 0,
+                                dislike: parseInt(event.target.getAttribute('data-dislike')) || 0
+                            }
+                        }
+                }
+                fetch('/api/appreciation/add', {
+                    method: 'POST',
+                    body: JSON.stringify(data, {
+                        method: 'POST',
+                    }),
+                }).then(async response => {
+                    if (!response.ok) {
+                        const error =  await response.json()
+                        ERROR_CONTROLLER.setMessage(`${response.statusText} : ${error.message}`)
+                        ERROR_CONTROLLER.display = true
+                        updateSingleComponent('c-error')
+                        throw new Error(`${response.statusText} : ${error.message}`);
+                    }
+                    return response.json()
+                })
+                .catch(console.error);
+            }
+        }
+        this.checkInputListener()
+    }
+
+
+    connectedCallback() {
+        this.render()
+        this.addEventListener('submit', this.commentListerner)
+        this.addEventListener('click', this.commentAppreciationListerner)
+    }
+
+    disconnectedCallback() {
+    }
+
+    shouldComponentRender() {
+        return !this.innerHTML
+    }
+
+    checkInputListener() {
+        this.addEventListener('input', e => {
+            FORM_CONTROLLER.setInput('comment', e.target)
+        })
+    }
+
+    render() {
+        this.innerHTML = /* HTML */ `
+        <div class="post-teaser">
+                <div class="head">
+                    <div class="ctn">
+                        <div class="img">
+                            <img src="//ui-avatars.com/api/?name=${COMMENT_CONTROLLER.post.Username}&size=90&rounded=true&color=fff&background=random"
+                            alt="">
+                        </div>
+                        <div class="nm-tm">
+                            <p>${COMMENT_CONTROLLER.post.Username}</p>
+                            <p>${new Date(COMMENT_CONTROLLER.post.Date).toLocaleDateString('en-us', { weekday: "long", year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "numeric", second: "numeric" })}</p>
+                        </div>
+                    </div>
+                    <div class="feather">
+                        ${COMMENT_CONTROLLER.post?.Categories?.split(' ')?.map(category => `
+                            <span class="cm-time">${category}</span>
+                        `).join('') || ''
+            } 
+                    </div>
+                </div>
+                <div class="text-area">
+                    <p class="cmt-title">
+                        ${COMMENT_CONTROLLER.post.Title || ''}
+                    </p>
+                    <p class="cmt">${COMMENT_CONTROLLER.post.Content || ''}</p>
+                </div>
+                <div class="submenu">
+                    <div class="sb-tags">
+                        <div class="sb-tags-l">
+                            <span class="apprec material-symbols-outlined" data-like="1" data-dislike="0" data-appreciation-type="post" data-postId="${COMMENT_CONTROLLER.post.Id}">thumb_up</span>
+                            <div id="like-post-id${COMMENT_CONTROLLER.post.Id}">${COMMENT_CONTROLLER.post.NbrLike}</div>
+                        </div>
+                        <div class="sb-tags-l">
+                            <span class="apprec material-symbols-outlined" data-like="0" data-dislike="1" data-appreciation-type="post" data-postId="${COMMENT_CONTROLLER.post.Id}">thumb_down</span>
+                            <div id="dislike-post-id${COMMENT_CONTROLLER.post.Id}">${COMMENT_CONTROLLER.post.NbrDislike}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cmts-ct">
+                        ${COMMENT_CONTROLLER.comments.length > 0 ? COMMENT_CONTROLLER.comments.map(comment => ( /* HTML */`
+                            <div class="cmt-ct">
+                                <div class="usr-cmt-photo"><img
+                                        src="//ui-avatars.com/api/?name=${comment.Username}&size=90&rounded=true&color=fff&background=random"
+                                        alt=""></div>
+                                <div class="comment">
+                                    <div class="cmt-head">
+                                        <p>${comment.Username}</p>
+                                    </div>
+                                    <div class="cmt-text">
+                                        <p class="cmt">
+                                            ${comment.Content}
+                                        </p>
+                                    </div>
+                                    <div class="sb-tags">
+                                        <div class="sb-tags-l">
+                                            <span class="apprec material-symbols-outlined" data-commentId="${comment.Id}" data-like="1" data-dislike="0" data-appreciation-type="comment" data-postId="${COMMENT_CONTROLLER.post.Id}">thumb_up</span>
+                                            <div id="like-comment-id${comment.Id}">${comment.Like}</div>
+                                        </div>
+                                        <div class="sb-tags-l">
+                                            <span class="apprec material-symbols-outlined" data-commentId="${comment.Id}" data-like="0" data-dislike="1" data-appreciation-type="comment" data-postId="${COMMENT_CONTROLLER.post.Id}">thumb_down</span>
+                                            <div id="dislike-comment-id${comment.Id}">${comment.Dislike}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        `)).join('') : ''
+            }
+                </div>
+                <p class="error-message">${FORM_CONTROLLER.errors.comment || ''}</p>
+                <div class="new-comment">
+                    <form id="comment-form">
+                        <input type="hidden" name="post_id" value="${COMMENT_CONTROLLER.post.Id}">
+                        <input class="nc-ct" type="text" name="comment" placeholder="write your comment here..."
+                            value="${FORM_CONTROLLER.forms?.comment?.comment || ''}" >
+                        <div class="nc-cm-btn-p">
+                        </br>
+                            <button class="submit-btn" type="submit">submit</button>
+                        </div>
+                    </form>
+                </div>
+        </div>
+        `
+    }
+
+    get commentForm() {
+        return this.querySelector('form')
+    }
+
+    get appreciationBtn() {
+        return this.querySelector('.sb-tags')
+    }
+}

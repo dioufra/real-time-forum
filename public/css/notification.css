@@ -1,0 +1,70 @@
+c-notification {
+  & .notification {
+    display: flex;
+    flex-direction: row;
+    width: max-content;
+    background-color: white;
+    border-radius: 15px;
+    padding: 10px;
+    color: black;
+    gap: 10px;
+    z-index: 3;
+    position: absolute;
+    transition: 1s;
+    left: 40vw;
+    bottom: 16px;
+
+    & .username {
+      color: blue;
+      font-size: 15px;
+      font-weight: bolder;
+    }
+
+    & .content {
+      color: black;
+      font-size: 15px
+    }
+  }
+
+  & .hidden {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+}
+
+
+c-error {
+  & .error {
+    display: flex;
+    flex-direction: row;
+    width: max-content;
+    background-color: white;
+    border-radius: 15px;
+    padding: 10px;
+    color: black;
+    gap: 10px;
+    z-index: 3;
+    position: absolute;
+    transition: 1s;
+    left: 40vw;
+    top: 16px;
+
+    & .username {
+      color: blue;
+      font-size: 15px;
+      font-weight: bolder;
+    }
+
+    & .content {
+      color: black;
+      font-size: 15px
+    }
+  }
+
+  & .hidden {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+}

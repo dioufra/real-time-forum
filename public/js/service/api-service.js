@@ -1,5 +1,6 @@
 import { FORM_CONTROLLER } from "../controllers/form.js";
 import { navigateTo } from "../routes/routechecker.js";
+import { updateSingleComponent } from "../script.js";
 
 class ApiService {
     constructor() {
@@ -7,24 +8,24 @@ class ApiService {
     }
 
     async registerUser(data) {
-        fetch('/api/register', {
-            method: 'POST',
-            body: JSON.stringify(data),
-        }).then(response => {
-            if (!response.ok) {
-                if (response.status === 400) {
-                    response.json()
-                    .then(error => {
-                        FORM_CONTROLLER.setError('register',error.message)
-                    })
-                    return
-                } else {
-                    throw new Error('Erreur de réseau');
-                }
+        try {
+            const response = await fetch('/api/register', {
+                method: 'POST',
+                body: JSON.stringify(data),
+            });
+    
+            if (!response.ok)  {
+                const error = await response.json();
+                FORM_CONTROLLER.setError('register', error.message || 'Something went wrong');
+                throw new Error(`Failed to register: ${response.statusText}`);
             }
-            return response.json()
-        })
+            return await response.json()
+        } catch (error) {
+            console.error('Registration failed:', error);
+            throw error;
+        }
     }
+    
 
     async loginUser(data) {
         try {
@@ -32,19 +33,16 @@ class ApiService {
                 method: 'POST',
                 body: JSON.stringify(data),
             });
-    
             if (!response.ok) {
-                if (response.status === 400) {
-                    const error = await response.json()
-                    FORM_CONTROLLER.setError('login',error.message)
-                    return
-                } else {
-                    throw new Error('Network error')
-                }
+                
+                const error = await response.json();
+                // Assuming FORM_CONTROLLER.setError sets an error state on the form
+                console.log(error.message);
+                FORM_CONTROLLER.setError('login', error.message || 'Something went wrong');
+                throw new Error(`Failed to login user: ${response.statusText}`);
             }
-            return  await response.json()
+            return await response.json()
         } catch (error) {
-            console.log(error);
             throw error;  // Re-throw the error so it can be caught in the calling code
         }
     }

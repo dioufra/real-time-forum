@@ -15,6 +15,13 @@ type Post struct {
 	Date       time.Time
 }
 
+type PostPlayload struct {
+	UserId     int    `json:"userId"`
+	Title      string `json:"title"`
+	Categories []int  `json:"categories"`
+	Content    string `json:"content"`
+}
+
 type PostData struct {
 	Post        Post `json:"Post"`
 	User        User `json:"User"`
@@ -52,7 +59,7 @@ type Posts []PostData
 func (r *PostRepository) GetAllPost() ([]PostInfo, error) {
 	var posts []PostInfo
 	req := `
-			SELECT p.id, p.title, p.content, p."date", u.username,
+			SELECT p.id, p.title, p.use_id, p.content, p."date", u.username,
 				( SELECT count(*) FROM "Appreciation" "a" WHERE p.id=a."Pos_id" AND "like"=1) as "likes",
 				( SELECT count(*) FROM "Appreciation" "a" WHERE p.id=a."Pos_id" AND "dislike"=1) as "dislikes",
 				( SELECT count(*) FROM "Comment" "c" WHERE p.id=c."Pos_id" ) as "Comments",
@@ -66,64 +73,30 @@ func (r *PostRepository) GetAllPost() ([]PostInfo, error) {
 	}
 
 	for row.Next() {
-		// postData := PostData{User: User{}, Post: Post{}}
 		var postData PostInfo
-		row.Scan(&postData.Id, &postData.Title, &postData.Content, &postData.Date, &postData.Username, &postData.NbrLike, &postData.NbrDislike, &postData.NbrComments, &postData.Categories)
+		row.Scan(&postData.Id, &postData.Title, &postData.User_id, &postData.Content, &postData.Date, &postData.Username, &postData.NbrLike, &postData.NbrDislike, &postData.NbrComments, &postData.Categories)
 		posts = append(posts, postData)
 	}
 	return posts, row.Err()
 }
 
-func (r *PostRepository) GetPostsByUser(user User) (Posts, error) {
-	var posts Posts
+func (r *PostRepository) GetPostById(post *PostInfo, postID int) error {
 	req := `
-			SELECT p.id, p.title,p.content,p."date",u.username, 
-				(SELECT count(*) FROM "Appreciation" "a" WHERE p.id=a."Pos_id" AND "like"=1) as "likes",
-				(SELECT count(*) FROM "Appreciation" "a" WHERE p.id=a."Pos_id" AND "dislike"=1) as "dislikes",
-				(SELECT count(*) FROM "Comment" "c" WHERE p.id=c."Pos_id" ) as "Comments"
-			FROM "Post" "p"
-			JOIN "Users" "u" ON p.Use_id=u.id
-			WHERE u.id = ? ORDER BY p.id DESC
-		`
-	row, err := r.db.Query(req, user.Id)
-	if err != nil {
-		return posts, err
-	}
-
-	for row.Next() {
-		var user User
-		var post Post
-		postData := PostData{User: user, Post: post}
-		row.Scan(&postData.Post.Id, &postData.Post.Title, &postData.Post.Date, &postData.User.Username, &postData.NbrLike, &postData.NbrDislike, &postData.NbrComments)
-		posts = append(posts, postData)
-	}
-	return posts, row.Err()
-}
-
-func (r *PostRepository) GetPostsByCatId(cat_id string) (Posts, error) {
-	var posts Posts
-	req := `
-			SELECT p.id, p.title, p.content, p."date", u.username,
+			SELECT p.id, p.title, p.use_id, p.content, p."date", u.username,
 				( SELECT count(*) FROM "Appreciation" "a" WHERE p.id=a."Pos_id" AND "like"=1) as "likes",
 				( SELECT count(*) FROM "Appreciation" "a" WHERE p.id=a."Pos_id" AND "dislike"=1) as "dislikes",
-				( SELECT count(*) FROM "Comment" "c" WHERE p.id=c."Pos_id" ) as "Comments"
+				( SELECT count(*) FROM "Comment" "c" WHERE p.id=c."Pos_id" ) as "Comments",
+				( SELECT GROUP_CONCAT("c"."name", ', ') FROM "Category" "c" JOIN "Post_Category" "pc" ON "c"."id" = "pc"."Cat_id" WHERE "pc"."Pos_id" = p.id) as "Categories"
 			FROM "Post" p
-			LEFT JOIN "Post_Category" pt on  pt."Pos_id"=p.id
-			JOIN "Users" "u" ON p.Use_id = u.id  where pt."Cat_id"=? ORDER BY p.id DESC
+			JOIN "Users" "u" ON p.Use_id = u.id
+			WHERE p.id = ?
+			ORDER BY p.id DESC
 			`
-	row, err := r.db.Query(req)
-	if err != nil {
-		return posts, err
-	}
 
-	for row.Next() {
-		var user User
-		var post Post
-		postData := PostData{User: user, Post: post}
-		row.Scan(&postData.Post.Id, &postData.Post.Title, &postData.Post.Date, &postData.User.Username, &postData.NbrLike, &postData.NbrDislike, &postData.NbrComments)
-		posts = append(posts, postData)
-	}
-	return posts, row.Err()
+	row := r.db.QueryRow(req, postID)
+	err := row.Scan(&post.Id, &post.Title, &post.User_id, &post.Content, &post.Date, &post.Username, &post.NbrLike, &post.NbrDislike, &post.NbrComments, &post.Categories)
+
+	return err
 }
 
 func (r *PostRepository) CreatePost(title, content string, user_id int, categories_id []int) error {
@@ -139,7 +112,7 @@ func (r *PostRepository) CreatePost(title, content string, user_id int, categori
 	}
 
 	for _, _id := range categories_id {
-		req = `INSERT INTO Post_Category (Post_id, Cat_id) VALUES (?, ?);`
+		req = `INSERT INTO Post_Category (Pos_id, Cat_id) VALUES (?, ?);`
 		_, err = r.db.Exec(req, id, _id)
 		if err != nil {
 			return err
@@ -147,7 +120,3 @@ func (r *PostRepository) CreatePost(title, content string, user_id int, categori
 	}
 	return nil
 }
-
-func (r *PostRepository) GetLikedPost() {}
-
-func (r *PostRepository) GetPostByCatId() {}

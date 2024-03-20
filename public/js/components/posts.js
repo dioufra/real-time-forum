@@ -1,17 +1,59 @@
-export default class Posts extends HTMLElement {
+import { ERROR_CONTROLLER } from "../controllers/error.js"
+import { FORM_CONTROLLER } from "../controllers/form.js"
+import { POST_CONTROLLER } from "../controllers/post.js"
+import { USER_CONTROLLER } from "../controllers/user.js"
+import { navigateTo } from "../routes/routechecker.js"
+import { updateSingleComponent } from "../script.js"
+
+export default class PostsContainer extends HTMLElement {
     constructor() {
         super()
+        this.commentPage = true
+        this.clickListener = (event) => {
+            event.preventDefault()
+            if (event.target.classList.contains('cmt-title')) {
+                // navigateTo(event.target.href)
+                let id = parseInt(event.target.href.split('/').reverse()[0])
+                document.dispatchEvent(new CustomEvent('postDetails', {detail: {data: id}}))
+                navigateTo('/post='+id)
+            } else if (event.target.classList.contains('apprec')) {
+                const data = {
+                    type: event.target.getAttribute('data-appreciation-type'),
+                    component: 'c-post',
+                    data: {
+                        userId: USER_CONTROLLER.Id || 0,
+                        postId: parseInt(event.target.getAttribute('data-postId'))|| 0,
+                        like: parseInt(event.target.getAttribute('data-like')) || 0,
+                        dislike: parseInt(event.target.getAttribute('data-dislike')) || 0,
+                    }
+                }
+                fetch('/api/appreciation/add', {
+                    method: 'POST',
+                    body: JSON.stringify(data, {
+                        method: 'POST',
+                    }),
+                }).then(async response => {
+                    if (!response.ok) {
+                        const error =  await response.json()
+                        ERROR_CONTROLLER.setMessage(`${response.statusText} : ${error.message}`)
+                        ERROR_CONTROLLER.display = true
+                        updateSingleComponent('c-error')
+                        throw new Error(`${response.statusText} : ${error.message}`);
+                    }
+                    return response.json()
+                })
+                .catch(console.error);
+            }
+        }
     }
 
+
     connectedCallback() {
-        // console.log(this)
         this.render()
-        // this._style()
-        this.addEventListener('post-detail', this.postListener)
+        this.addEventListener('click', this.clickListener)
     }
 
     disconnectedCallback() {
-        this.removeEventListener('submit', this.formSubmission)
     }
 
     shouldComponentRender() {
@@ -20,61 +62,66 @@ export default class Posts extends HTMLElement {
 
     render() {
         this.innerHTML = /* HTML */ `
-            <div class="form-ff">
-                <div class="title-form">
-                    <p class="title-form">Connexion</p>
-                </div>
-                <p class="error-message"></p>
-                <form class="connection-form" action="/api/login" method="post">
-                <div class="input-form">
-                    <input type="text" name="login" placeholder="email or username" >
-                </div>
-                <div class="input-form">                    
-                    <input type="password" name="password" placeholder="password">
-                </div>                        
-                    <button class="submit-btn" type="submit">envoyer</button>
-                </form>
-            </div>
+        <div class="posts">
+            ${
+                POST_CONTROLLER.filteredPosts.map(post => (`
+                    <div class="post-teaser">
+                        <div class="head">
+                            <div class="ctn">
+                                <div class="img">
+                                    <img src="//ui-avatars.com/api/?name=${post.Username}&size=60&rounded=true&color=fff&background=random"
+                                        alt="">
+                                </div>
+                                <div class="nm-tm">
+                                <p>${post.Username}</p>
+                                <p>${new Date(post.Date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"numeric", second:"numeric"})}</p>
+                                </div>
+                            </div>
+                            <div class="feather">
+                                ${post.Categories.split(',').map(cat => `
+                                    <span class="cm-time">${cat}</span>
+                                `).join('')} 
+                            </div>
+                        </div>
+                        <div class="text-area">
+                            <a href="/post/${post.Id}" class="cmt-title">
+                                ${post.Title}
+                            </a>
+                            <p class="cmt">
+                                ${post.Content}
+                            </p>
+                        </div>
+                        <div class="submenu">
+                            <div class="sb-tags">
+                            <div class="sb-tags-l">
+                                <span class="apprec material-symbols-outlined" data-like="1" data-dislike="0" data-appreciation-type="post" data-postId="${post.Id}"> thumb_up</span>
+                                <div id="like-post-id${post.Id}">
+                                    ${post.NbrLike}
+                                </div>
+                            </div>
+                            <div class="sb-tags-l">
+                            <span class="apprec material-symbols-outlined" data-commentId="${post.Id}" data-like="0" data-dislike="1" data-appreciation-type="post" data-postId="${post.Id}"> thumb_down</span>
+                            <div id="dislike-comment-id${post.Id}">${post.NbrDislike}</div>
+
+                            </div>
+                            </div>
+                            <div class="activity">
+                            <a href="/post/${post.Id}" class="cmt-title">
+                                <div><img src="/public/img/icones/message-square.svg" alt=""></div>
+                                <div>${post.NbrComments}</div>
+                            </a>
+                            </div>
+                        </div>
+                    </div>
+                `)).join('')
+            }
+        </div>
         `
-    }
-
-
-    _style() {
-        const style = document.createElement('style')
-        style.textContent = `
-        ${this.tagName} .main-header{
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-        }
-        ${this.tagName} .main-header>.menu-a{
-            padding: 0;
-            background-color: #002ea3;
-            width: 150px;
-            height: 37px;
-            border-radius: 23px;
-            justify-content: center;
-            align-items: center;
-            font-weight: 600;
-        }
-        ${this.tagName} .main-header .join {
-
-        }
-
-        `
-        console.log(this.header)
-        this.appendChild(style)
-
+        this.postSection = this.querySelector('.posts')
     }
 
     get header() {
-        console.log(this.querySelector('.main-header'))
         this.querySelector('.main-header')
     }
 
-    get loginForm() {
-        return this.querySelector('form')
-    }
 }

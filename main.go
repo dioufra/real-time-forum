@@ -40,6 +40,16 @@ func init() {
 			datefin		TIMESTAMP,
 			constraint  PK_SESS primary key (id)
 		);`,
+		`CREATE TABLE IF NOT EXISTS Message (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			sender_id INTEGER NOT NULL,
+			receiver_id INTEGER NOT NULL,
+			content VARCHAR(255) NOT NULL,
+			is_read BOOLEAN DEFAULT FALSE,
+			date TIMESTAMP NOT NULL,
+			CONSTRAINT FK_Message_Sender FOREIGN KEY (sender_id) REFERENCES "Users" (id),
+			CONSTRAINT FK_Message_Receiver FOREIGN KEY (receiver_id) REFERENCES "Users" (id)
+		);`,
 	}
 	for _, req := range tabRequest {
 		_, queryErr := controllers.DB.Exec(req)
@@ -65,8 +75,11 @@ func main() {
 	router.Route()
 
 	fmt.Println("Listening in http://localhost" + PORT)
-
-	http.ListenAndServe(PORT, nil)
+	err := http.ListenAndServe(PORT, nil)
+	if err != nil {
+		fmt.Println("ListenAndServe: ", err)
+		return
+	}
 
 	defer controllers.DB.Close()
 

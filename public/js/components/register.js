@@ -60,7 +60,7 @@ export default class Register extends HTMLElement {
 
                 <div class="input-form">
                     <input type="text" name="username" placeholder="username"
-                        value="${FORM_CONTROLLER.forms?.register?.lastname ||''}" >
+                        value="${FORM_CONTROLLER.forms?.register?.username ||''}" >
                 </div>
 
                 <div class="input-form">
@@ -124,10 +124,6 @@ export default class Register extends HTMLElement {
         `
         this.appendChild(style)
 
-    }
-
-    get header() {
-        return this.querySelector('.main-header')
     }
 
     get registerForm() {
