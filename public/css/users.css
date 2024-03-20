@@ -1,14 +1,26 @@
 sc-user-info {
-    & .discussions{
+
+    & > button.chat-toggle{
+        display: none;
+        border: none;
+        background-color: #002EA3;
+        font-size: 20px;
+        width: 150px;
+        border-radius: 20px;
+        & span {
+            color: white;
+            &:nth-child(2){
+                width: 50%;
+                margin-top: -30px;
+            }
+        }
+    }
+    .discussions{
         margin: 0;
         padding: 0;
         width: 100%;
-
-        & > .material-symbols-outlined{
-            display: none;
-        }
     }
-     .users-list{
+    .users-list{
         width: 100%;
         & label{
             font-size: 130%;
