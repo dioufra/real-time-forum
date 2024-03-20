@@ -8,7 +8,7 @@ import (
 	"real-time-forum/server/models"
 )
 
-func AddPost(res http.ResponseWriter, req *http.Request) {
+func 	AddPost(res http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodPost {
 		log.Println("method not allowed")
 		return
