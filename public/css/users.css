@@ -1,5 +1,14 @@
 sc-user-info {
-    & .users-list{
+    & .discussions{
+        margin: 0;
+        padding: 0;
+        width: 100%;
+
+        & > .material-symbols-outlined{
+            display: none;
+        }
+    }
+     .users-list{
         width: 100%;
         & label{
             font-size: 130%;

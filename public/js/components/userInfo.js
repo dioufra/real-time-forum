@@ -55,9 +55,14 @@ export default class UserInfo extends HTMLElement {
     render() {
         this.innerHTML = /* HTML */ `
             <c-profile class="profil"></c-profile>
-            <c-discussion-list class="users-list"></c-discussion-list>
-            <c-online-users-list class="users-list"></c-online-users-list>
-            <c-users-list class="users-list"></c-users-list>
+            <div class="discussions">
+                <span class="material-symbols-outlined">
+                    chat
+                </span>
+                <c-discussion-list class="users-list"></c-discussion-list>
+                <c-online-users-list class="users-list"></c-online-users-list>
+                <c-users-list class="users-list"></c-users-list>
+            </div>
         `
     }
 }
